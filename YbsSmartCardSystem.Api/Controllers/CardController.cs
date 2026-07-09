@@ -22,11 +22,30 @@ namespace YbsSmartCardSystem.Api.Controllers
         public IActionResult CardList([FromQuery] CardListRequestModel request)
         {
             var result = _cardService.GetList(request);
-            //if (result.IsSuccess)
-            //{
-            //    return Ok(result.Data);
-            //}
-            //return BadRequest(result.Message);
+            return Execute(result);
+        }
+        [HttpPost]
+        public IActionResult CardCreate([FromBody] CardCreateRequestModel request)
+        {
+            var result = _cardService.Create(request);
+            return Execute(result);
+        }
+        [HttpPut("{id}")]
+        public IActionResult CardUpdate(int id, [FromBody] CardUpdateRequestModel request)
+        {
+            var result = _cardService.Update(id, request);
+            return Execute(result);
+        }
+        [HttpPatch("{id}")]
+        public IActionResult CardPatch(int id, [FromBody] CardPatchRequestModel request)
+        {
+            var result = _cardService.Patch(id, request);
+            return Execute(result);
+        }
+        [HttpDelete("{id}")]
+        public IActionResult CardDelete(int id)
+        {
+            var result = _cardService.Delete(id);
             return Execute(result);
         }
     }

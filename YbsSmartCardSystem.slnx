@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="YbsSmartCardSystem.Api/YbsSmartCardSystem.Api.csproj" />
+  <Project Path="YbsSmartCardSystem.Database/YbsSmartCardSystem.Database.csproj" />
+  <Project Path="YbsSmartCardSystem.Domain/YbsSmartCardSystem.Domain.csproj" />
+</Solution>

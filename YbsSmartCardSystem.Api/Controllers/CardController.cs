@@ -24,6 +24,12 @@ namespace YbsSmartCardSystem.Api.Controllers
             var result = _cardService.GetList(request);
             return Execute(result);
         }
+        [HttpGet("{id}")]
+        public IActionResult CardGetById(int id)
+        {
+            var result = _cardService.GetById(id);
+            return Execute(result);
+        }
         [HttpPost]
         public IActionResult CardCreate([FromBody] CardCreateRequestModel request)
         {

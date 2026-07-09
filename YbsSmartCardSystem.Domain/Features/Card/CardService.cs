@@ -59,6 +59,58 @@ public class CardService
             return result;//400
         }
     }
+
+    public Result<CardModel> GetById(int id)
+    {
+        try
+        {
+            if (id <= 0)
+            {
+                return new Result<CardModel>
+                {
+                    IsSuccess = false,
+                    Message = "CardId is required."
+                };
+            }
+
+            var item = _db.TblCards
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CardId == id && x.DeleteFlag == false);
+
+            if (item is null)
+            {
+                return new Result<CardModel>
+                {
+                    IsSuccess = false,
+                    Message = "Card not found."
+                };
+            }
+
+            return new Result<CardModel>
+            {
+                IsSuccess = true,
+                Message = "Card retrieved successfully.",
+                Data = new CardModel
+                {
+                    CardId = item.CardId,
+                    CardNum = item.CardNum,
+                    OwnerName = item.OwnerName,
+                    MobileNo = item.MobileNo,
+                    Balance = item.Balance
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Result<CardModel>
+            {
+                IsSuccess = false,
+                Message = ex.ToString()
+            };
+        }
+    }
+
+
     public Result<CardModel> Create(CardCreateRequestModel request)
     {
         try

@@ -1,0 +1,31 @@
+﻿@page "/card-list"
+@inject ApiService ApiService
+
+@if (response.IsSuccess)
+{
+    <table class="table table_responsive">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Card No</th>
+                <th>FullName</th>
+                <th>MobileNo</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            if(response.Data is not null){
+                @foreach(var item in response.Data?.Cards)
+                {
+                    <tr>
+                        <td>@(++rowNo)</td>
+                        <td>@item.CardId</td>
+                        <td>@item.OwnerName</td>
+                        <td>@item.MobileNo</td>
+                        <td>@item.Balance</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}

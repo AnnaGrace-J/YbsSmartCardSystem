@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="YbsSmartCardSystem.Api/YbsSmartCardSystem.Api.csproj" />
+  <Project Path="YbsSmartCardSystem.App/YbsSmartCardSystem.App.csproj" Id="12282e73-58ec-4800-a55a-102da1ff8e4d" />
   <Project Path="YbsSmartCardSystem.Database/YbsSmartCardSystem.Database.csproj" />
   <Project Path="YbsSmartCardSystem.Domain/YbsSmartCardSystem.Domain.csproj" />
 </Solution>

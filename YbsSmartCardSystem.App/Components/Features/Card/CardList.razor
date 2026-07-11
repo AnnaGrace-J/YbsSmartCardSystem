@@ -1,5 +1,9 @@
-﻿@page "/card-list"
+﻿@page "/cards"
 @inject ApiService ApiService
+
+<NavLink class= "btn btn-outline-success" href="/card/new">
+    New Card
+    </NavLink>
 
 @if (response.IsSuccess)
 {
@@ -14,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-            if(response.Data is not null){
+            @if(response.Data is not null){
                 @foreach(var item in response.Data?.Cards)
                 {
                     <tr>

@@ -111,7 +111,7 @@ public class CardService
     }
 
 
-    public Result<CardModel> Create(CardCreateRequestModel request)
+    public Result<CardCreateResponseModel> Create(CardCreateRequestModel request)
     {
         try
         {
@@ -120,30 +120,28 @@ public class CardService
                 CardNum = request.CardNum,
                 OwnerName = request.OwnerName,
                 MobileNo = request.MobileNo,
-                Balance = request.Balance,
                 CreatedDate = DateTime.Now,
                 DeleteFlag = false
             };
             _db.TblCards.Add(card);
             _db.SaveChanges();
-            Result<CardModel> result = new Result<CardModel>
+            Result<CardCreateResponseModel> result = new Result<CardCreateResponseModel>
             {
                 IsSuccess = true,
                 Message = "Card Created Successfully",
-                Data = new CardModel
+                Data = new CardCreateResponseModel
                 {
                     CardId = card.CardId,
                     CardNum = card.CardNum,
                     OwnerName = card.OwnerName,
-                    MobileNo = card.MobileNo,
-                    Balance = card.Balance
+                    MobileNo = card.MobileNo
                 }
             };
             return result;
         }
         catch(Exception ex)
         {
-            Result<CardModel> result = new Result<CardModel>
+            Result<CardCreateResponseModel> result = new Result<CardCreateResponseModel>
             {
                 IsSuccess = false,
                 Message = ex.ToString()

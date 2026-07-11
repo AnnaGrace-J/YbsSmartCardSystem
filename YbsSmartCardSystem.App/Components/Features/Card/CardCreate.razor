@@ -1,0 +1,20 @@
+﻿@page "/card/new"
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<input type="text" @bind-value="request.CardNum"/>
+<input type="text" @bind-value="request.OwnerName"/>
+<input type="text" @bind-value="request.MobileNo"/>
+
+<button class="btn btn-success" @onclick="Save">Save</button>
+@code {
+    private CardCreateRequestModel request = new();
+    private async Task Save()
+    {
+        var response = await ApiService.CardCreate(request);
+        await JSRuntime.InvokeVoidAsync("alert", response.Message);
+        request = new();
+        NavigationManager.NavigateTo("/cards");
+    }
+}

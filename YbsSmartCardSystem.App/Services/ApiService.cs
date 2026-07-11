@@ -25,6 +25,14 @@ public class ApiService
         var result = await response.Content.ReadFromJsonAsync<Result<CardListResponseModel>>();
         return result!;
     }
+    public async Task<Result<CardCreateResponseModel>> CardCreate(CardCreateRequestModel request)
+    {
+        var httpClient = _httpClientFactory.CreateClient();
+        httpClient.BaseAddress = new Uri(_baseUrl);
+        var response = await httpClient.PostAsJsonAsync(ApiEndpoints.CreateCard, request);
+        var result = await response.Content.ReadFromJsonAsync<Result<CardCreateResponseModel>>();
+        return result!;
+    }
 
 }
 

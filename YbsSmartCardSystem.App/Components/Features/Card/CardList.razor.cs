@@ -15,7 +15,7 @@ namespace YbsSmartCardSystem.App.Components.Features.Card
                 PageNo = 1,
                 PageSize = 10
             };
-            await ApiService.GetCards(request);
+           response = await ApiService.GetCards(request);
         }
     }
 }

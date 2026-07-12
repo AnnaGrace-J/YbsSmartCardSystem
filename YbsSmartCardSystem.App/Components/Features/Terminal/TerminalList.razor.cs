@@ -1,0 +1,147 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using YbsSmartCardSystem.App.Services;
+using YbsSmartCardSystem.Domain;
+using YbsSmartCardSystem.Domain.Features.Bus.Models;
+using YbsSmartCardSystem.Domain.Features.Terminal.Models;
+
+namespace YbsSmartCardSystem.App.Components.Features.Terminal;
+
+public partial class TerminalList
+{
+    [Inject] private ApiService ApiService { get; set; } = default!;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+
+    private TerminalListRequestModel request = new();
+    private Result<TerminalListResponseModel> response = new();
+    private TerminalPatchRequestModel editTerminal = new();
+    private Result<BusListResponseModel> busOptions = new();
+    private int? editingTerminalId;
+    private bool editTerminalIsActive;
+    private string? message;
+    private bool isSuccess;
+    private bool isSaving;
+
+    private int TotalPages =>
+        response.Data is null || request.PageSize == 0
+            ? 1
+            : (int)Math.Ceiling((double)response.Data.TotalCount / request.PageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBusOptions();
+        await LoadTerminals();
+    }
+
+    private async Task LoadTerminals()
+    {
+        response = await ApiService.GetTerminals(request);
+    }
+
+    private async Task LoadBusOptions()
+    {
+        busOptions = await ApiService.GetBuses(new BusListRequestModel { PageNo = 1, PageSize = 1000 });
+    }
+
+    private void EditTerminal(TerminalModel terminal)
+    {
+        editingTerminalId    = terminal.TerminalId;
+        editTerminalIsActive = terminal.IsActive;
+        editTerminal = new TerminalPatchRequestModel
+        {
+            TerminalSerialNo = terminal.TerminalSerialNo,
+            BusId            = terminal.BusId,
+            IsActive         = terminal.IsActive
+        };
+        message = null;
+    }
+
+    private void CancelEdit()
+    {
+        editingTerminalId = null;
+        editTerminal      = new();
+        message           = null;
+    }
+
+    private bool ValidateEdit()
+    {
+        if (string.IsNullOrWhiteSpace(editTerminal.TerminalSerialNo))
+        {
+            message   = "Terminal serial number is required.";
+            isSuccess = false;
+            return false;
+        }
+
+        if (editTerminal.TerminalSerialNo.Trim().Length > 100)
+        {
+            message   = "Terminal serial number cannot exceed 100 characters.";
+            isSuccess = false;
+            return false;
+        }
+
+        if (editTerminal.BusId is null || editTerminal.BusId <= 0)
+        {
+            message   = "Bus is required.";
+            isSuccess = false;
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task UpdateTerminal()
+    {
+        if (editingTerminalId is null) return;
+
+        if (!ValidateEdit()) return;
+
+        editTerminal.IsActive = editTerminalIsActive;
+
+        isSaving = true;
+
+        var result = await ApiService.TerminalPatch(editingTerminalId.Value, editTerminal);
+        message   = result.Message;
+        isSuccess = result.IsSuccess;
+
+        if (result.IsSuccess)
+        {
+            CancelEdit();
+            await LoadTerminals();
+        }
+
+        isSaving = false;
+    }
+
+    private async Task DeleteTerminal(int id)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this terminal?");
+        if (!confirmed) return;
+
+        var result = await ApiService.TerminalDelete(id);
+        message   = result.Message;
+        isSuccess = result.IsSuccess;
+
+        if (result.IsSuccess)
+        {
+            await LoadTerminals();
+        }
+    }
+
+    private async Task PrevPage()
+    {
+        if (request.PageNo > 1)
+        {
+            request.PageNo--;
+            await LoadTerminals();
+        }
+    }
+
+    private async Task NextPage()
+    {
+        if (request.PageNo < TotalPages)
+        {
+            request.PageNo++;
+            await LoadTerminals();
+        }
+    }
+}

@@ -1,0 +1,112 @@
+@page "/terminals"
+@rendermode InteractiveServer
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h3>Terminal List</h3>
+    <NavLink class="btn btn-outline-success" href="/terminal/new">
+        New Terminal
+    </NavLink>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="alert @(isSuccess ? "alert-success" : "alert-danger") alert-dismissible">
+        @message
+        <button type="button" class="btn-close" @onclick="() => message = null"></button>
+    </div>
+}
+
+@if (editingTerminalId is not null)
+{
+    <div class="card mb-3 border-primary">
+        <div class="card-header bg-primary text-white">Edit Terminal</div>
+        <div class="card-body">
+            <div class="mb-2">
+                <label>Terminal Serial Number</label>
+                <input class="form-control" type="text" maxlength="100" @bind="editTerminal.TerminalSerialNo" />
+            </div>
+            <div class="mb-2">
+                <label>Bus</label>
+                <select class="form-select" @bind="editTerminal.BusId">
+                    <option value="0">-- Select Bus --</option>
+                    @if (busOptions.Data is not null)
+                    {
+                        @foreach (var bus in busOptions.Data.Buses)
+                        {
+                            <option value="@bus.BusId">@bus.BusNo — @bus.BusLicense</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="mb-2 form-check">
+                <input class="form-check-input" type="checkbox" id="editIsActive" @bind="editTerminalIsActive" />
+                <label class="form-check-label" for="editIsActive">Active</label>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" @onclick="UpdateTerminal" disabled="@isSaving">
+                    @(isSaving ? "Saving…" : "Save")
+                </button>
+                <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (response.Data is null)
+{
+    <p>Loading…</p>
+}
+else if (!response.Data.Terminals.Any())
+{
+    <p class="text-muted">No terminals found.</p>
+}
+else
+{
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Actions</th>
+                <th>No</th>
+                <th>Serial Number</th>
+                <th>Bus No</th>
+                <th>Bus License</th>
+                <th>Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{int rowNo = (request.PageNo - 1) * request.PageSize;}
+            @foreach (var terminal in response.Data.Terminals)
+            {
+                rowNo++;
+                var localTerminal = terminal;
+                <tr>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditTerminal(localTerminal)">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteTerminal(localTerminal.TerminalId)">Delete</button>
+                    </td>
+                    <td>@rowNo</td>
+                    <td>@terminal.TerminalSerialNo</td>
+                    <td>@terminal.BusNo</td>
+                    <td>@terminal.BusLicense</td>
+                    <td>
+                        @if (terminal.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Inactive</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-outline-secondary btn-sm" @onclick="PrevPage" disabled="@(request.PageNo <= 1)">← Prev</button>
+        <span>Page @request.PageNo of @TotalPages</span>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="NextPage" disabled="@(request.PageNo >= TotalPages)">Next →</button>
+    </div>
+}

@@ -1,0 +1,111 @@
+@page "/buses"
+@rendermode InteractiveServer
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h3>Bus List</h3>
+    <NavLink class="btn btn-outline-success" href="/bus/new">
+        New Bus
+    </NavLink>
+</div>
+
+@if (editingBusId is not null)
+{
+    <div class="card mt-3 p-3">
+        <h5>Edit Bus</h5>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert alert-danger">@message</div>
+        }
+
+        <div class="mb-2">
+            <label>Bus Number</label>
+            <input class="form-control" type="text" maxlength="50" @bind="editBus.BusNo" />
+        </div>
+        <div class="mb-2">
+            <label>Bus License</label>
+            <input class="form-control" type="text" maxlength="50" @bind="editBus.BusLicense" />
+        </div>
+
+        <div class="d-flex gap-2 mt-2">
+            <button class="btn btn-primary" @onclick="UpdateBus" disabled="@isSaving">
+                @(isSaving ? "Saving…" : "Update")
+            </button>
+            <button class="btn btn-secondary" @onclick="CancelEdit" disabled="@isSaving">
+                Cancel
+            </button>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(message) && editingBusId is null)
+{
+    <div class="alert alert-info mt-2">@message</div>
+}
+
+@if (response.IsSuccess)
+{
+    <table class="table table-responsive mt-3 table-hover">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 180px;">Actions</th>
+                <th>No</th>
+                <th>Bus No</th>
+                <th>Bus License</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (response.Data is not null)
+            {
+                var startNo = (request.PageNo - 1) * request.PageSize;
+                @for (var i = 0; i < response.Data.Buses.Count; i++)
+                {
+                    var item = response.Data.Buses[i];
+                    var itemIndex = i;
+                    <tr class="@(editingBusId == item.BusId ? "table-warning" : "")">
+                        <td>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-outline-warning btn-sm"
+                                        @onclick="() => EditBus(item)"
+                                        disabled="@(editingBusId is not null)">
+                                    Edit
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm"
+                                        @onclick="() => DeleteBus(item.BusId)"
+                                        disabled="@(editingBusId is not null)">
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
+                        <td>@(startNo + itemIndex + 1)</td>
+                        <td>@item.BusNo</td>
+                        <td>@item.BusLicense</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @if (response.Data is not null)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                Total: <strong>@response.Data.TotalCount</strong> buses
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
+                    Previous
+                </button>
+                <span>Page @request.PageNo of @TotalPages</span>
+                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
+                    Next
+                </button>
+            </div>
+        </div>
+    }
+}
+else if (response.Message is not null)
+{
+    <div class="alert alert-danger mt-3">@response.Message</div>
+}

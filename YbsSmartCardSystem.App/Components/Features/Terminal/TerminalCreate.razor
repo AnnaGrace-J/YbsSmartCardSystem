@@ -1,0 +1,36 @@
+@page "/terminal/new"
+@rendermode InteractiveServer
+
+<h4>New Terminal</h4>
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="alert @(isSuccess ? "alert-success" : "alert-danger")">@message</div>
+}
+
+<div class="mb-2">
+    <label>Terminal Serial Number <span class="text-danger">*</span></label>
+    <input class="form-control" type="text" maxlength="100" @bind="request.TerminalSerialNo" />
+</div>
+<div class="mb-2">
+    <label>Bus <span class="text-danger">*</span></label>
+    <select class="form-select" @bind="request.BusId">
+        <option value="0">-- Select Bus --</option>
+        @if (busOptions.Data is not null)
+        {
+            @foreach (var bus in busOptions.Data.Buses)
+            {
+                <option value="@bus.BusId">@bus.BusNo — @bus.BusLicense</option>
+            }
+        }
+    </select>
+</div>
+<div class="mb-3 form-check">
+    <input class="form-check-input" type="checkbox" id="isActive" @bind="request.IsActive" />
+    <label class="form-check-label" for="isActive">Active</label>
+</div>
+
+<button class="btn btn-success" @onclick="Save" disabled="@isSaving">
+    @(isSaving ? "Saving…" : "Save")
+</button>
+<NavLink class="btn btn-outline-secondary ms-2" href="/terminals">Cancel</NavLink>

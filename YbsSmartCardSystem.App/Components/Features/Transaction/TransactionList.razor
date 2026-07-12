@@ -1,0 +1,89 @@
+@page "/transactions"
+@rendermode InteractiveServer
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Transaction History</h3>
+    <NavLink class="btn btn-success" href="/transactions/new">
+        New Transaction
+    </NavLink>
+</div>
+
+<div class="row g-2 mb-3">
+    <div class="col-md-4">
+        <label class="form-label fw-bold">Card Number</label>
+        <input class="form-control" type="text" maxlength="50" @bind="request.CardNum" @bind:event="oninput" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label fw-bold">Terminal Serial Number</label>
+        <input class="form-control" type="text" maxlength="100" @bind="request.TerminalSerialNo" @bind:event="oninput" />
+    </div>
+    <div class="col-md-4 d-flex align-items-end gap-2">
+        <button class="btn btn-primary" @onclick="ApplyFilter" disabled="@isLoading">Search</button>
+        <button class="btn btn-outline-secondary" @onclick="ClearFilter" disabled="@isLoading">Clear</button>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Loading transactions...</div>
+}
+else if (response.IsSuccess)
+{
+    <table class="table table-responsive mt-3 table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>No</th>
+                <th>Transaction No</th>
+                <th>Card No</th>
+                <th>FullName</th>
+                <th>Terminal</th>
+                <th>Bus No</th>
+                <th>Bus License</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (response.Data is not null)
+            {
+                int rowNo = (request.PageNo - 1) * request.PageSize;
+                @foreach (var item in response.Data.Transactions)
+                {
+                    <tr>
+                        <td>@(++rowNo)</td>
+                        <td class="text-monospace">@item.TransactionNo</td>
+                        <td>@item.CardNum</td>
+                        <td>@item.OwnerName</td>
+                        <td>@item.TerminalSerialNo</td>
+                        <td>@item.BusNo</td>
+                        <td>@item.BusLicense</td>
+                        <td class="fw-bold text-danger">@item.Amount.ToString("N2") MMK</td>
+                        <td>@item.TransactionDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @if (response.Data is not null)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                Total: <strong>@response.Data.TotalCount</strong> records
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
+                    Previous
+                </button>
+                <span>Page @request.PageNo of @TotalPages</span>
+                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
+                    Next
+                </button>
+            </div>
+        </div>
+    }
+}
+else if (!string.IsNullOrWhiteSpace(response.Message))
+{
+    <div class="alert alert-danger mt-3">@response.Message</div>
+}

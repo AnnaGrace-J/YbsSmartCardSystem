@@ -15,7 +15,7 @@ namespace YbsSmartCardSystem.Api.Controllers
                 return Ok(result);
             }
 
-            return BadRequest(result);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

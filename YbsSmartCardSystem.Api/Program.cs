@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
 using YbsSmartCardSystem.Domain.Features.Card;
 using YbsSmartCardSystem.Domain.Features.TopUp;
+using YbsSmartCardSystem.Domain.Features.Bus;
+using YbsSmartCardSystem.Domain.Features.Terminal;
+using YbsSmartCardSystem.Domain.Features.Transaction;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,10 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 builder.Services.AddScoped<CardService>();
 builder.Services.AddScoped<TopUpService>();
+builder.Services.AddScoped<BusService>();
+builder.Services.AddScoped<TerminalService>();
+builder.Services.AddScoped<TransactionService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

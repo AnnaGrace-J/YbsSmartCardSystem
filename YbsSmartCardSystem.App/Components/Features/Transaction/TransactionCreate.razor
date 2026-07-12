@@ -1,0 +1,54 @@
+@page "/transactions/new"
+@rendermode InteractiveServer
+
+<h4>New Transaction</h4>
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="alert @(isSuccess ? "alert-success" : "alert-danger")">@message</div>
+}
+
+<div class="mb-2">
+    <label>Card Number <span class="text-danger">*</span></label>
+    <input class="form-control" type="text" maxlength="50" @bind="request.CardNum" />
+</div>
+
+<div class="mb-3">
+    <label>Terminal Serial Number <span class="text-danger">*</span></label>
+    <input class="form-control" type="text" maxlength="100" @bind="request.TerminalSerialNo" />
+</div>
+
+<button class="btn btn-success" @onclick="Save" disabled="@isSaving">
+    @(isSaving ? "Processing..." : "Pay 400 Kyats")
+</button>
+
+@if (transactionResult is not null)
+{
+    <div class="mt-3">
+        <h5>Transaction Result</h5>
+        <table class="table table-sm">
+            <tbody>
+                <tr>
+                    <th>Transaction No</th>
+                    <td>@transactionResult.TransactionNo</td>
+                </tr>
+                <tr>
+                    <th>Card</th>
+                    <td>@transactionResult.CardNum - @transactionResult.OwnerName</td>
+                </tr>
+                <tr>
+                    <th>Terminal</th>
+                    <td>@transactionResult.TerminalSerialNo</td>
+                </tr>
+                <tr>
+                    <th>Amount</th>
+                    <td>@transactionResult.Amount</td>
+                </tr>
+                <tr>
+                    <th>Remaining Balance</th>
+                    <td>@transactionResult.RemainingBalance</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}

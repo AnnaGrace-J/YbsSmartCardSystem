@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
 using YbsSmartCardSystem.Domain.Features.Card;
+using YbsSmartCardSystem.Domain.Features.TopUp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 });
 
 builder.Services.AddScoped<CardService>();
+builder.Services.AddScoped<TopUpService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

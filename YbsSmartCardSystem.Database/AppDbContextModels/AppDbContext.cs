@@ -11,17 +11,19 @@ public partial class AppDbContext : DbContext
     {
     }
 
-    public virtual DbSet<TblBus> TblBus { get; set; }
+    public virtual DbSet<TblBu> TblBus { get; set; }
 
     public virtual DbSet<TblCard> TblCards { get; set; }
 
     public virtual DbSet<TblTerminal> TblTerminals { get; set; }
 
+    public virtual DbSet<TblTopUp> TblTopUps { get; set; }
+
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TblBus>(entity =>
+        modelBuilder.Entity<TblBu>(entity =>
         {
             entity.HasKey(e => e.BusId).HasName("PK__Tbl_Bus__6A0F60B5CD2F452C");
 
@@ -64,6 +66,31 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.BusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Terminal_Bus");
+        });
+
+        modelBuilder.Entity<TblTopUp>(entity =>
+        {
+            entity.HasKey(e => e.TopUpId);
+
+            entity.ToTable("Tbl_TopUp");
+
+            entity.HasIndex(e => e.CardId, "IX_Tbl_TopUp_CardId");
+
+            entity.HasIndex(e => e.TopUpDate, "IX_Tbl_TopUp_TopUpDate");
+
+            entity.HasIndex(e => e.TopUpNo, "IX_Tbl_TopUp_TopUpNo").IsUnique();
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Remark).HasMaxLength(250);
+            entity.Property(e => e.TopUpDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.TopUpNo).HasDefaultValueSql("(newid())");
+
+            entity.HasOne(d => d.Card).WithMany(p => p.TblTopUps)
+                .HasForeignKey(d => d.CardId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TopUp_Card");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>

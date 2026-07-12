@@ -1,20 +1,83 @@
-﻿@page "/card/new"
+@page "/card/new"
+@rendermode InteractiveServer
 @inject ApiService ApiService
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
 
-<input type="text" @bind-value="request.CardNum"/>
-<input type="text" @bind-value="request.OwnerName"/>
-<input type="text" @bind-value="request.MobileNo"/>
+<h4>New Card</h4>
 
-<button class="btn btn-success" @onclick="Save">Save</button>
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert @(isSuccess ? "alert-success" : "alert-danger")">@message</div>
+}
+
+<div class="mb-2">
+    <label>Card Number <span class="text-danger">*</span></label>
+    <input class="form-control" type="text" @bind="request.CardNum" />
+</div>
+<div class="mb-2">
+    <label>Owner Name <span class="text-danger">*</span></label>
+    <input class="form-control" type="text" @bind="request.OwnerName" />
+</div>
+<div class="mb-2">
+    <label>Mobile No</label>
+    <input class="form-control" type="text" @bind="request.MobileNo" />
+</div>
+
+<button class="btn btn-success" @onclick="Save" disabled="@isSaving">
+    @(isSaving ? "Saving…" : "Save")
+</button>
+<NavLink class="btn btn-outline-secondary ms-2" href="/cards">Cancel</NavLink>
+
 @code {
     private CardCreateRequestModel request = new();
+    private string? message;
+    private bool isSaving;
+    private bool isSuccess;
+
+    private bool Validate()
+    {
+        if (string.IsNullOrWhiteSpace(request.CardNum))
+        {
+            message = "Card number is required.";
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(request.OwnerName))
+        {
+            message = "Owner name is required.";
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.MobileNo) && request.MobileNo.Length > 20)
+        {
+            message = "Mobile number cannot exceed 20 characters.";
+            return false;
+        }
+
+        return true;
+    }
+
     private async Task Save()
     {
+        message = null;
+
+        if (!Validate())
+        {
+            return;
+        }
+
+        isSaving = true;
+
         var response = await ApiService.CardCreate(request);
-        await JSRuntime.InvokeVoidAsync("alert", response.Message);
-        request = new();
-        NavigationManager.NavigateTo("/cards");
+        message = response.Message;
+        isSuccess = response.IsSuccess;
+
+        if (response.IsSuccess)
+        {
+            request = new CardCreateRequestModel();
+            NavigationManager.NavigateTo("/cards");
+        }
+
+        isSaving = false;
     }
 }

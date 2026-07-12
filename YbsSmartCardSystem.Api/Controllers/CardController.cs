@@ -36,12 +36,12 @@ namespace YbsSmartCardSystem.Api.Controllers
             var result = _cardService.Create(request);
             return Execute(result);
         }
-        [HttpPut("{id}")]
-        public IActionResult CardUpdate(int id, [FromBody] CardUpdateRequestModel request)
-        {
-            var result = _cardService.Update(id, request);
-            return Execute(result);
-        }
+        //[HttpPut("{id}")]
+        //public IActionResult CardUpdate(int id, [FromBody] CardUpdateRequestModel request)
+        //{
+        //    var result = _cardService.Update(id, request);
+        //    return Execute(result);
+        //}
         [HttpPatch("{id}")]
         public IActionResult CardPatch(int id, [FromBody] CardPatchRequestModel request)
         {

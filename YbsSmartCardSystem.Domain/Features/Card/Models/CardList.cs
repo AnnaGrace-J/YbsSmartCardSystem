@@ -1,14 +1,16 @@
-﻿namespace YbsSmartCardSystem.Domain.Features.Card.Models;
+namespace YbsSmartCardSystem.Domain.Features.Card.Models;
 
 public class CardListRequestModel
 {
-    public int PageNo { get; set; } = 1;
-    public int PageSize { get; set; } = 10;
+    public int     PageNo   { get; set; } = 1;
+    public int     PageSize { get; set; } = 10;
+    public string? Search   { get; set; }
 }
 
 public class CardListResponseModel
 {
-    public List<CardModel> Cards { get; set; } = new List<CardModel>();
+    public List<CardModel> Cards      { get; set; } = new();
+    public int             TotalCount { get; set; }
 }
 public class CardCreateRequestModel
 {
@@ -26,25 +28,28 @@ public class CardCreateResponseModel()
     // public decimal Balance { get; set; }
 }
 
-public class CardUpdateRequestModel
-{
-    public string CardNum { get; set; } = null!;
+//public class CardUpdateRequestModel
+//{
+//    public string CardNum { get; set; } = null!;
 
-    public string OwnerName { get; set; } = null!;
+//    public string OwnerName { get; set; } = null!;
 
-    public string? MobileNo { get; set; }
+//    public string? MobileNo { get; set; }
 
-    public decimal Balance { get; set; }
-}
+//    public decimal Balance { get; set; }
+//}
 public class CardPatchRequestModel
 {
-    public string? CardNum { get; set; }
-
+    public string? CardNum   { get; set; }
     public string? OwnerName { get; set; }
-
-    public string? MobileNo { get; set; }
-
-    public decimal? Balance { get; set; }
+    public string? MobileNo  { get; set; }
+    // Balance is intentionally excluded — balance is only changed via TopUp or Transaction.
+}
+public class CardPatchResponseModel
+{
+    public string? CardNum   { get; set; }
+    public string? OwnerName { get; set; }
+    public string? MobileNo  { get; set; }
 }
 public class CardModel
 {

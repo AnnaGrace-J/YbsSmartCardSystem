@@ -1,15 +1,66 @@
-﻿@page "/cards"
+@page "/cards"
+@rendermode InteractiveServer
 @inject ApiService ApiService
 
-<NavLink class= "btn btn-outline-success" href="/card/new">
-    New Card
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Card List</h3>
+    <NavLink class="btn btn-outline-success" href="/card/new">
+        New Card
     </NavLink>
+</div>
+
+<div class="row g-2 mb-3">
+    <div class="col-md-6 d-flex gap-2">
+        <input class="form-control" placeholder="Search by Card No or Owner Name..." @bind="searchText" @onkeyup="@(e => e.Key == "Enter" ? Search() : Task.CompletedTask)" />
+        <button class="btn btn-outline-secondary" @onclick="Search">Search</button>
+    </div>
+</div>
+
+@if (editingCardId is not null)
+{
+    <div class="card mt-3 p-3">
+        <h5>Edit Card</h5>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert alert-danger">@message</div>
+        }
+
+        <div class="mb-2">
+            <label>Card Number</label>
+            <input class="form-control" type="text" @bind="editCard.CardNum" />
+        </div>
+        <div class="mb-2">
+            <label>Owner Name</label>
+            <input class="form-control" type="text" @bind="editCard.OwnerName" />
+        </div>
+        <div class="mb-2">
+            <label>Mobile No</label>
+            <input class="form-control" type="text" @bind="editCard.MobileNo" />
+        </div>
+
+        <div class="d-flex gap-2 mt-2">
+            <button class="btn btn-primary" @onclick="UpdateCard" disabled="@isSaving">
+                @(isSaving ? "Saving…" : "Update")
+            </button>
+            <button class="btn btn-secondary" @onclick="CancelEdit" disabled="@isSaving">
+                Cancel
+            </button>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(message) && editingCardId is null)
+{
+    <div class="alert alert-info mt-2">@message</div>
+}
 
 @if (response.IsSuccess)
 {
-    <table class="table table_responsive">
+    <table class="table table-responsive mt-3">
         <thead>
             <tr>
+                <th style="width: 200px;">Actions</th>
                 <th>No</th>
                 <th>Card No</th>
                 <th>FullName</th>
@@ -18,18 +69,56 @@
             </tr>
         </thead>
         <tbody>
-            @if(response.Data is not null){
-                @foreach(var item in response.Data?.Cards)
+            @if (response.Data is not null)
+            {
+                int rowNo = (request.PageNo - 1) * request.PageSize;
+                @foreach (var item in response.Data.Cards)
                 {
-                    <tr>
+                    <tr class="@(editingCardId == item.CardId ? "table-warning" : "")">
+                        <td>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-outline-warning btn-sm"
+                                        @onclick="() => EditCard(item)"
+                                        disabled="@(editingCardId is not null)">
+                                    Edit
+                                </button>
+                                <NavLink class="btn btn-outline-info btn-sm"
+                                         href="@($"/topup/new?cardId={item.CardId}")">
+                                    Top Up
+                                </NavLink>
+                            </div>
+                        </td>
                         <td>@(++rowNo)</td>
-                        <td>@item.CardId</td>
+                        <td>@item.CardNum</td>
                         <td>@item.OwnerName</td>
                         <td>@item.MobileNo</td>
-                        <td>@item.Balance</td>
+                        <td>@item.Balance.ToString("N2") MMK</td>
                     </tr>
                 }
             }
         </tbody>
     </table>
+
+    @if (response.Data is not null)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                Total: <strong>@response.Data.TotalCount</strong> cards
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
+                    Previous
+                </button>
+                <span>Page @request.PageNo of @TotalPages</span>
+                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
+                    Next
+                </button>
+            </div>
+        </div>
+    }
 }
+else if (response.Message is not null)
+{
+    <div class="alert alert-danger mt-3">@response.Message</div>
+}
+

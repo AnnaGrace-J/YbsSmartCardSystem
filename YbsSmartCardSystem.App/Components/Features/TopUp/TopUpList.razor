@@ -1,0 +1,81 @@
+@page "/topups"
+@rendermode InteractiveServer
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Top Up History</h3>
+    <NavLink class="btn btn-success" href="/topup/new">
+        New Top Up
+    </NavLink>
+</div>
+
+<div class="row g-2 mb-3">
+    <div class="col-md-4">
+        <label class="form-label fw-bold">Filter by Card</label>
+        <select class="form-select" @onchange="OnCardFilterChanged">
+            <option value="0">-- All Cards --</option>
+            @foreach (var card in cards)
+            {
+                <option value="@card.CardId" selected="@(selectedCardId == card.CardId)">
+                    @card.CardNum - @card.OwnerName
+                </option>
+            }
+        </select>
+    </div>
+</div>
+
+@if (response.IsSuccess)
+{
+    <table class="table table-responsive mt-3 table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>No</th>
+                <th>Top Up No</th>
+                <th>Card No</th>
+                <th>FullName</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Remark</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (response.Data is not null)
+            {
+                int rowNo = (request.PageNo - 1) * request.PageSize;
+                @foreach (var item in response.Data.TopUps)
+                {
+                    <tr>
+                        <td>@(++rowNo)</td>
+                        <td class="text-monospace">@item.TopUpNo</td>
+                        <td>@item.CardNum</td>
+                        <td>@item.OwnerName</td>
+                        <td class="fw-bold text-success">@item.Amount.ToString("N2") MMK</td>
+                        <td>@item.TopUpDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@item.Remark</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @if (response.Data is not null)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                Total: <strong>@response.Data.TotalCount</strong> records
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
+                    Previous
+                </button>
+                <span>Page @request.PageNo of @TotalPages</span>
+                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
+                    Next
+                </button>
+            </div>
+        </div>
+    }
+}
+else if (response.Message is not null)
+{
+    <div class="alert alert-danger mt-3">@response.Message</div>
+}

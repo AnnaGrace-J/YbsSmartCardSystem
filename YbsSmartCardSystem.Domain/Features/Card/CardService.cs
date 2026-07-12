@@ -1,10 +1,4 @@
-﻿using Azure.Core;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YbsSmartCardSystem.Database.AppDbContextModels;
 using YbsSmartCardSystem.Domain.Features.Card.Models;
 
@@ -23,40 +17,51 @@ public class CardService
     {
         try
         {
-            var cards = _db.TblCards
+            var query = _db.TblCards
                 .AsNoTracking()
-                .Where(x => x.DeleteFlag == false)
-                .OrderByDescending(x=>x.CardId)
+                .Where(x => x.DeleteFlag == false);
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                var search = request.Search.Trim();
+                query = query.Where(x =>
+                    x.CardNum.Contains(search) ||
+                    x.OwnerName.Contains(search));
+            }
+
+            var totalCount = query.Count();
+
+            var cards = query
+                .OrderByDescending(x => x.CardId)
                 .Skip((request.PageNo - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToList();
 
-            Result<CardListResponseModel> result = new Result<CardListResponseModel>
+            return new Result<CardListResponseModel>
             {
                 IsSuccess = true,
-                Message = "Card retrieved successfully.",
-                Data = new CardListResponseModel
+                Message   = "Card retrieved successfully.",
+                Data      = new CardListResponseModel
                 {
-                    Cards = cards.Select(c => new CardModel
+                    TotalCount = totalCount,
+                    Cards      = cards.Select(c => new CardModel
                     {
-                        CardId = c.CardId,
-                        CardNum = c.CardNum,
+                        CardId    = c.CardId,
+                        CardNum   = c.CardNum,
                         OwnerName = c.OwnerName,
-                        MobileNo = c.MobileNo,
-                        Balance = c.Balance
+                        MobileNo  = c.MobileNo,
+                        Balance   = c.Balance
                     }).ToList()
                 }
             };
-            return result;
         }
         catch (Exception ex)
         {
-            Result<CardListResponseModel> result = new Result<CardListResponseModel>
+            return new Result<CardListResponseModel>
             {
                 IsSuccess = false,
-                Message = ex.ToString()
+                Message   = ex.ToString()
             };
-            return result;//400
         }
     }
 
@@ -115,17 +120,68 @@ public class CardService
     {
         try
         {
+            if (request is null)
+            {
+                return new Result<CardCreateResponseModel>
+                {
+                    IsSuccess = false,
+                    Message = "Request data is required."
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(request.CardNum))
+            {
+                return new Result<CardCreateResponseModel>
+                {
+                    IsSuccess = false,
+                    Message = "Card number is required."
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(request.OwnerName))
+            {
+                return new Result<CardCreateResponseModel>
+                {
+                    IsSuccess = false,
+                    Message = "Owner name is required."
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.MobileNo) && request.MobileNo.Length > 20)
+            {
+                return new Result<CardCreateResponseModel>
+                {
+                    IsSuccess = false,
+                    Message = "Mobile number cannot exceed 20 characters."
+                };
+            }
+
+            var isDuplicateCardNum = _db.TblCards
+                .AsNoTracking()
+                .Any(x => x.CardNum == request.CardNum && x.DeleteFlag == false);
+
+            if (isDuplicateCardNum)
+            {
+                return new Result<CardCreateResponseModel>
+                {
+                    IsSuccess = false,
+                    Message = "Card number already exists."
+                };
+            }
+
             var card = new TblCard
             {
-                CardNum = request.CardNum,
-                OwnerName = request.OwnerName,
-                MobileNo = request.MobileNo,
+                CardNum = request.CardNum.Trim(),
+                OwnerName = request.OwnerName.Trim(),
+                MobileNo = string.IsNullOrWhiteSpace(request.MobileNo) ? null : request.MobileNo.Trim(),
+                Balance = 0,
                 CreatedDate = DateTime.Now,
                 DeleteFlag = false
             };
             _db.TblCards.Add(card);
             _db.SaveChanges();
-            Result<CardCreateResponseModel> result = new Result<CardCreateResponseModel>
+
+            return new Result<CardCreateResponseModel>
             {
                 IsSuccess = true,
                 Message = "Card Created Successfully",
@@ -137,113 +193,10 @@ public class CardService
                     MobileNo = card.MobileNo
                 }
             };
-            return result;
-        }
-        catch(Exception ex)
-        {
-            Result<CardCreateResponseModel> result = new Result<CardCreateResponseModel>
-            {
-                IsSuccess = false,
-                Message = ex.ToString()
-            };
-            return result;
-        }
-    }
-
-    public Result<CardModel> Update(int id, CardUpdateRequestModel request)
-    {
-        try
-        {
-            if (id <= 0)
-            {
-                return new Result<CardModel>
-                {
-                    IsSuccess = false,
-                    Message = "CardId is required."
-                };
-            }
-
-            if (string.IsNullOrWhiteSpace(request.CardNum))
-            {
-                return new Result<CardModel>
-                {
-                    IsSuccess = false,
-                    Message = "Card number is required."
-                };
-            }
-
-            if (string.IsNullOrWhiteSpace(request.OwnerName))
-            {
-                return new Result<CardModel>
-                {
-                    IsSuccess = false,
-                    Message = "Owner name is required."
-                };
-            }
-
-            if (request.Balance < 0)
-            {
-                return new Result<CardModel>
-                {
-                    IsSuccess = false,
-                    Message = "Balance cannot be negative."
-                };
-            }
-
-            var item = _db.TblCards
-                .AsNoTracking()
-                .FirstOrDefault(x => x.CardId == id && x.DeleteFlag == false);
-
-            if (item is null)
-            {
-                return new Result<CardModel>
-                {
-                    IsSuccess = false,
-                    Message = "Card not found."
-                };
-            }
-
-            var isDuplicateCardNum = _db.TblCards
-                .AsNoTracking()
-                .Any(x => x.CardNum == request.CardNum
-                    && x.CardId != id
-                    && x.DeleteFlag == false);
-
-            if (isDuplicateCardNum)
-            {
-                return new Result<CardModel>
-                {
-                    IsSuccess = false,
-                    Message = "Card number already exists."
-                };
-            }
-
-            item.CardNum = request.CardNum;
-            item.OwnerName = request.OwnerName;
-            item.MobileNo = request.MobileNo;
-            item.Balance = request.Balance;
-            item.UpdatedDate = DateTime.Now;
-
-            _db.Entry(item).State = EntityState.Modified;
-            _db.SaveChanges();
-
-            return new Result<CardModel>
-            {
-                IsSuccess = true,
-                Message = "Card updated successfully.",
-                Data = new CardModel
-                {
-                    CardId = item.CardId,
-                    CardNum = item.CardNum,
-                    OwnerName = item.OwnerName,
-                    MobileNo = item.MobileNo,
-                    Balance = item.Balance
-                }
-            };
         }
         catch (Exception ex)
         {
-            return new Result<CardModel>
+            return new Result<CardCreateResponseModel>
             {
                 IsSuccess = false,
                 Message = ex.ToString()
@@ -275,8 +228,7 @@ public class CardService
 
             if (request.CardNum is null &&
                 request.OwnerName is null &&
-                request.MobileNo is null &&
-                request.Balance is null)
+                request.MobileNo is null)
             {
                 return new Result<CardModel>
                 {
@@ -303,14 +255,6 @@ public class CardService
                 };
             }
 
-            if (request.Balance is not null && request.Balance < 0)
-            {
-                return new Result<CardModel>
-                {
-                    IsSuccess = false,
-                    Message = "Balance cannot be negative."
-                };
-            }
 
             var item = _db.TblCards
                 .AsNoTracking()
@@ -355,10 +299,6 @@ public class CardService
                 item.MobileNo = request.MobileNo;
             }
 
-            if (request.Balance is not null)
-            {
-                item.Balance = request.Balance.Value;
-            }
 
             item.UpdatedDate = DateTime.Now;
 

@@ -1,0 +1,93 @@
+@page "/topup/new"
+@rendermode InteractiveServer
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">New Card Top Up</h4>
+        </div>
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(message))
+            {
+                <div class="alert @(isSuccess ? "alert-success" : "alert-danger") shadow-sm">
+                    @message
+                </div>
+            }
+
+            @if (isSuccess && responseData != null)
+            {
+                <div class="card bg-light border-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">Top Up Receipt</h5>
+                        <hr />
+                        <div class="row mb-1">
+                            <div class="col-sm-5 text-muted">Receipt No:</div>
+                            <div class="col-sm-7 fw-bold text-dark">@responseData.TopUpNo</div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col-sm-5 text-muted">Card Number:</div>
+                            <div class="col-sm-7 fw-bold text-dark">@responseData.CardNum</div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col-sm-5 text-muted">Owner Name:</div>
+                            <div class="col-sm-7 text-dark">@responseData.OwnerName</div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col-sm-5 text-muted">Top Up Amount:</div>
+                            <div class="col-sm-7 fw-bold text-success">@responseData.Amount.ToString("N2") MMK</div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col-sm-5 text-muted">New Balance:</div>
+                            <div class="col-sm-7 fw-bold text-primary">@responseData.NewBalance.ToString("N2") MMK</div>
+                        </div>
+                        <div class="row mb-1">
+                            <div class="col-sm-5 text-muted">Date:</div>
+                            <div class="col-sm-7 text-dark">@responseData.TopUpDate.ToString("yyyy-MM-dd HH:mm:ss")</div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(responseData.Remark))
+                        {
+                            <div class="row mb-1">
+                                <div class="col-sm-5 text-muted">Remark:</div>
+                                <div class="col-sm-7 text-dark">@responseData.Remark</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Select Card <span class="text-danger">*</span></label>
+                <select class="form-select" @bind="request.CardId">
+                    <option value="0">-- Select a Card --</option>
+                    @foreach (var card in cards)
+                    {
+                        <option value="@card.CardId">@card.CardNum - @card.OwnerName (@card.Balance.ToString("N2") MMK)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Top Up Amount (MMK) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" placeholder="Min 1,000 - Max 100,000" @bind="request.Amount" />
+                <div class="form-text text-muted">Amount must be between 1,000 MMK and 100,000 MMK.</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Remark</label>
+                <textarea class="form-control" rows="2" placeholder="Optional remark (Max 250 characters)" @bind="request.Remark"></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-success px-4" @onclick="Save" disabled="@isSaving">
+                    @(isSaving ? "Processing…" : "Top Up")
+                </button>
+                <NavLink class="btn btn-outline-secondary" href="/topups">
+                    Top Up History
+                </NavLink>
+                <NavLink class="btn btn-outline-dark ms-auto" href="/cards">
+                    Back to Cards
+                </NavLink>
+            </div>
+        </div>
+    </div>
+</div>

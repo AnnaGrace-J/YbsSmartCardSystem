@@ -15,7 +15,7 @@ public partial class TblTerminal
 
     public bool DeleteFlag { get; set; }
 
-    public virtual TblBus Bus { get; set; } = null!;
+    public virtual TblBu Bus { get; set; } = null!;
 
     public virtual ICollection<TblTransaction> TblTransactions { get; set; } = new List<TblTransaction>();
 }

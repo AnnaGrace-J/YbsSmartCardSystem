@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using YbsSmartCardSystem.Domain;
 
 namespace YbsSmartCardSystem.Api.Controllers
@@ -10,19 +8,14 @@ namespace YbsSmartCardSystem.Api.Controllers
     public class BaseController : ControllerBase
     {
         [NonAction]
-        public IActionResult Execute(object data)
+        public IActionResult Execute<T>(Result<T> result)
         {
-            string json = JsonConvert.SerializeObject(data);//object to json string
-            Result<object> result = JsonConvert.DeserializeObject<Result<object>>(json)!;//json string to object
             if (result.IsSuccess)
             {
-                return Ok(data);
-            }
-            else
-            {
-                return StatusCode(400, result);
+                return Ok(result);
             }
 
+            return BadRequest(result);
         }
     }
 }

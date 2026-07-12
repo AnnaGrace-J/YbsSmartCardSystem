@@ -21,5 +21,7 @@ public partial class TblCard
 
     public bool DeleteFlag { get; set; }
 
+    public virtual ICollection<TblTopUp> TblTopUps { get; set; } = new List<TblTopUp>();
+
     public virtual ICollection<TblTransaction> TblTransactions { get; set; } = new List<TblTransaction>();
 }

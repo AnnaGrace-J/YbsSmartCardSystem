@@ -3,4 +3,7 @@
   <Project Path="YbsSmartCardSystem.App/YbsSmartCardSystem.App.csproj" Id="12282e73-58ec-4800-a55a-102da1ff8e4d" />
   <Project Path="YbsSmartCardSystem.Database/YbsSmartCardSystem.Database.csproj" />
   <Project Path="YbsSmartCardSystem.Domain/YbsSmartCardSystem.Domain.csproj" />
+  <Project Path="YbsSmartCardSystem.Contracts/YbsSmartCardSystem.Contracts.csproj" />
+  <Project Path="YbsSmartCardSystem.Infrastructure/YbsSmartCardSystem.Infrastructure.csproj" />
+  <Project Path="YbsSmartCardSystem.Shared/YbsSmartCardSystem.Shared.csproj" />
 </Solution>

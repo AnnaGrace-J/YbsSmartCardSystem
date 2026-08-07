@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\YbsSmartCardSystem.Domain\YbsSmartCardSystem.Domain.csproj" />
+    <ProjectReference Include="..\YbsSmartCardSystem.Contracts\YbsSmartCardSystem.Contracts.csproj" />
+    <ProjectReference Include="..\YbsSmartCardSystem.Shared\YbsSmartCardSystem.Shared.csproj" />
   </ItemGroup>
 
 </Project>

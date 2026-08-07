@@ -1,6 +1,7 @@
+using YbsSmartCardSystem.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
-using YbsSmartCardSystem.Domain.Features.TopUp.Models;
+using YbsSmartCardSystem.Contracts.Features.TopUp;
 
 namespace YbsSmartCardSystem.Domain.Features.TopUp;
 
@@ -23,7 +24,8 @@ public class TopUpService
                 return new Result<TopUpCreateResponseModel>
                 {
                     IsSuccess = false,
-                    Message   = "Request data is required."
+                    Message   = "Request data is required.",
+                    StatusCode = 400
                 };
             }
 
@@ -32,7 +34,8 @@ public class TopUpService
                 return new Result<TopUpCreateResponseModel>
                 {
                     IsSuccess = false,
-                    Message   = "Card is required."
+                    Message   = "Card is required.",
+                    StatusCode = 400
                 };
             }
 
@@ -59,7 +62,8 @@ public class TopUpService
                 return new Result<TopUpCreateResponseModel>
                 {
                     IsSuccess = false,
-                    Message   = "Remark cannot exceed 250 characters."
+                    Message   = "Remark cannot exceed 250 characters.",
+                    StatusCode = 400
                 };
             }
 
@@ -71,7 +75,8 @@ public class TopUpService
                 return new Result<TopUpCreateResponseModel>
                 {
                     IsSuccess = false,
-                    Message   = "Card not found."
+                    Message   = "Card not found.",
+                    StatusCode = 404
                 };
             }
 
@@ -91,8 +96,6 @@ public class TopUpService
 
                 card.Balance    += request.Amount;
                 card.UpdatedDate = DateTime.Now;
-                _db.Entry(card).State = EntityState.Modified;
-
                 _db.SaveChanges();
                 tx.Commit();
 
@@ -125,7 +128,9 @@ public class TopUpService
             return new Result<TopUpCreateResponseModel>
             {
                 IsSuccess = false,
-                Message   = ex.ToString()
+                Message = "An unexpected error occurred.",
+                StatusCode = 500
+                // TODO: Log exception after Infrastructure logging is added.
             };
         }
     }
@@ -178,7 +183,9 @@ public class TopUpService
             return new Result<TopUpListResponseModel>
             {
                 IsSuccess = false,
-                Message   = ex.ToString()
+                Message = "An unexpected error occurred.",
+                StatusCode = 500
+                // TODO: Log exception after Infrastructure logging is added.
             };
         }
     }

@@ -1,6 +1,7 @@
+using YbsSmartCardSystem.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
-using YbsSmartCardSystem.Domain.Features.Bus.Models;
+using YbsSmartCardSystem.Contracts.Features.BusPayment;
 
 namespace YbsSmartCardSystem.Domain.Features.Bus;
 
@@ -51,7 +52,9 @@ public class BusService
             return new Result<BusListResponseModel>
             {
                 IsSuccess = false,
-                Message   = ex.ToString()
+                Message = "An unexpected error occurred.",
+                StatusCode = 500
+                // TODO: Log exception after Infrastructure logging is added.
             };
         }
     }
@@ -66,7 +69,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "BusId is required."
+                    Message   = "BusId is required.",
                 };
             }
 
@@ -80,7 +83,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 404,
-                    Message   = "Bus not found."
+                    Message   = "Bus not found.",
                 };
             }
 
@@ -118,7 +121,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "Request data is required."
+                    Message   = "Request data is required.",
                 };
             }
 
@@ -128,7 +131,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "Bus number is required."
+                    Message   = "Bus number is required.",
                 };
             }
 
@@ -138,7 +141,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "Bus license is required."
+                    Message   = "Bus license is required.",
                 };
             }
 
@@ -151,7 +154,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "Bus number cannot exceed 50 characters."
+                    Message   = "Bus number cannot exceed 50 characters.",
                 };
             }
 
@@ -161,7 +164,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "Bus license cannot exceed 50 characters."
+                    Message   = "Bus license cannot exceed 50 characters.",
                 };
             }
 
@@ -175,7 +178,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 409,
-                    Message   = "Bus license already exists."
+                    Message   = "Bus license already exists.",
                 };
             }
 
@@ -209,7 +212,7 @@ public class BusService
             {
                 IsSuccess = false,
                 StatusCode = 409,
-                Message   = "Bus license already exists."
+                Message   = "Bus license already exists.",
             };
         }
         catch (Exception ex)
@@ -233,7 +236,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "BusId is required."
+                    Message   = "BusId is required.",
                 };
             }
 
@@ -243,7 +246,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "Request data is required."
+                    Message   = "Request data is required.",
                 };
             }
 
@@ -253,7 +256,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "At least one field is required to update."
+                    Message   = "At least one field is required to update.",
                 };
             }
 
@@ -266,7 +269,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 404,
-                    Message   = "Bus not found."
+                    Message   = "Bus not found.",
                 };
             }
 
@@ -290,7 +293,7 @@ public class BusService
                     {
                         IsSuccess = false,
                         StatusCode = 400,
-                        Message   = "Bus number cannot exceed 50 characters."
+                        Message   = "Bus number cannot exceed 50 characters.",
                     };
                 }
 
@@ -317,7 +320,7 @@ public class BusService
                     {
                         IsSuccess = false,
                         StatusCode = 400,
-                        Message   = "Bus license cannot exceed 50 characters."
+                        Message   = "Bus license cannot exceed 50 characters.",
                     };
                 }
 
@@ -331,14 +334,12 @@ public class BusService
                     {
                         IsSuccess = false,
                         StatusCode = 409,
-                        Message   = "Bus license already exists."
+                        Message   = "Bus license already exists.",
                     };
                 }
 
                 item.BusLicense = busLicense;
             }
-
-            _db.Entry(item).State = EntityState.Modified;
             _db.SaveChanges();
 
             return new Result<BusModel>
@@ -360,7 +361,7 @@ public class BusService
             {
                 IsSuccess = false,
                 StatusCode = 409,
-                Message   = "Bus license already exists."
+                Message   = "Bus license already exists.",
             };
         }
         catch (Exception ex)
@@ -384,7 +385,7 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message   = "BusId is required."
+                    Message   = "BusId is required.",
                 };
             }
 
@@ -397,13 +398,11 @@ public class BusService
                 {
                     IsSuccess = false,
                     StatusCode = 404,
-                    Message   = "Bus not found."
+                    Message   = "Bus not found.",
                 };
             }
 
             item.DeleteFlag = true;
-
-            _db.Entry(item).State = EntityState.Modified;
             _db.SaveChanges();
 
             return new Result<BusModel>

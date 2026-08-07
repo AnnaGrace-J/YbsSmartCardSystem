@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using YbsSmartCardSystem.Domain.Features.Transaction;
-using YbsSmartCardSystem.Domain.Features.Transaction.Models;
+using YbsSmartCardSystem.Contracts.Features.Transaction;
 
 namespace YbsSmartCardSystem.Api.Controllers;
 

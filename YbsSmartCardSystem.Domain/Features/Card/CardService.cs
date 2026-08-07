@@ -1,6 +1,7 @@
+using YbsSmartCardSystem.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
-using YbsSmartCardSystem.Domain.Features.Card.Models;
+using YbsSmartCardSystem.Contracts.Features.Card;
 
 namespace YbsSmartCardSystem.Domain.Features.Card;
 
@@ -31,6 +32,10 @@ public class CardService
 
             var totalCount = query.Count();
 
+            if (request.PageNo < 1) request.PageNo = 1;
+            if (request.PageSize < 1) request.PageSize = 10;
+            if (request.PageSize > 100) request.PageSize = 100;
+
             var cards = query
                 .OrderByDescending(x => x.CardId)
                 .Skip((request.PageNo - 1) * request.PageSize)
@@ -60,7 +65,9 @@ public class CardService
             return new Result<CardListResponseModel>
             {
                 IsSuccess = false,
-                Message   = ex.ToString()
+                Message = "An unexpected error occurred.",
+                StatusCode = 500
+                // TODO: Log exception after Infrastructure logging is added.
             };
         }
     }
@@ -74,7 +81,8 @@ public class CardService
                 return new Result<CardModel>
                 {
                     IsSuccess = false,
-                    Message = "CardId is required."
+                    Message = "CardId is required.",
+                    StatusCode = 400
                 };
             }
 
@@ -87,7 +95,8 @@ public class CardService
                 return new Result<CardModel>
                 {
                     IsSuccess = false,
-                    Message = "Card not found."
+                    Message = "Card not found.",
+                    StatusCode = 404
                 };
             }
 
@@ -110,7 +119,9 @@ public class CardService
             return new Result<CardModel>
             {
                 IsSuccess = false,
-                Message = ex.ToString()
+                Message = "An unexpected error occurred.",
+                StatusCode = 500
+                // TODO: Log exception after Infrastructure logging is added.
             };
         }
     }
@@ -125,7 +136,8 @@ public class CardService
                 return new Result<CardCreateResponseModel>
                 {
                     IsSuccess = false,
-                    Message = "Request data is required."
+                    Message = "Request data is required.",
+                    StatusCode = 400
                 };
             }
 
@@ -134,7 +146,8 @@ public class CardService
                 return new Result<CardCreateResponseModel>
                 {
                     IsSuccess = false,
-                    Message = "Card number is required."
+                    Message = "Card number is required.",
+                    StatusCode = 400
                 };
             }
 
@@ -143,7 +156,8 @@ public class CardService
                 return new Result<CardCreateResponseModel>
                 {
                     IsSuccess = false,
-                    Message = "Owner name is required."
+                    Message = "Owner name is required.",
+                    StatusCode = 400
                 };
             }
 
@@ -152,7 +166,8 @@ public class CardService
                 return new Result<CardCreateResponseModel>
                 {
                     IsSuccess = false,
-                    Message = "Mobile number cannot exceed 20 characters."
+                    Message = "Mobile number cannot exceed 20 characters.",
+                    StatusCode = 400
                 };
             }
 
@@ -165,7 +180,8 @@ public class CardService
                 return new Result<CardCreateResponseModel>
                 {
                     IsSuccess = false,
-                    Message = "Card number already exists."
+                    Message = "Card number already exists.",
+                    StatusCode = 409
                 };
             }
 
@@ -185,6 +201,7 @@ public class CardService
             {
                 IsSuccess = true,
                 Message = "Card Created Successfully",
+                StatusCode = 201,
                 Data = new CardCreateResponseModel
                 {
                     CardId = card.CardId,
@@ -199,7 +216,9 @@ public class CardService
             return new Result<CardCreateResponseModel>
             {
                 IsSuccess = false,
-                Message = ex.ToString()
+                Message = "An unexpected error occurred.",
+                StatusCode = 500
+                // TODO: Log exception after Infrastructure logging is added.
             };
         }
     }
@@ -213,7 +232,8 @@ public class CardService
                 return new Result<CardModel>
                 {
                     IsSuccess = false,
-                    Message = "CardId is required."
+                    Message = "CardId is required.",
+                    StatusCode = 400
                 };
             }
 
@@ -222,7 +242,8 @@ public class CardService
                 return new Result<CardModel>
                 {
                     IsSuccess = false,
-                    Message = "Request data is required."
+                    Message = "Request data is required.",
+                    StatusCode = 400
                 };
             }
 
@@ -233,7 +254,8 @@ public class CardService
                 return new Result<CardModel>
                 {
                     IsSuccess = false,
-                    Message = "At least one field is required to update."
+                    Message = "At least one field is required to update.",
+                    StatusCode = 400
                 };
             }
 
@@ -257,7 +279,6 @@ public class CardService
 
 
             var item = _db.TblCards
-                .AsNoTracking()
                 .FirstOrDefault(x => x.CardId == id && x.DeleteFlag == false);
 
             if (item is null)
@@ -265,7 +286,8 @@ public class CardService
                 return new Result<CardModel>
                 {
                     IsSuccess = false,
-                    Message = "Card not found."
+                    Message = "Card not found.",
+                    StatusCode = 404
                 };
             }
 
@@ -282,7 +304,8 @@ public class CardService
                     return new Result<CardModel>
                     {
                         IsSuccess = false,
-                        Message = "Card number already exists."
+                        Message = "Card number already exists.",
+                    StatusCode = 409
                     };
                 }
 
@@ -301,8 +324,6 @@ public class CardService
 
 
             item.UpdatedDate = DateTime.Now;
-
-            _db.Entry(item).State = EntityState.Modified;
             _db.SaveChanges();
 
             return new Result<CardModel>
@@ -324,7 +345,9 @@ public class CardService
             return new Result<CardModel>
             {
                 IsSuccess = false,
-                Message = ex.ToString()
+                Message = "An unexpected error occurred.",
+                StatusCode = 500
+                // TODO: Log exception after Infrastructure logging is added.
             };
         }
     }
@@ -338,12 +361,12 @@ public class CardService
                 return new Result<CardModel>
                 {
                     IsSuccess = false,
-                    Message = "CardId is required."
+                    Message = "CardId is required.",
+                    StatusCode = 400
                 };
             }
 
             var item = _db.TblCards
-                .AsNoTracking()
                 .FirstOrDefault(x => x.CardId == id && x.DeleteFlag == false);
 
             if (item is null)
@@ -351,14 +374,14 @@ public class CardService
                 return new Result<CardModel>
                 {
                     IsSuccess = false,
-                    Message = "Card not found."
+                    Message = "Card not found.",
+                    StatusCode = 404
                 };
             }
 
             item.DeleteFlag = true;
             item.UpdatedDate = DateTime.Now;
 
-            _db.Entry(item).State = EntityState.Modified;
             _db.SaveChanges();
 
             return new Result<CardModel>
@@ -380,7 +403,9 @@ public class CardService
             return new Result<CardModel>
             {
                 IsSuccess = false,
-                Message = ex.ToString()
+                Message = "An unexpected error occurred.",
+                StatusCode = 500
+                // TODO: Log exception after Infrastructure logging is added.
             };
         }
     }

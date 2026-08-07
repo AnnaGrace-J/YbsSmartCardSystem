@@ -1,4 +1,4 @@
-namespace YbsSmartCardSystem.Domain.Features.TopUp.Models;
+namespace YbsSmartCardSystem.Contracts.Features.TopUp;
 
 public class TopUpCreateRequestModel
 {

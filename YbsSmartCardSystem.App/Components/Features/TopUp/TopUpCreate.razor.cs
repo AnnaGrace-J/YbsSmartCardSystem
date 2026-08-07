@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using YbsSmartCardSystem.App.Services;
-using YbsSmartCardSystem.Domain.Features.Card.Models;
-using YbsSmartCardSystem.Domain.Features.TopUp.Models;
+using YbsSmartCardSystem.Contracts.Features.Card;
+using YbsSmartCardSystem.Contracts.Features.TopUp;
 
 namespace YbsSmartCardSystem.App.Components.Features.TopUp
 {

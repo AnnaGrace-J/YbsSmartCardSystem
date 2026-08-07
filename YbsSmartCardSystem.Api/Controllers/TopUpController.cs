@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using YbsSmartCardSystem.Domain.Features.TopUp;
-using YbsSmartCardSystem.Domain.Features.TopUp.Models;
+using YbsSmartCardSystem.Contracts.Features.TopUp;
 
 namespace YbsSmartCardSystem.Api.Controllers
 {

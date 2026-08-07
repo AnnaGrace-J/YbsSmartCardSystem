@@ -1,5 +1,5 @@
+using YbsSmartCardSystem.Domain.Common;
 using Microsoft.AspNetCore.Mvc;
-using YbsSmartCardSystem.Domain;
 
 namespace YbsSmartCardSystem.Api.Controllers
 {
@@ -13,6 +13,11 @@ namespace YbsSmartCardSystem.Api.Controllers
             if (result.IsSuccess)
             {
                 return Ok(result);
+            }
+
+            if (result.StatusCode < 400)
+            {
+                return BadRequest(result);
             }
 
             return StatusCode(result.StatusCode, result);

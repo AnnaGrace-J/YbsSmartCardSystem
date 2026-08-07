@@ -1,4 +1,4 @@
-namespace YbsSmartCardSystem.Domain.Features.Terminal.Models;
+namespace YbsSmartCardSystem.Contracts.Features.BusPayment;
 
 public class TerminalListRequestModel
 {

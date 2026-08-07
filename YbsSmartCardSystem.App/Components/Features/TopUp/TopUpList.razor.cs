@@ -1,7 +1,8 @@
+using YbsSmartCardSystem.Domain.Common;
 using Microsoft.AspNetCore.Components;
 using YbsSmartCardSystem.App.Services;
-using YbsSmartCardSystem.Domain.Features.Card.Models;
-using YbsSmartCardSystem.Domain.Features.TopUp.Models;
+using YbsSmartCardSystem.Contracts.Features.Card;
+using YbsSmartCardSystem.Contracts.Features.TopUp;
 
 namespace YbsSmartCardSystem.App.Components.Features.TopUp
 {
@@ -10,7 +11,7 @@ namespace YbsSmartCardSystem.App.Components.Features.TopUp
         [Inject] private ApiService ApiService { get; set; } = null!;
 
         private TopUpListRequestModel request = new() { PageNo = 1, PageSize = 10 };
-        private YbsSmartCardSystem.Domain.Result<TopUpListResponseModel> response = new();
+        private Result<TopUpListResponseModel> response = new();
         private List<CardModel> cards = new();
         private int selectedCardId = 0;
 

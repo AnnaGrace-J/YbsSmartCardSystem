@@ -1,4 +1,4 @@
-namespace YbsSmartCardSystem.Domain.Features.Transaction.Models;
+namespace YbsSmartCardSystem.Contracts.Features.Transaction;
 
 public class TransactionCreateRequestModel
 {

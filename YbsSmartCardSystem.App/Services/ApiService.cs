@@ -1,10 +1,11 @@
+using YbsSmartCardSystem.Domain.Common;
 using System.Net.Http.Json;
 using YbsSmartCardSystem.Domain;
-using YbsSmartCardSystem.Domain.Features.Card.Models;
-using YbsSmartCardSystem.Domain.Features.TopUp.Models;
-using YbsSmartCardSystem.Domain.Features.Bus.Models;
-using YbsSmartCardSystem.Domain.Features.Terminal.Models;
-using YbsSmartCardSystem.Domain.Features.Transaction.Models;
+using YbsSmartCardSystem.Contracts.Features.Card;
+using YbsSmartCardSystem.Contracts.Features.TopUp;
+using YbsSmartCardSystem.Contracts.Features.BusPayment;
+using YbsSmartCardSystem.Contracts.Features.BusPayment;
+using YbsSmartCardSystem.Contracts.Features.Transaction;
 
 namespace YbsSmartCardSystem.App.Services;
 

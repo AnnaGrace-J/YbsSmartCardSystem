@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using YbsSmartCardSystem.App.Services;
-using YbsSmartCardSystem.Domain.Features.Transaction.Models;
+using YbsSmartCardSystem.Contracts.Features.Transaction;
 
 namespace YbsSmartCardSystem.App.Components.Features.Transaction;
 

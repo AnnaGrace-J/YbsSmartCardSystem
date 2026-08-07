@@ -1,6 +1,7 @@
+using YbsSmartCardSystem.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
-using YbsSmartCardSystem.Domain.Features.Terminal.Models;
+using YbsSmartCardSystem.Contracts.Features.BusPayment;
 
 namespace YbsSmartCardSystem.Domain.Features.Terminal;
 
@@ -72,7 +73,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 400,
-                    Message    = "TerminalId is required."
+                    Message    = "TerminalId is required.",
                 };
             }
 
@@ -87,7 +88,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 404,
-                    Message    = "Terminal not found."
+                    Message    = "Terminal not found.",
                 };
             }
 
@@ -128,7 +129,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 400,
-                    Message    = "Request data is required."
+                    Message    = "Request data is required.",
                 };
             }
 
@@ -138,7 +139,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 400,
-                    Message    = "Terminal serial number is required."
+                    Message    = "Terminal serial number is required.",
                 };
             }
 
@@ -150,7 +151,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 400,
-                    Message    = "Terminal serial number cannot exceed 100 characters."
+                    Message    = "Terminal serial number cannot exceed 100 characters.",
                 };
             }
 
@@ -160,7 +161,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 400,
-                    Message    = "Bus is required."
+                    Message    = "Bus is required.",
                 };
             }
 
@@ -174,7 +175,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 409,
-                    Message    = "Terminal serial number already exists."
+                    Message    = "Terminal serial number already exists.",
                 };
             }
 
@@ -188,7 +189,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 404,
-                    Message    = "Bus not found."
+                    Message    = "Bus not found.",
                 };
             }
 
@@ -225,7 +226,7 @@ public class TerminalService
             {
                 IsSuccess  = false,
                 StatusCode = 409,
-                Message    = "Terminal serial number already exists."
+                Message    = "Terminal serial number already exists.",
             };
         }
         catch (Exception ex)
@@ -249,7 +250,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 400,
-                    Message    = "TerminalId is required."
+                    Message    = "TerminalId is required.",
                 };
             }
 
@@ -259,7 +260,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 400,
-                    Message    = "Request data is required."
+                    Message    = "Request data is required.",
                 };
             }
 
@@ -269,7 +270,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 400,
-                    Message    = "At least one field is required to update."
+                    Message    = "At least one field is required to update.",
                 };
             }
 
@@ -283,7 +284,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 404,
-                    Message    = "Terminal not found."
+                    Message    = "Terminal not found.",
                 };
             }
 
@@ -307,7 +308,7 @@ public class TerminalService
                     {
                         IsSuccess  = false,
                         StatusCode = 400,
-                        Message    = "Terminal serial number cannot exceed 100 characters."
+                        Message    = "Terminal serial number cannot exceed 100 characters.",
                     };
                 }
 
@@ -323,7 +324,7 @@ public class TerminalService
                     {
                         IsSuccess  = false,
                         StatusCode = 409,
-                        Message    = "Terminal serial number already exists."
+                        Message    = "Terminal serial number already exists.",
                     };
                 }
 
@@ -352,7 +353,7 @@ public class TerminalService
                     {
                         IsSuccess  = false,
                         StatusCode = 404,
-                        Message    = "Bus not found."
+                        Message    = "Bus not found.",
                     };
                 }
 
@@ -364,8 +365,6 @@ public class TerminalService
             {
                 item.IsActive = request.IsActive.Value;
             }
-
-            _db.Entry(item).State = EntityState.Modified;
             _db.SaveChanges();
 
             return new Result<TerminalModel>
@@ -390,7 +389,7 @@ public class TerminalService
             {
                 IsSuccess  = false,
                 StatusCode = 409,
-                Message    = "Terminal serial number already exists."
+                Message    = "Terminal serial number already exists.",
             };
         }
         catch (Exception ex)
@@ -414,7 +413,7 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 400,
-                    Message    = "TerminalId is required."
+                    Message    = "TerminalId is required.",
                 };
             }
 
@@ -428,13 +427,11 @@ public class TerminalService
                 {
                     IsSuccess  = false,
                     StatusCode = 404,
-                    Message    = "Terminal not found."
+                    Message    = "Terminal not found.",
                 };
             }
 
             item.DeleteFlag = true;
-
-            _db.Entry(item).State = EntityState.Modified;
             _db.SaveChanges();
 
             return new Result<TerminalModel>

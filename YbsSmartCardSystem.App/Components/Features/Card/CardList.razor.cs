@@ -1,5 +1,6 @@
+using YbsSmartCardSystem.Domain.Common;
 using YbsSmartCardSystem.Domain;
-using YbsSmartCardSystem.Domain.Features.Card.Models;
+using YbsSmartCardSystem.Contracts.Features.Card;
 
 namespace YbsSmartCardSystem.App.Components.Features.Card
 {

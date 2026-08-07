@@ -1,6 +1,7 @@
+using YbsSmartCardSystem.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
-using YbsSmartCardSystem.Domain.Features.Transaction.Models;
+using YbsSmartCardSystem.Contracts.Features.Transaction;
 
 namespace YbsSmartCardSystem.Domain.Features.Transaction;
 
@@ -169,7 +170,7 @@ public class TransactionService
                 {
                     IsSuccess = false,
                     StatusCode = 400,
-                    Message = "Page size cannot exceed 100."
+                    Message = "Page size cannot exceed 100.",
                 };
             }
 

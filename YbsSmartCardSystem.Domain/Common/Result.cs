@@ -1,4 +1,4 @@
-namespace YbsSmartCardSystem.Domain
+namespace YbsSmartCardSystem.Domain.Common
 {
     public class Result<T>
     {
@@ -9,3 +9,4 @@ namespace YbsSmartCardSystem.Domain
         public int StatusCode { get; set; } = 200;
     }
 }
+

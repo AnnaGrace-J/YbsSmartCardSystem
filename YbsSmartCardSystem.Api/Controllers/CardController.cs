@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using YbsSmartCardSystem.Database.AppDbContextModels;
 using YbsSmartCardSystem.Domain.Features.Card;
-using YbsSmartCardSystem.Domain.Features.Card.Models;
-using CardListRequestModel = YbsSmartCardSystem.Domain.Features.Card.Models.CardListRequestModel;
+using YbsSmartCardSystem.Contracts.Features.Card;
+using CardListRequestModel = YbsSmartCardSystem.Contracts.Features.Card.CardListRequestModel;
 
 namespace YbsSmartCardSystem.Api.Controllers
 {

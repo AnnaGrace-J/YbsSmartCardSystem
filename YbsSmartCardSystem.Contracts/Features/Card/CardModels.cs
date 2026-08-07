@@ -1,4 +1,4 @@
-namespace YbsSmartCardSystem.Domain.Features.Card.Models;
+namespace YbsSmartCardSystem.Contracts.Features.Card;
 
 public class CardListRequestModel
 {

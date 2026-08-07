@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using YbsSmartCardSystem.Domain.Features.Bus;
-using YbsSmartCardSystem.Domain.Features.Bus.Models;
+using YbsSmartCardSystem.Contracts.Features.BusPayment;
 
 namespace YbsSmartCardSystem.Api.Controllers;
 

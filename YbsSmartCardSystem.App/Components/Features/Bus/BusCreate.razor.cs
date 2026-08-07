@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using YbsSmartCardSystem.App.Services;
-using YbsSmartCardSystem.Domain.Features.Bus.Models;
+using YbsSmartCardSystem.Contracts.Features.BusPayment;
 
 namespace YbsSmartCardSystem.App.Components.Features.Bus
 {

@@ -1,4 +1,4 @@
-namespace YbsSmartCardSystem.Domain.Features.Bus.Models;
+namespace YbsSmartCardSystem.Contracts.Features.BusPayment;
 
 public class BusListRequestModel
 {

@@ -47,7 +47,7 @@ public class BusService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<BusListResponseModel>
             {
@@ -100,13 +100,13 @@ public class BusService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<BusModel>
             {
                 IsSuccess = false,
                 StatusCode = 500,
-                Message   = ex.Message
+                Message   = "An unexpected error occurred."
             };
         }
     }
@@ -215,13 +215,13 @@ public class BusService
                 Message   = "Bus license already exists.",
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<BusCreateResponseModel>
             {
                 IsSuccess = false,
                 StatusCode = 500,
-                Message   = ex.Message
+                Message   = "An unexpected error occurred."
             };
         }
     }
@@ -364,13 +364,13 @@ public class BusService
                 Message   = "Bus license already exists.",
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<BusModel>
             {
                 IsSuccess = false,
                 StatusCode = 500,
-                Message   = ex.Message
+                Message   = "An unexpected error occurred."
             };
         }
     }
@@ -418,13 +418,13 @@ public class BusService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<BusModel>
             {
                 IsSuccess = false,
                 StatusCode = 500,
-                Message   = ex.Message
+                Message   = "An unexpected error occurred."
             };
         }
     }

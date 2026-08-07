@@ -52,13 +52,13 @@ public class TerminalService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<TerminalListResponseModel>
             {
                 IsSuccess  = false,
                 StatusCode = 500,
-                Message    = ex.Message
+                Message    = "An unexpected error occurred."
             };
         }
     }
@@ -108,13 +108,13 @@ public class TerminalService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<TerminalModel>
             {
                 IsSuccess  = false,
                 StatusCode = 500,
-                Message    = ex.Message
+                Message    = "An unexpected error occurred."
             };
         }
     }
@@ -229,13 +229,13 @@ public class TerminalService
                 Message    = "Terminal serial number already exists.",
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<TerminalCreateResponseModel>
             {
                 IsSuccess  = false,
                 StatusCode = 500,
-                Message    = ex.Message
+                Message    = "An unexpected error occurred."
             };
         }
     }
@@ -392,13 +392,13 @@ public class TerminalService
                 Message    = "Terminal serial number already exists.",
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<TerminalModel>
             {
                 IsSuccess  = false,
                 StatusCode = 500,
-                Message    = ex.Message
+                Message    = "An unexpected error occurred."
             };
         }
     }
@@ -450,13 +450,13 @@ public class TerminalService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<TerminalModel>
             {
                 IsSuccess  = false,
                 StatusCode = 500,
-                Message    = ex.Message
+                Message    = "An unexpected error occurred."
             };
         }
     }

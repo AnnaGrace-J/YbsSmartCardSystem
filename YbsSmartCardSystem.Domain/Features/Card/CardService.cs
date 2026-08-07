@@ -60,7 +60,7 @@ public class CardService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<CardListResponseModel>
             {
@@ -114,7 +114,7 @@ public class CardService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<CardModel>
             {
@@ -211,7 +211,7 @@ public class CardService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<CardCreateResponseModel>
             {
@@ -340,7 +340,7 @@ public class CardService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<CardModel>
             {
@@ -398,7 +398,7 @@ public class CardService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<CardModel>
             {

@@ -127,13 +127,13 @@ public class TransactionService
                 throw;
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<TransactionCreateResponseModel>
             {
                 IsSuccess = false,
                 StatusCode = 500,
-                Message = ex.Message
+                Message = "An unexpected error occurred."
             };
         }
     }
@@ -231,13 +231,13 @@ public class TransactionService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<TransactionListResponseModel>
             {
                 IsSuccess = false,
                 StatusCode = 500,
-                Message = ex.Message
+                Message = "An unexpected error occurred."
             };
         }
     }

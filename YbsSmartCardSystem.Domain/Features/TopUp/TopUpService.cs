@@ -123,7 +123,7 @@ public class TopUpService
                 throw;
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<TopUpCreateResponseModel>
             {
@@ -178,7 +178,7 @@ public class TopUpService
                 }
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Result<TopUpListResponseModel>
             {

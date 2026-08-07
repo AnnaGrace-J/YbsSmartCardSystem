@@ -4,8 +4,8 @@ using YbsSmartCardSystem.Domain;
 using YbsSmartCardSystem.Contracts.Features.Card;
 using YbsSmartCardSystem.Contracts.Features.TopUp;
 using YbsSmartCardSystem.Contracts.Features.BusPayment;
-using YbsSmartCardSystem.Contracts.Features.BusPayment;
 using YbsSmartCardSystem.Contracts.Features.Transaction;
+using YbsSmartCardSystem.Contracts.Features.Package;
 
 namespace YbsSmartCardSystem.App.Services;
 
@@ -430,6 +430,125 @@ public class ApiService
             };
         }
     }
+
+    // ── Package ─────────────────────────────────────────────────────────────
+
+    public async Task<Result<PackageListResponseModel>> GetPackages(PackageListRequestModel request)
+    {
+        try
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            httpClient.BaseAddress = new Uri(_baseUrl);
+
+            var search = string.IsNullOrWhiteSpace(request.Search)
+                ? string.Empty
+                : $"&search={Uri.EscapeDataString(request.Search)}";
+            var isActive = request.IsActive.HasValue
+                ? $"&isActive={request.IsActive.Value}"
+                : string.Empty;
+            
+            var url = $"{ApiEndpoints.PackageList}?pageNo={request.PageNo}&pageSize={request.PageSize}{search}{isActive}";
+
+            var response = await httpClient.GetAsync(url);
+            var result = await response.Content.ReadFromJsonAsync<Result<PackageListResponseModel>>();
+            return result ?? new Result<PackageListResponseModel>
+            {
+                IsSuccess = false,
+                StatusCode = (int)response.StatusCode,
+                Message = "Invalid response from API."
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Result<PackageListResponseModel>
+            {
+                IsSuccess = false,
+                StatusCode = 500,
+                Message = $"Failed to reach API: {ex.Message}"
+            };
+        }
+    }
+
+    public async Task<Result<PackageCreateResponseModel>> PackageCreate(PackageCreateRequestModel request)
+    {
+        try
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            httpClient.BaseAddress = new Uri(_baseUrl);
+
+            var response = await httpClient.PostAsJsonAsync(ApiEndpoints.CreatePackage, request);
+            var result = await response.Content.ReadFromJsonAsync<Result<PackageCreateResponseModel>>();
+            return result ?? new Result<PackageCreateResponseModel>
+            {
+                IsSuccess = false,
+                StatusCode = (int)response.StatusCode,
+                Message = "Invalid response from API."
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Result<PackageCreateResponseModel>
+            {
+                IsSuccess = false,
+                StatusCode = 500,
+                Message = $"Failed to reach API: {ex.Message}"
+            };
+        }
+    }
+
+    public async Task<Result<PackageModel>> PackagePatch(int id, PackagePatchRequestModel request)
+    {
+        try
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            httpClient.BaseAddress = new Uri(_baseUrl);
+
+            var response = await httpClient.PatchAsJsonAsync(ApiEndpoints.PackageDetail(id), request);
+            var result = await response.Content.ReadFromJsonAsync<Result<PackageModel>>();
+            return result ?? new Result<PackageModel>
+            {
+                IsSuccess = false,
+                StatusCode = (int)response.StatusCode,
+                Message = "Invalid response from API."
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Result<PackageModel>
+            {
+                IsSuccess = false,
+                StatusCode = 500,
+                Message = $"Failed to reach API: {ex.Message}"
+            };
+        }
+    }
+
+    public async Task<Result<PackageModel>> PackageDelete(int id)
+    {
+        try
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            httpClient.BaseAddress = new Uri(_baseUrl);
+
+            var response = await httpClient.DeleteAsync(ApiEndpoints.PackageDetail(id));
+            var result = await response.Content.ReadFromJsonAsync<Result<PackageModel>>();
+            return result ?? new Result<PackageModel>
+            {
+                IsSuccess = false,
+                StatusCode = (int)response.StatusCode,
+                Message = "Invalid response from API."
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Result<PackageModel>
+            {
+                IsSuccess = false,
+                StatusCode = 500,
+                Message = $"Failed to reach API: {ex.Message}"
+            };
+        }
+    }
 }
 
 public static class ApiEndpoints
@@ -456,4 +575,9 @@ public static class ApiEndpoints
     // Transaction
     public const string CreateTransaction = "api/Transaction";
     public const string TransactionList = "api/Transaction";
+
+    // Package
+    public const string PackageList = "api/Package";
+    public const string CreatePackage = "api/Package";
+    public static string PackageDetail(int packageId) => $"api/Package/{packageId}";
 }

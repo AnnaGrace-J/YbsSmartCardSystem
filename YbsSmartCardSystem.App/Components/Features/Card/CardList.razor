@@ -1,12 +1,15 @@
 @page "/cards"
-@rendermode InteractiveServer
 @inject ApiService ApiService
+@inject YbsSmartCardSystem.App.Services.AuthStateService AuthState
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Card List</h3>
-    <NavLink class="btn btn-outline-success" href="/card/new">
-        New Card
-    </NavLink>
+    @if (AuthState.HasPermission("Card.Register"))
+    {
+        <NavLink class="btn btn-outline-success" href="/card/new">
+            New Card
+        </NavLink>
+    }
 </div>
 
 <div class="row g-2 mb-3">

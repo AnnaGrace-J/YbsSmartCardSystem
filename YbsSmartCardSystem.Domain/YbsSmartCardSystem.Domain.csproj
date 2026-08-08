@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,6 +10,7 @@
     <ProjectReference Include="..\YbsSmartCardSystem.Database\YbsSmartCardSystem.Database.csproj" />
     <ProjectReference Include="..\YbsSmartCardSystem.Contracts\YbsSmartCardSystem.Contracts.csproj" />
     <ProjectReference Include="..\YbsSmartCardSystem.Shared\YbsSmartCardSystem.Shared.csproj" />
+    <ProjectReference Include="..\YbsSmartCardSystem.Infrastructure\YbsSmartCardSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

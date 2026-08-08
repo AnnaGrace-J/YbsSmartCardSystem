@@ -2,6 +2,9 @@ using YbsSmartCardSystem.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
 using YbsSmartCardSystem.Contracts.Features.Transaction;
+using YbsSmartCardSystem.Infrastructure.AuditLog;
+using YbsSmartCardSystem.Infrastructure.Services;
+using YbsSmartCardSystem.Shared.Constants;
 
 namespace YbsSmartCardSystem.Domain.Features.Transaction;
 
@@ -9,10 +12,14 @@ public class TransactionService
 {
     private const decimal FixedFareAmount = 400m;
     private readonly AppDbContext _db;
+    private readonly IAuditLogWriter _audit;
+    private readonly ICurrentUserService _currentUser;
 
-    public TransactionService(AppDbContext db)
+    public TransactionService(AppDbContext db, IAuditLogWriter audit, ICurrentUserService currentUser)
     {
         _db = db;
+        _audit = audit;
+        _currentUser = currentUser;
     }
 
     public Result<TransactionCreateResponseModel> Create(TransactionCreateRequestModel request)
@@ -100,6 +107,18 @@ public class TransactionService
 
                 _db.SaveChanges();
                 tx.Commit();
+
+                _ = _audit.WriteAsync(new AuditLogWriteModel
+                {
+                    UserId      = _currentUser.UserId,
+                    Action      = AuditActions.BusTap,
+                    FeatureName = "Transaction",
+                    EntityName  = "TblTransaction",
+                    EntityId    = transaction.TransactionId.ToString(),
+                    NewValue    = new { transaction.TransactionNo, card.CardNum, terminal.TerminalSerialNo, transaction.Amount, RemainingBalance = card.Balance },
+                    IpAddress   = _currentUser.IpAddress,
+                    UserAgent   = _currentUser.UserAgent
+                });
 
                 return new Result<TransactionCreateResponseModel>
                 {

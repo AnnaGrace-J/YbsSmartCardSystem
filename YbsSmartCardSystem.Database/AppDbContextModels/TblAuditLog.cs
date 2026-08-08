@@ -27,5 +27,5 @@ public partial class TblAuditLog
 
     public DateTime CreatedDateTime { get; set; }
 
-    public virtual TblUser? User { get; set; }
+    public string? UserType { get; set; }
 }

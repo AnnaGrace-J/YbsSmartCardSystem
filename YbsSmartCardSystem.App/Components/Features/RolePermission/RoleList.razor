@@ -1,0 +1,118 @@
+@page "/roles"
+@using YbsSmartCardSystem.Contracts.Features.RolePermission
+@inject YbsSmartCardSystem.App.Services.ApiService Api
+@inject NavigationManager NavManager
+
+<h3>Role List</h3>
+
+<div class="mb-3 d-flex gap-2">
+    <input type="text" class="form-control" placeholder="Search by code or name..." @bind="Request.Search" @bind:event="oninput" @onkeyup="HandleSearch" />
+    <select class="form-select w-auto" @bind="IsActiveFilter" @bind:after="LoadRoles">
+        <option value="">All Statuses</option>
+        <option value="true">Active Only</option>
+        <option value="false">Inactive Only</option>
+    </select>
+    <a href="/roles/create" class="btn btn-primary">Create Role</a>
+</div>
+
+@if (ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+
+@if (Roles == null)
+{
+    <p>Loading...</p>
+}
+else if (!Roles.Any())
+{
+    <p>No roles found.</p>
+}
+else
+{
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>System Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var role in Roles)
+            {
+                <tr>
+                    <td>@role.RoleCode</td>
+                    <td>@role.RoleName</td>
+                    <td>@role.Description</td>
+                    <td>
+                        @if (role.IsSystemRole)
+                        {
+                            <span class="badge bg-info">System</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">User-Defined</span>
+                        }
+                    </td>
+                    <td>
+                        @if (role.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Inactive</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="/roles/permissions/@role.RoleId" class="btn btn-outline-primary">Permissions</a>
+                            @if (!role.IsSystemRole)
+                            {
+                                <a href="/roles/edit/@role.RoleId" class="btn btn-outline-secondary">Edit</a>
+                                <button class="btn btn-outline-danger" @onclick="() => ConfirmDelete(role)">Delete</button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            Showing @(((Request.PageNo - 1) * Request.PageSize) + 1) to @(Math.Min(Request.PageNo * Request.PageSize, TotalCount)) of @TotalCount entries
+        </div>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" disabled="@(Request.PageNo == 1)" @onclick="PrevPage">Previous</button>
+            <span class="btn btn-light disabled">Page @Request.PageNo of @MaxPage</span>
+            <button class="btn btn-outline-secondary" disabled="@(Request.PageNo >= MaxPage)" @onclick="NextPage">Next</button>
+        </div>
+    </div>
+}
+
+@if (ShowDeleteConfirm && RoleToDelete != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5)">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Role</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the role <strong>@RoleToDelete.RoleCode</strong> (@RoleToDelete.RoleName)?</p>
+                    <p class="text-danger"><small>This will also deactivate this role's user and permission assignments.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelDelete">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteRole">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

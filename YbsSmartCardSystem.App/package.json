@@ -1,0 +1,13 @@
+{
+  "name": "ybs-smartcard-system-app",
+  "version": "1.0.0",
+  "description": "Blazor Frontend Tailwind Configuration",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./Styles/app.css -o ./wwwroot/app.css --minify",
+    "watch:css": "tailwindcss -i ./Styles/app.css -o ./wwwroot/app.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

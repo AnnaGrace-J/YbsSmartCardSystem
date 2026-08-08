@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using YbsSmartCardSystem.Domain.Features.Bus;
 using YbsSmartCardSystem.Contracts.Features.BusPayment;
+using YbsSmartCardSystem.Domain.Features.Bus;
+using YbsSmartCardSystem.Infrastructure.Authorization.DynamicRbac;
+using YbsSmartCardSystem.Shared.Constants;
 
 namespace YbsSmartCardSystem.Api.Controllers;
 
@@ -16,6 +18,7 @@ public class BusController : BaseController
     }
 
     [HttpGet]
+    [RequirePermission(PermissionCodes.BusView)]
     public IActionResult BusList([FromQuery] BusListRequestModel request)
     {
         var result = _busService.GetList(request);
@@ -23,6 +26,7 @@ public class BusController : BaseController
     }
 
     [HttpGet("{id}")]
+    [RequirePermission(PermissionCodes.BusView)]
     public IActionResult BusGetById(int id)
     {
         var result = _busService.GetById(id);
@@ -30,6 +34,7 @@ public class BusController : BaseController
     }
 
     [HttpPost]
+    [RequirePermission(PermissionCodes.BusCreate)]
     public IActionResult BusCreate([FromBody] BusCreateRequestModel request)
     {
         var result = _busService.Create(request);
@@ -37,6 +42,7 @@ public class BusController : BaseController
     }
 
     [HttpPatch("{id}")]
+    [RequirePermission(PermissionCodes.BusUpdate)]
     public IActionResult BusPatch(int id, [FromBody] BusPatchRequestModel request)
     {
         var result = _busService.Patch(id, request);
@@ -44,6 +50,7 @@ public class BusController : BaseController
     }
 
     [HttpDelete("{id}")]
+    [RequirePermission(PermissionCodes.BusDelete)]
     public IActionResult BusDelete(int id)
     {
         var result = _busService.Delete(id);

@@ -14,10 +14,8 @@ public class CardListResponseModel
 }
 public class CardCreateRequestModel
 {
-    public string CardNum { get; set; } = string.Empty;
     public string OwnerName { get; set; } = string.Empty;
-    public string? MobileNo { get; set; } = string.Empty;
-   // public decimal Balance { get; set; }
+    public string MobileNo { get; set; } = string.Empty;
 }
 public class CardCreateResponseModel()
 {

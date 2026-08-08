@@ -10,6 +10,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<ApiService>();
+builder.Services.AddScoped<AuthStateService>();
 
 var app = builder.Build();
 

@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 using YbsSmartCardSystem.App.Services;
 using YbsSmartCardSystem.Domain;
 using YbsSmartCardSystem.Contracts.Features.BusPayment;
-using YbsSmartCardSystem.Contracts.Features.BusPayment;
 
 namespace YbsSmartCardSystem.App.Components.Features.Terminal;
 

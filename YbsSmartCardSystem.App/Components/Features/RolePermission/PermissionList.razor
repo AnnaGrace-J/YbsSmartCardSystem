@@ -1,0 +1,72 @@
+@page "/permissions"
+@using YbsSmartCardSystem.Contracts.Features.RolePermission
+@inject YbsSmartCardSystem.App.Services.ApiService Api
+
+<h3>Permission List</h3>
+
+<div class="mb-3 d-flex gap-2">
+    <input type="text" class="form-control" placeholder="Search code or name..." @bind="Request.Search" @bind:event="oninput" @onkeyup="HandleSearch" />
+    <input type="text" class="form-control" placeholder="Filter by feature name..." @bind="Request.FeatureName" @bind:event="oninput" @onkeyup="HandleSearch" />
+</div>
+
+@if (ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+
+@if (Permissions == null)
+{
+    <p>Loading...</p>
+}
+else if (!Permissions.Any())
+{
+    <p>No permissions found.</p>
+}
+else
+{
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Feature</th>
+                <th>Action</th>
+                <th>Description</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var perm in Permissions)
+            {
+                <tr>
+                    <td>@perm.PermissionCode</td>
+                    <td>@perm.PermissionName</td>
+                    <td><span class="badge bg-secondary">@perm.FeatureName</span></td>
+                    <td><span class="badge bg-info">@perm.ActionName</span></td>
+                    <td>@perm.Description</td>
+                    <td>
+                        @if (perm.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Inactive</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            Showing @(((Request.PageNo - 1) * Request.PageSize) + 1) to @(Math.Min(Request.PageNo * Request.PageSize, TotalCount)) of @TotalCount entries
+        </div>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" disabled="@(Request.PageNo == 1)" @onclick="PrevPage">Previous</button>
+            <span class="btn btn-light disabled">Page @Request.PageNo of @MaxPage</span>
+            <button class="btn btn-outline-secondary" disabled="@(Request.PageNo >= MaxPage)" @onclick="NextPage">Next</button>
+        </div>
+    </div>
+}

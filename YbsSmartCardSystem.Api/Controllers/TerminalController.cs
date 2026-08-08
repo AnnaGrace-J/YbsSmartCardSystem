@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using YbsSmartCardSystem.Domain.Features.Terminal;
 using YbsSmartCardSystem.Contracts.Features.BusPayment;
+using YbsSmartCardSystem.Infrastructure.Authorization.DynamicRbac;
+using YbsSmartCardSystem.Shared.Constants;
 
 namespace YbsSmartCardSystem.Api.Controllers;
 
@@ -16,6 +18,7 @@ public class TerminalController : BaseController
     }
 
     [HttpGet]
+    [RequirePermission(PermissionCodes.TerminalView)]
     public IActionResult TerminalList([FromQuery] TerminalListRequestModel request)
     {
         var result = _terminalService.GetList(request);
@@ -23,6 +26,7 @@ public class TerminalController : BaseController
     }
 
     [HttpGet("{id}")]
+    [RequirePermission(PermissionCodes.TerminalView)]
     public IActionResult TerminalGetById(int id)
     {
         var result = _terminalService.GetById(id);
@@ -30,6 +34,7 @@ public class TerminalController : BaseController
     }
 
     [HttpPost]
+    [RequirePermission(PermissionCodes.TerminalCreate)]
     public IActionResult TerminalCreate([FromBody] TerminalCreateRequestModel request)
     {
         var result = _terminalService.Create(request);
@@ -37,6 +42,7 @@ public class TerminalController : BaseController
     }
 
     [HttpPatch("{id}")]
+    [RequirePermission(PermissionCodes.TerminalUpdate)]
     public IActionResult TerminalPatch(int id, [FromBody] TerminalPatchRequestModel request)
     {
         var result = _terminalService.Patch(id, request);
@@ -44,6 +50,7 @@ public class TerminalController : BaseController
     }
 
     [HttpDelete("{id}")]
+    [RequirePermission(PermissionCodes.TerminalDelete)]
     public IActionResult TerminalDelete(int id)
     {
         var result = _terminalService.Delete(id);

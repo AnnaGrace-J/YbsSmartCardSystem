@@ -17,5 +17,5 @@ public partial class TblUserRole
 
     public virtual TblRole Role { get; set; } = null!;
 
-    public virtual TblUser User { get; set; } = null!;
+    public virtual TblStaffUser User { get; set; } = null!;
 }

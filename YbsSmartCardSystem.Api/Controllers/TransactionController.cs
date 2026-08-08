@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using YbsSmartCardSystem.Domain.Features.Transaction;
 using YbsSmartCardSystem.Contracts.Features.Transaction;
+using YbsSmartCardSystem.Domain.Features.Transaction;
+using YbsSmartCardSystem.Infrastructure.Authorization.DynamicRbac;
+using YbsSmartCardSystem.Shared.Constants;
 
 namespace YbsSmartCardSystem.Api.Controllers;
 
@@ -16,6 +18,7 @@ public class TransactionController : BaseController
     }
 
     [HttpPost]
+    [RequirePermission(PermissionCodes.BusPaymentCreate)]
     public IActionResult TransactionCreate([FromBody] TransactionCreateRequestModel request)
     {
         var result = _transactionService.Create(request);
@@ -23,6 +26,7 @@ public class TransactionController : BaseController
     }
 
     [HttpGet]
+    [RequirePermission(PermissionCodes.TransactionView)]
     public IActionResult TransactionList([FromQuery] TransactionListRequestModel request)
     {
         var result = _transactionService.GetList(request);

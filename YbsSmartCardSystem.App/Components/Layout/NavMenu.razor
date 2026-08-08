@@ -1,3 +1,7 @@
+@inject YbsSmartCardSystem.App.Services.AuthStateService AuthState
+@inject NavigationManager NavManager
+@implements IDisposable
+
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">YbsSmartCardSystem.App</a>
@@ -26,42 +30,138 @@
             </NavLink>
         </div> *@
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="cards">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Card List
-            </NavLink>
-        </div>
+        @if (AuthState.IsAuthenticated)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="dashboard">
+                    <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Dashboard / Profile
+                </NavLink>
+            </div>
+            @if (AuthState.HasPermission("Card.View"))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="cards">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Card List
+                    </NavLink>
+                </div>
+            }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="topups">
-                <span class="bi bi-wallet-nav-menu" aria-hidden="true"></span> Top Up History
-            </NavLink>
-        </div>
+            @if (AuthState.HasPermission("TopUp.View") || AuthState.HasPermission("TopUp.Create"))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="topups">
+                        <span class="bi bi-wallet-nav-menu" aria-hidden="true"></span> Top Up History
+                    </NavLink>
+                </div>
+            }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="buses">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Bus List
-            </NavLink>
-        </div>
+            @if (AuthState.HasPermission("BusPayment.Create"))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="transactions/new">
+                        <span class="bi bi-wallet-nav-menu" aria-hidden="true"></span> Bus Payment (Tap)
+                    </NavLink>
+                </div>
+            }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="terminals">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Terminal List
-            </NavLink>
-        </div>
+            @if (AuthState.HasPermission("Bus.View"))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="buses">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Bus List
+                    </NavLink>
+                </div>
+            }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="transactions">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Transaction History
-            </NavLink>
-        </div>
+            @if (AuthState.HasPermission("Terminal.View"))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="terminals">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Terminal List
+                    </NavLink>
+                </div>
+            }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="packages">
-                <span class="bi bi-box-seam-nav-menu" aria-hidden="true"></span> Package List
-            </NavLink>
-        </div>
+            @if (AuthState.HasPermission("Transaction.View"))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="transactions">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Transaction History
+                    </NavLink>
+                </div>
+            }
+
+
+
+            @if (AuthState.HasPermission("RolePermission.View"))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="roles">
+                        <span class="bi bi-shield-lock-nav-menu" aria-hidden="true"></span> Roles
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="permissions">
+                        <span class="bi bi-key-nav-menu" aria-hidden="true"></span> Permissions
+                    </NavLink>
+                </div>
+            }
+
+            @if (AuthState.HasPermission("AuditLog.View"))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="auditlogs">
+                        <span class="bi bi-journal-text-nav-menu" aria-hidden="true"></span> Audit Log
+                    </NavLink>
+                </div>
+            }
+        }
+
+        <hr class="mx-3 my-2" />
+
+        @if (AuthState.IsAuthenticated)
+        {
+            <div class="nav-item px-3">
+                <span class="nav-link text-light">@AuthState.CurrentUser?.FullName</span>
+            </div>
+            <div class="nav-item px-3">
+                <button class="nav-link btn btn-link text-start w-100" @onclick="HandleLogout">
+                    <span class="bi bi-box-arrow-right-nav-menu" aria-hidden="true"></span> Logout
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="login">
+                    <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Login
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="register">
+                    <span class="bi bi-person-plus-nav-menu" aria-hidden="true"></span> Register
+                </NavLink>
+            </div>
+        }
 
     </nav>
 </div>
 
+@code {
+    protected override void OnInitialized()
+    {
+        AuthState.OnChange += StateHasChanged;
+    }
+
+    private void HandleLogout()
+    {
+        AuthState.Logout();
+        NavManager.NavigateTo("/login");
+    }
+
+    public void Dispose()
+    {
+        AuthState.OnChange -= StateHasChanged;
+    }
+}

@@ -2,16 +2,23 @@ using YbsSmartCardSystem.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
 using YbsSmartCardSystem.Contracts.Features.TopUp;
+using YbsSmartCardSystem.Infrastructure.AuditLog;
+using YbsSmartCardSystem.Infrastructure.Services;
+using YbsSmartCardSystem.Shared.Constants;
 
 namespace YbsSmartCardSystem.Domain.Features.TopUp;
 
 public class TopUpService
 {
     private readonly AppDbContext _db;
+    private readonly IAuditLogWriter _audit;
+    private readonly ICurrentUserService _currentUser;
 
-    public TopUpService(AppDbContext db)
+    public TopUpService(AppDbContext db, IAuditLogWriter audit, ICurrentUserService currentUser)
     {
         _db = db;
+        _audit = audit;
+        _currentUser = currentUser;
     }
 
     public Result<TopUpCreateResponseModel> Create(TopUpCreateRequestModel request)
@@ -98,6 +105,18 @@ public class TopUpService
                 card.UpdatedDate = DateTime.Now;
                 _db.SaveChanges();
                 tx.Commit();
+
+                _ = _audit.WriteAsync(new AuditLogWriteModel
+                {
+                    UserId      = _currentUser.UserId,
+                    Action      = AuditActions.TopUp,
+                    FeatureName = "TopUp",
+                    EntityName  = "TblTopUp",
+                    EntityId    = topUp.TopUpId.ToString(),
+                    NewValue    = new { topUp.TopUpNo, request.CardId, topUp.Amount, NewBalance = card.Balance },
+                    IpAddress   = _currentUser.IpAddress,
+                    UserAgent   = _currentUser.UserAgent
+                });
 
                 return new Result<TopUpCreateResponseModel>
                 {

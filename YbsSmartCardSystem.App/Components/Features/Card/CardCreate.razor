@@ -1,83 +1,163 @@
 @page "/card/new"
-@rendermode InteractiveServer
 @inject ApiService ApiService
 @inject NavigationManager NavigationManager
 
-<h4>New Card</h4>
+<h4>Register New Card</h4>
 
 @if (!string.IsNullOrEmpty(message))
 {
     <div class="alert @(isSuccess ? "alert-success" : "alert-danger")">@message</div>
 }
 
-<div class="mb-2">
-    <label>Card Number <span class="text-danger">*</span></label>
-    <input class="form-control" type="text" @bind="request.CardNum" />
-</div>
-<div class="mb-2">
-    <label>Owner Name <span class="text-danger">*</span></label>
-    <input class="form-control" type="text" @bind="request.OwnerName" />
-</div>
-<div class="mb-2">
-    <label>Mobile No</label>
-    <input class="form-control" type="text" @bind="request.MobileNo" />
-</div>
-
-<button class="btn btn-success" @onclick="Save" disabled="@isSaving">
-    @(isSaving ? "Saving…" : "Save")
-</button>
-<NavLink class="btn btn-outline-secondary ms-2" href="/cards">Cancel</NavLink>
+@if (currentStep == 1)
+{
+    <h5>Step 1: Phone Number Verification</h5>
+    <div class="mb-2">
+        <label>Mobile No <span class="text-danger">*</span></label>
+        <input class="form-control" type="text" @bind="phoneNumber" placeholder="e.g. 09123456789" />
+    </div>
+    <button class="btn btn-primary" @onclick="SendOtp" disabled="@isProcessing">
+        @(isProcessing ? "Sending OTP..." : "Send OTP")
+    </button>
+    <NavLink class="btn btn-outline-secondary ms-2" href="/cards">Cancel</NavLink>
+}
+else if (currentStep == 2)
+{
+    <h5>Step 2: Enter OTP</h5>
+    <div class="mb-2">
+        <label>OTP Code <span class="text-danger">*</span></label>
+        <input class="form-control" type="text" @bind="otpCode" placeholder="Enter 6-digit OTP" />
+    </div>
+    <button class="btn btn-primary" @onclick="VerifyOtp" disabled="@isProcessing">
+        @(isProcessing ? "Verifying..." : "Verify OTP")
+    </button>
+    <button class="btn btn-outline-secondary ms-2" @onclick="() => currentStep = 1">Back</button>
+}
+else if (currentStep == 3)
+{
+    <h5>Step 3: Card Details</h5>
+    <div class="mb-2">
+        <label>Mobile No</label>
+        <input class="form-control" type="text" value="@phoneNumber" readonly />
+    </div>
+    <div class="mb-2">
+        <label>Owner Name <span class="text-danger">*</span></label>
+        <input class="form-control" type="text" @bind="ownerName" />
+    </div>
+    <button class="btn btn-success" @onclick="CreateCard" disabled="@isProcessing">
+        @(isProcessing ? "Creating..." : "Create Card")
+    </button>
+}
+else if (currentStep == 4)
+{
+    <h5>Registration Complete</h5>
+    <div class="alert alert-success">
+        Card successfully created!
+        <br />
+        <strong>Card Number:</strong> @generatedCardNumber
+    </div>
+    <NavLink class="btn btn-primary" href="/cards">Back to List</NavLink>
+}
 
 @code {
-    private CardCreateRequestModel request = new();
+    private int currentStep = 1;
+    private string phoneNumber = "";
+    private string otpCode = "";
+    private string ownerName = "";
+    private string generatedCardNumber = "";
+    
     private string? message;
-    private bool isSaving;
     private bool isSuccess;
+    private bool isProcessing;
 
-    private bool Validate()
+    private async Task SendOtp()
     {
-        if (string.IsNullOrWhiteSpace(request.CardNum))
+        if (string.IsNullOrWhiteSpace(phoneNumber))
         {
-            message = "Card number is required.";
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(request.OwnerName))
-        {
-            message = "Owner name is required.";
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.MobileNo) && request.MobileNo.Length > 20)
-        {
-            message = "Mobile number cannot exceed 20 characters.";
-            return false;
-        }
-
-        return true;
-    }
-
-    private async Task Save()
-    {
-        message = null;
-
-        if (!Validate())
-        {
+            message = "Phone number is required.";
+            isSuccess = false;
             return;
         }
 
-        isSaving = true;
+        isProcessing = true;
+        message = null;
 
-        var response = await ApiService.CardCreate(request);
-        message = response.Message;
-        isSuccess = response.IsSuccess;
+        var request = new CardRegistrationSendOtpRequestModel { PhoneNumber = phoneNumber };
+        var response = await ApiService.SendCardRegistrationOtp(request);
 
         if (response.IsSuccess)
         {
-            request = new CardCreateRequestModel();
-            NavigationManager.NavigateTo("/cards");
+            isSuccess = true;
+            message = "OTP sent successfully. Please check your phone.";
+            currentStep = 2;
+        }
+        else
+        {
+            isSuccess = false;
+            message = response.Message;
         }
 
-        isSaving = false;
+        isProcessing = false;
+    }
+
+    private async Task VerifyOtp()
+    {
+        if (string.IsNullOrWhiteSpace(otpCode))
+        {
+            message = "OTP code is required.";
+            isSuccess = false;
+            return;
+        }
+
+        isProcessing = true;
+        message = null;
+
+        var request = new CardRegistrationVerifyOtpRequestModel { PhoneNumber = phoneNumber, OtpCode = otpCode };
+        var response = await ApiService.VerifyCardRegistrationOtp(request);
+
+        if (response.IsSuccess)
+        {
+            isSuccess = true;
+            message = "OTP verified successfully. You can now create the card.";
+            currentStep = 3;
+        }
+        else
+        {
+            isSuccess = false;
+            message = response.Message;
+        }
+
+        isProcessing = false;
+    }
+
+    private async Task CreateCard()
+    {
+        if (string.IsNullOrWhiteSpace(ownerName))
+        {
+            message = "Owner name is required.";
+            isSuccess = false;
+            return;
+        }
+
+        isProcessing = true;
+        message = null;
+
+        var request = new CardCreateRequestModel { OwnerName = ownerName, MobileNo = phoneNumber };
+        var response = await ApiService.CardCreate(request);
+
+        if (response.IsSuccess)
+        {
+            isSuccess = true;
+            message = response.Message;
+            generatedCardNumber = response.Data!.CardNum;
+            currentStep = 4;
+        }
+        else
+        {
+            isSuccess = false;
+            message = response.Message;
+        }
+
+        isProcessing = false;
     }
 }

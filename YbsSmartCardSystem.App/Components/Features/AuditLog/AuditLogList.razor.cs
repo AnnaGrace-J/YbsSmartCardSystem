@@ -11,7 +11,7 @@ public partial class AuditLogList : ComponentBase, IDisposable
     [Inject] private AuthStateService AuthState { get; set; } = default!;
     [Inject] private NavigationManager NavManager { get; set; } = default!;
 
-    private AuditLogListRequestModel Request { get; set; } = new() { PageNo = 1, PageSize = 20 };
+    private AuditLogListRequestModel Request { get; set; } = new() { PageNo = 1, PageSize = 10 };
     private Result<AuditLogListResponseModel>? Response { get; set; }
     private bool IsLoading { get; set; }
     private string? ErrorMessage { get; set; }
@@ -53,7 +53,7 @@ public partial class AuditLogList : ComponentBase, IDisposable
 
     private async Task ResetAsync()
     {
-        Request = new AuditLogListRequestModel { PageNo = 1, PageSize = 20 };
+        Request = new AuditLogListRequestModel { PageNo = 1, PageSize = 10 };
         ExpandedId = null;
         await LoadAsync();
     }

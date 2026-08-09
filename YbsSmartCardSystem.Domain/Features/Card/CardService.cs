@@ -36,7 +36,29 @@ public class CardService
         {
             var query = _db.TblCards
                 .AsNoTracking()
-                .Where(x => x.DeleteFlag == false);
+                .Include(x => x.CreatedUser)
+                .AsQueryable();
+
+            // Viewer users can only see their own card
+            if (_currentUser.IsViewer)
+            {
+                var viewerPhone = _currentUser.PhoneNumber;
+                if (string.IsNullOrEmpty(viewerPhone))
+                {
+                    return new Result<CardListResponseModel>
+                    {
+                        IsSuccess = true,
+                        Message = "No card found.",
+                        Data = new CardListResponseModel { TotalCount = 0, Cards = [] }
+                    };
+                }
+                query = query.Where(x => x.MobileNo == viewerPhone);
+            }
+
+            if (request.IsDeleted.HasValue)
+            {
+                query = query.Where(x => x.DeleteFlag == request.IsDeleted.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
@@ -44,6 +66,12 @@ public class CardService
                 query = query.Where(x =>
                     x.CardNum.Contains(search) ||
                     x.OwnerName.Contains(search));
+            }
+
+            if (request.FilterDate.HasValue)
+            {
+                var dateStr = request.FilterDate.Value.ToString("ddMMyyyy");
+                query = query.Where(x => x.CardNum.Contains(dateStr));
             }
 
             var totalCount = query.Count();
@@ -56,6 +84,12 @@ public class CardService
                 .OrderByDescending(x => x.CardId)
                 .Skip((request.PageNo - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .Select(c => new
+                {
+                    Card = c,
+                    CreatorName = c.CreatedUser != null ? c.CreatedUser.UserName : null,
+                    CreatorRole = c.CreatedUser != null ? _db.TblUserRoles.Where(ur => ur.UserId == c.CreatedBy && !ur.DeleteFlag).Select(ur => ur.Role.RoleName).FirstOrDefault() : null
+                })
                 .ToList();
 
             return new Result<CardListResponseModel>
@@ -67,11 +101,14 @@ public class CardService
                     TotalCount = totalCount,
                     Cards      = cards.Select(c => new CardModel
                     {
-                        CardId    = c.CardId,
-                        CardNum   = c.CardNum,
-                        OwnerName = c.OwnerName,
-                        MobileNo  = c.MobileNo,
-                        Balance   = c.Balance
+                        CardId    = c.Card.CardId,
+                        CardNum   = c.Card.CardNum,
+                        OwnerName = c.Card.OwnerName,
+                        MobileNo  = c.Card.MobileNo,
+                        Balance   = c.Card.Balance,
+                        CreatedByName = c.CreatorName,
+                        CreatedByRole = c.CreatorRole,
+                        DeleteFlag = c.Card.DeleteFlag
                     }).ToList()
                 }
             };
@@ -144,6 +181,20 @@ public class CardService
     {
         if (string.IsNullOrWhiteSpace(request.PhoneNumber))
             return new Result<CardRegistrationSendOtpResponseModel> { IsSuccess = false, Message = "Phone number is required.", StatusCode = 400 };
+
+        // Check if an active card already exists for this phone number
+        var existingCard = await _db.TblCards
+            .AnyAsync(x => x.MobileNo == request.PhoneNumber && !x.DeleteFlag);
+
+        if (existingCard)
+        {
+            return new Result<CardRegistrationSendOtpResponseModel>
+            {
+                IsSuccess = false,
+                Message = "A card already exists for this phone number.",
+                StatusCode = 409
+            };
+        }
 
         var result = await _otpService.SendOtpAsync(request.PhoneNumber, "CardRegistration");
         
@@ -225,7 +276,8 @@ public class CardService
                 MobileNo = request.MobileNo.Trim(),
                 Balance = 0,
                 CreatedDate = DateTime.Now,
-                DeleteFlag = false
+                DeleteFlag = false,
+                CreatedBy = _currentUser.UserId
             };
             _db.TblCards.Add(card);
             
@@ -304,7 +356,19 @@ public class CardService
             if (!string.IsNullOrWhiteSpace(request.OwnerName))
                 item.OwnerName = request.OwnerName;
             if (request.MobileNo is not null)
+            {
+                if (string.IsNullOrWhiteSpace(request.MobileNo))
+                {
+                    return new Result<CardModel> { IsSuccess = false, Message = "Mobile number cannot be empty.", StatusCode = 400 };
+                }
+
+                var isDuplicatePhone = _db.TblCards.AsNoTracking()
+                    .Any(x => x.MobileNo == request.MobileNo && x.CardId != id && x.DeleteFlag == false);
+                if (isDuplicatePhone)
+                    return new Result<CardModel> { IsSuccess = false, Message = "A card already exists for this phone number.", StatusCode = 409 };
+
                 item.MobileNo = request.MobileNo;
+            }
 
             item.UpdatedDate = DateTime.Now;
             _db.SaveChanges();
@@ -372,6 +436,45 @@ public class CardService
         catch (Exception)
         {
             return new Result<CardModel> { IsSuccess = false, Message = "An unexpected error occurred.", StatusCode = 500 };
+        }
+    }
+
+    public Result<CardModel?> GetMyCard()
+    {
+        try
+        {
+            var phone = _currentUser.PhoneNumber;
+            if (string.IsNullOrEmpty(phone))
+            {
+                return new Result<CardModel?> { IsSuccess = true, Data = null, Message = "User has no phone number registered." };
+            }
+
+            var card = _db.TblCards
+                .AsNoTracking()
+                .FirstOrDefault(x => x.MobileNo == phone && x.DeleteFlag == false);
+
+            if (card is null)
+            {
+                return new Result<CardModel?> { IsSuccess = true, Data = null, Message = "No card registered for this phone number." };
+            }
+
+            return new Result<CardModel?>
+            {
+                IsSuccess = true,
+                Data = new CardModel
+                {
+                    CardId = card.CardId,
+                    CardNum = card.CardNum,
+                    OwnerName = card.OwnerName,
+                    MobileNo = card.MobileNo,
+                    Balance = card.Balance,
+                    DeleteFlag = card.DeleteFlag
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Result<CardModel?> { IsSuccess = false, Message = ex.Message, StatusCode = 500 };
         }
     }
 }

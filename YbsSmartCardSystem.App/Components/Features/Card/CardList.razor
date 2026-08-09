@@ -5,7 +5,7 @@
 <PageHeader Title="Card Registry" Subtitle="Manage passenger cards and balances">
     @if (AuthState.HasPermission("Card.Register"))
     {
-        <NavLink class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm" href="/card/new">
+        <NavLink class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm" href="/card/new">
             <span class="bi bi-plus-lg"></span> New Card
         </NavLink>
     }
@@ -16,17 +16,29 @@
         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
             <span class="bi bi-search"></span>
         </span>
-        <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm" 
+        <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm" 
                placeholder="Search by Card No or Owner Name..." @bind="searchText" @onkeyup="@(e => e.Key == "Enter" ? Search() : Task.CompletedTask)" />
     </div>
-    <button class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-colors border border-slate-200 shadow-sm" @onclick="Search">
+    <div class="relative w-full sm:w-48">
+        <select class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm"
+                @bind="StatusFilter" @bind:after="Search">
+            <option value="active">Active Cards</option>
+            <option value="inactive">Inactive Cards</option>
+            <option value="all">All Cards</option>
+        </select>
+    </div>
+    <div class="relative w-full sm:w-48">
+        <input type="date" class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm" 
+               @bind="request.FilterDate" @bind:after="Search" />
+    </div>
+    <button class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors border border-slate-200 shadow-sm" @onclick="Search">
         Search
     </button>
 </div>
 
 @if (editingCardId is not null)
 {
-    <div class="bg-slate-50 rounded-xl p-6 mb-6 border border-slate-200 shadow-sm">
+    <div class="bg-slate-50 rounded-lg p-6 mb-6 border border-slate-200 shadow-sm">
         <h5 class="text-lg font-semibold text-slate-900 mb-4">Edit Card</h5>
 
         @if (!string.IsNullOrEmpty(message))
@@ -39,7 +51,9 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
                 <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Card Number</label>
-                <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" type="text" @bind="editCard.CardNum" />
+                <div class="w-full bg-slate-100 border border-slate-200 text-slate-500 rounded-lg px-3 py-2 text-sm font-mono cursor-not-allowed">
+                    @editingCardNum
+                </div>
             </div>
             <div>
                 <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Owner Name</label>
@@ -47,7 +61,9 @@
             </div>
             <div>
                 <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Mobile No</label>
-                <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" type="text" @bind="editCard.MobileNo" />
+                <div class="w-full bg-slate-100 border border-slate-200 text-slate-500 rounded-lg px-3 py-2 text-sm font-mono cursor-not-allowed">
+                    @(string.IsNullOrEmpty(editingMobileNo) ? "-" : editingMobileNo)
+                </div>
             </div>
         </div>
 
@@ -64,7 +80,7 @@
 
 @if (!string.IsNullOrEmpty(message) && editingCardId is null)
 {
-    <div class="mb-6 p-4 rounded-xl bg-blue-50 text-blue-700 text-sm border border-blue-200 flex items-center gap-2">
+    <div class="mb-6 p-4 rounded-lg bg-blue-50 text-blue-700 text-sm border border-blue-200 flex items-center gap-2">
         <span class="bi bi-info-circle"></span> @message
     </div>
 }
@@ -76,12 +92,13 @@
             <table class="w-full text-left text-sm text-slate-600">
                 <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wider">
                     <tr>
-                        <th class="px-6 py-4 w-48">Actions</th>
-                        <th class="px-6 py-4">No</th>
-                        <th class="px-6 py-4">Card No</th>
-                        <th class="px-6 py-4">FullName</th>
-                        <th class="px-6 py-4">MobileNo</th>
-                        <th class="px-6 py-4 text-right">Balance</th>
+                        <th class="px-6 py-4 w-40">ACTIONS</th>
+                        <th class="px-6 py-4">NO</th>
+                        <th class="px-6 py-4">CARD NO</th>
+                        <th class="px-6 py-4">FULLNAME</th>
+                        <th class="px-6 py-4">MOBILENO</th>
+                        <th class="px-6 py-4 text-right">BALANCE</th>
+                        <th class="px-6 py-4">CREATED BY</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -93,24 +110,54 @@
                             <tr class="hover:bg-slate-50/50 transition-colors @(editingCardId == item.CardId ? "bg-amber-50" : "")">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
-                                        <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-400 hover:text-amber-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50"
+                                        <button class="inline-flex items-center justify-center h-8 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-md transition-colors shadow-sm disabled:opacity-50"
                                                 @onclick="() => EditCard(item)"
                                                 disabled="@(editingCardId is not null)">
-                                            <span class="bi bi-pencil mr-1.5"></span> Edit
+                                            Edit
                                         </button>
-                                        <NavLink class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:border-teal-500 hover:text-teal-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm"
+                                        <NavLink class="inline-flex items-center justify-center h-8 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-md transition-colors shadow-sm"
                                                  href="@($"/topup/new?cardId={item.CardId}")">
-                                            <span class="bi bi-wallet2 mr-1.5"></span> Top Up
+                                            Top Up
                                         </NavLink>
+                                        @if (AuthState.HasPermission("Card.Delete") && !item.DeleteFlag)
+                                        {
+                                            <button class="inline-flex items-center justify-center h-8 px-3 bg-white border border-slate-200 hover:border-rose-400 hover:text-rose-600 text-slate-700 text-xs font-medium rounded-md transition-colors shadow-sm disabled:opacity-50"
+                                                    @onclick="() => DeleteCard(item.CardId)"
+                                                    disabled="@(editingCardId is not null)">
+                                                Delete
+                                            </button>
+                                        }
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-slate-400">@(++rowNo)</td>
-                                <td class="px-6 py-4 font-mono text-slate-900">@item.CardNum</td>
-                                <td class="px-6 py-4 font-medium text-slate-900">@item.OwnerName</td>
-                                <td class="px-6 py-4 text-slate-500">@item.MobileNo</td>
+                                <td class="px-6 py-4 font-mono text-slate-900">
+                                    <div class="flex items-center gap-2">
+                                        @item.CardNum
+                                        @if (item.DeleteFlag)
+                                        {
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">Deleted</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 font-bold text-slate-900">@item.OwnerName</td>
+                                <td class="px-6 py-4 font-mono text-slate-500">@item.MobileNo</td>
                                 <td class="px-6 py-4 text-right">
-                                    <span class="font-semibold text-slate-900">@item.Balance.ToString("N0")</span>
+                                    <span class="font-bold text-slate-900">@item.Balance.ToString("N0")</span>
                                     <span class="text-slate-400 text-xs ml-1">MMK</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if (!string.IsNullOrEmpty(item.CreatedByName))
+                                    {
+                                        <span class="text-slate-700 font-medium">@item.CreatedByName</span>
+                                        @if (!string.IsNullOrEmpty(item.CreatedByRole))
+                                        {
+                                            <span class="text-slate-400 text-xs ml-1">(@item.CreatedByRole)</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-slate-300">—</span>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -123,14 +170,14 @@
         {
             <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="text-sm text-slate-500">
-                    Total: <strong class="text-slate-900 font-semibold">@response.Data.TotalCount</strong> cards
+                    Total: <strong class="text-slate-900">@response.Data.TotalCount</strong> cards
                 </div>
                 <div class="flex items-center gap-2">
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
+                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-md transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
                         Previous
                     </button>
-                    <span class="text-sm text-slate-600 font-medium px-2">Page @request.PageNo of @TotalPages</span>
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
+                    <span class="text-sm text-slate-600 px-2">Page <strong class="text-slate-900">@request.PageNo</strong> of @TotalPages</span>
+                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-md transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
                         Next
                     </button>
                 </div>

@@ -67,7 +67,7 @@ public class AuthController : BaseController
     [Authorize]
     public async Task<IActionResult> Dashboard()
     {
-        var phoneNumber = User.FindFirstValue(ClaimTypes.MobilePhone);
+        var phoneNumber = User.FindFirstValue(ClaimTypes.MobilePhone) ?? User.FindFirst("PhoneNumber")?.Value;
         if (string.IsNullOrWhiteSpace(phoneNumber))
         {
             return Unauthorized();

@@ -2,16 +2,19 @@ using YbsSmartCardSystem.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
 using YbsSmartCardSystem.Contracts.Features.BusPayment;
+using YbsSmartCardSystem.Infrastructure.Services;
 
 namespace YbsSmartCardSystem.Domain.Features.Terminal;
 
 public class TerminalService
 {
     private readonly AppDbContext _db;
+    private readonly ICurrentUserService _currentUser;
 
-    public TerminalService(AppDbContext db)
+    public TerminalService(AppDbContext db, ICurrentUserService currentUser)
     {
         _db = db;
+        _currentUser = currentUser;
     }
 
     public Result<TerminalListResponseModel> GetList(TerminalListRequestModel request)
@@ -21,7 +24,20 @@ public class TerminalService
             var query = _db.TblTerminals
                 .AsNoTracking()
                 .Include(x => x.Bus)
-                .Where(x => !x.DeleteFlag && !x.Bus.DeleteFlag);
+                .AsQueryable();
+
+            if (request.IsDeleted.HasValue)
+            {
+                query = query.Where(x => x.DeleteFlag == request.IsDeleted.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                var search = request.Search.Trim();
+                query = query.Where(x => x.TerminalSerialNo.Contains(search) ||
+                                         x.Bus.BusNo.Contains(search) ||
+                                         x.Bus.BusLicense.Contains(search));
+            }
 
             var totalCount = query.Count();
 
@@ -36,7 +52,10 @@ public class TerminalService
                     BusId            = x.BusId,
                     BusNo            = x.Bus.BusNo,
                     BusLicense       = x.Bus.BusLicense,
-                    IsActive         = x.IsActive
+                    IsActive         = x.IsActive,
+                    CreatedByName    = x.CreatedUser != null ? x.CreatedUser.UserName : null,
+                    CreatedByRole    = x.CreatedUser != null ? _db.TblUserRoles.Where(ur => ur.UserId == x.CreatedBy && !ur.DeleteFlag).Select(ur => ur.Role.RoleName).FirstOrDefault() : null,
+                    DeleteFlag       = x.DeleteFlag
                 })
                 .ToList();
 
@@ -198,7 +217,8 @@ public class TerminalService
                 TerminalSerialNo = terminalSerialNo,
                 BusId            = request.BusId,
                 IsActive         = request.IsActive,
-                DeleteFlag       = false
+                DeleteFlag       = false,
+                CreatedBy        = _currentUser.UserId
             };
 
             _db.TblTerminals.Add(terminal);

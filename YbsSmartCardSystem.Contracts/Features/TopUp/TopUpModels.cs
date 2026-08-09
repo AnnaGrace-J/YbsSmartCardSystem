@@ -25,6 +25,8 @@ public class TopUpListRequestModel
     public int  CardId   { get; set; }  // 0 = all cards
     public int  PageNo   { get; set; } = 1;
     public int  PageSize { get; set; } = 10;
+    public string? Search   { get; set; }
+    public DateTime? FilterDate { get; set; }
 }
 
 public class TopUpListResponseModel
@@ -43,4 +45,6 @@ public class TopUpModel
     public decimal  Amount    { get; set; }
     public DateTime TopUpDate { get; set; }
     public string?  Remark    { get; set; }
+    public string? CreatedByName { get; set; }
+    public string? CreatedByRole { get; set; }
 }

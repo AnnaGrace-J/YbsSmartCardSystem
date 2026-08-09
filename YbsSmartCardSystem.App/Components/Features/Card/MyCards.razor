@@ -1,0 +1,374 @@
+@page "/my-cards"
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+    @if (isLoading)
+    {
+        <div class="flex flex-col items-center justify-center min-h-[400px]">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+            <p class="text-slate-500 mt-4 font-medium">Loading your cards...</p>
+        </div>
+    }
+    else
+    {
+        <!-- Page Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">My Cards</h1>
+                <p class="text-slate-500 mt-1">Manage your transit passes and virtual wallets</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Balance Capsule -->
+                <div class="bg-white border border-slate-200/80 rounded-full px-5 py-2 flex items-center gap-2 shadow-sm">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Balance:</span>
+                    <span class="text-sm font-bold text-blue-900">
+                        @(card != null ? $"{card.Balance:N0} MMK" : "0 MMK")
+                    </span>
+                </div>
+                <!-- Notification Bell -->
+                <button class="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors shadow-sm relative">
+                    <span class="bi bi-bell text-lg"></span>
+                    <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-blue-600 border-2 border-white rounded-full"></span>
+                </button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="mb-6 p-4 rounded-xl border @(isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-rose-50 border-rose-200 text-rose-800") flex items-center justify-between shadow-sm animate-fade-in">
+                <div class="flex items-center gap-3">
+                    <span class="bi @(isSuccess ? "bi-check-circle-fill text-emerald-500" : "bi-exclamation-triangle-fill text-rose-500") text-lg"></span>
+                    <span class="text-sm font-medium">@message</span>
+                </div>
+                <button class="text-slate-400 hover:text-slate-600" @onclick="() => message = null">
+                    <span class="bi bi-x-lg"></span>
+                </button>
+            </div>
+        }
+
+
+        @if (card == null)
+        {
+            <!-- Empty State / Link Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-8 sm:p-12 text-center max-w-lg mx-auto shadow-sm">
+                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+                    <span class="bi bi-credit-card-2-front-fill text-3xl"></span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">No Registered Card Found</h3>
+                <p class="text-slate-500 mb-6 text-sm leading-relaxed">
+                    There are no cards registered to your phone number. Register your physical card now to activate virtual wallet access and manage auto-reload settings.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <NavLink class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-500/10 transition-all text-sm" href="/card/new">
+                        Register Physical Card
+                    </NavLink>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Cards Grid Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                
+                <!-- Left Column: Physical Commuter Card -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bi bi-credit-card-fill text-blue-600 text-lg"></span>
+                        <h2 class="text-base font-bold text-[#091e42]">Physical Commuter Card</h2>
+                    </div>
+
+                    <!-- Visual Physical Card -->
+                    <div class="bg-gradient-to-br from-[#0052cc] to-[#0747a6] rounded-2xl p-6 text-white relative overflow-hidden shadow-lg h-56 flex flex-col justify-between"
+                         style="background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1.2px, transparent 1.2px); background-size: 16px 16px;">
+                        
+                        <!-- Top Row -->
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-200/80">TRANSITPAY</span>
+                                <h4 class="text-xl font-bold mt-0.5 text-white tracking-wide">Everyday Pass</h4>
+                            </div>
+                            <!-- Contactless waves symbol -->
+                            <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                                <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                                    <path d="M5 12a7 7 0 0 1 0-10"/>
+                                    <path d="M8.5 12a12 12 0 0 1 0-15"/>
+                                    <path d="M12 12a17 17 0 0 1 0-20"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Card Number / Status Row -->
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-[9px] font-bold text-blue-200/50 uppercase tracking-widest mb-0.5">Card Number</p>
+                                <p class="font-mono text-lg tracking-widest font-bold text-white leading-none">@FormatCardNum(card.CardNum)</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[9px] font-bold text-blue-200/50 uppercase tracking-widest mb-1">Status</p>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30 backdrop-blur-sm">
+                                    Active
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <button class="flex flex-col sm:flex-row items-center justify-center py-3.5 bg-[#f0f4ff] hover:bg-[#e1e9ff] text-[#0052cc] text-xs font-bold rounded-xl border border-[#d2e0ff] transition-all shadow-sm gap-2"
+                                @onclick="() => showAutoReloadModal = true">
+                            <span class="bi bi-arrow-repeat text-base"></span>
+                            <span>Set Auto-Reload</span>
+                        </button>
+                        <button class="flex flex-col sm:flex-row items-center justify-center py-3.5 bg-[#f0f4ff] hover:bg-[#e1e9ff] text-[#0052cc] text-xs font-bold rounded-xl border border-[#d2e0ff] transition-all shadow-sm gap-2"
+                                @onclick="OpenRenameModal">
+                            <span class="bi bi-pencil text-base"></span>
+                            <span>Rename Card</span>
+                        </button>
+                        <button class="flex flex-col sm:flex-row items-center justify-center py-3.5 bg-[#ffebe6] hover:bg-[#ffdad0] text-[#de350b] text-xs font-bold rounded-xl transition-all shadow-sm gap-2 border-none"
+                                @onclick="ReportLost">
+                            <span class="bi bi-exclamation-triangle text-base"></span>
+                            <span>Report Lost</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column: Virtual Mobile Card -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bi bi-phone-fill text-teal-600 text-lg"></span>
+                        <h2 class="text-base font-bold text-[#091e42]">Virtual Mobile Card</h2>
+                    </div>
+
+                    <!-- Visual Virtual Card -->
+                    <div class="bg-gradient-to-br from-[#106b52] to-[#0b4d3b] rounded-2xl p-6 text-white relative overflow-hidden shadow-lg h-56 flex flex-col justify-between"
+                         style="background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1.2px, transparent 1.2px); background-size: 14px 14px;">
+                        
+                        <!-- Top Row -->
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-200/80">TRANSITPAY VIRTUAL</span>
+                                <h4 class="text-xl font-bold mt-0.5 text-white tracking-wide">Mobile Wallet</h4>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                                <span class="bi bi-wallet2 text-base text-white"></span>
+                            </div>
+                        </div>
+
+                        <!-- Device / Wallet Row -->
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-[9px] font-bold text-emerald-200/50 uppercase tracking-widest mb-0.5">Device</p>
+                                <p class="font-mono text-xs font-bold text-white">iPhone 13 Pro</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-sm">
+                                    Linked
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shared Wallet Balance Container -->
+                    <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col justify-between min-h-[148px]">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-semibold text-slate-500">Shared Wallet Balance</span>
+                                <div class="w-6 h-6 border border-slate-200 rounded flex items-center justify-center text-slate-400">
+                                    <span class="bi bi-wallet2 text-xs"></span>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-[#091e42] tracking-tight">
+                                @FormatBalance(card.Balance)
+                            </div>
+                            <div class="flex items-center gap-1.5 mt-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs text-slate-500 font-medium">
+                                    @(autoReloadEnabled ? $"Auto-reload at {FormatBalance(autoReloadTriggerAmount)}" : "Auto-reload disabled")
+                                </span>
+                            </div>
+                        </div>
+
+                        <button class="w-full mt-4 py-3 bg-[#0052cc] hover:bg-[#0747a6] text-white text-sm font-semibold rounded-xl transition-all shadow-sm"
+                                @onclick="() => showTopUpModal = true">
+                            Add Funds Now
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        }
+    }
+</div>
+
+<!-- ============================================== -->
+<!-- MODALS SECTION                                 -->
+<!-- ============================================== -->
+
+<!-- 1. Rename Card Modal -->
+@if (showRenameModal)
+{
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 max-w-md w-full p-6 animate-in fade-in duration-200">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-lg font-bold text-slate-900">Rename Card Owner</h3>
+                <button class="text-slate-400 hover:text-slate-600" @onclick="() => showRenameModal = false">
+                    <span class="bi bi-x-lg text-lg"></span>
+                </button>
+            </div>
+            
+            <div class="mb-5">
+                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">New Owner Name</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <span class="bi bi-person"></span>
+                    </span>
+                    <input class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all"
+                           type="text" maxlength="100" @bind="newOwnerName" placeholder="Enter owner name" />
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors border border-slate-200/60"
+                        @onclick="() => showRenameModal = false" disabled="@isRenaming">
+                    Cancel
+                </button>
+                <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-500/10 transition-all flex items-center gap-2"
+                        @onclick="RenameCard" disabled="@(isRenaming || string.IsNullOrWhiteSpace(newOwnerName))">
+                    @if (isRenaming)
+                    {
+                        <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    }
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- 2. Add Funds Modal -->
+@if (showTopUpModal)
+{
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 max-w-md w-full p-6 animate-in fade-in duration-200">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-lg font-bold text-slate-900">Add Funds to Card</h3>
+                <button class="text-slate-400 hover:text-slate-600" @onclick="() => showTopUpModal = false">
+                    <span class="bi bi-x-lg text-lg"></span>
+                </button>
+            </div>
+
+            <!-- Top Up Amount Selections -->
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Select Amount</label>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button class="py-2.5 rounded-xl border text-sm font-bold transition-all @(topUpAmount == 5000 ? "bg-blue-50 border-blue-500 text-blue-700" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100")"
+                                @onclick="() => topUpAmount = 5000">
+                            5,000 MMK
+                        </button>
+                        <button class="py-2.5 rounded-xl border text-sm font-bold transition-all @(topUpAmount == 10000 ? "bg-blue-50 border-blue-500 text-blue-700" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100")"
+                                @onclick="() => topUpAmount = 10000">
+                            10,000 MMK
+                        </button>
+                        <button class="py-2.5 rounded-xl border text-sm font-bold transition-all @(topUpAmount == 20000 ? "bg-blue-50 border-blue-500 text-blue-700" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100")"
+                                @onclick="() => topUpAmount = 20000">
+                            20,000 MMK
+                        </button>
+                        <button class="py-2.5 rounded-xl border text-sm font-bold transition-all @(topUpAmount == 50000 ? "bg-blue-50 border-blue-500 text-blue-700" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100")"
+                                @onclick="() => topUpAmount = 50000">
+                            50,000 MMK
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Custom Amount (MMK)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm font-semibold">MMK</span>
+                        <input class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all font-semibold"
+                               type="number" step="500" min="500" @bind="topUpAmount" placeholder="Enter amount" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors border border-slate-200/60"
+                        @onclick="() => showTopUpModal = false" disabled="@isToppingUp">
+                    Cancel
+                </button>
+                <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-500/10 transition-all flex items-center gap-2"
+                        @onclick="SubmitTopUp" disabled="@(isToppingUp || topUpAmount <= 0)">
+                    @if (isToppingUp)
+                    {
+                        <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    }
+                    Confirm Deposit
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- 3. Auto Reload Modal -->
+@if (showAutoReloadModal)
+{
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 max-w-md w-full p-6 animate-in fade-in duration-200">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-lg font-bold text-slate-900">Auto-Reload Settings</h3>
+                <button class="text-slate-400 hover:text-slate-600" @onclick="() => showAutoReloadModal = false">
+                    <span class="bi bi-x-lg text-lg"></span>
+                </button>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <!-- Toggle Switch -->
+                <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                    <div>
+                        <p class="text-sm font-bold text-slate-900">Enable Auto-Reload</p>
+                        <p class="text-xs text-slate-500">Automatically top up your card when it runs low</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" @bind="autoReloadEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+
+                @if (autoReloadEnabled)
+                {
+                    <div class="space-y-4 animate-in slide-in-from-top-2 duration-200">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">When Balance Drops Below</label>
+                            <select class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-white transition-all font-semibold"
+                                    @bind="autoReloadTriggerAmount">
+                                <option value="5000">5,000 MMK</option>
+                                <option value="10000">10,000 MMK</option>
+                                <option value="20000">20,000 MMK</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Top Up Amount</label>
+                            <select class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-white transition-all font-semibold"
+                                    @bind="autoReloadTopUpAmount">
+                                <option value="10000">10,000 MMK</option>
+                                <option value="20000">20,000 MMK</option>
+                                <option value="50000">50,000 MMK</option>
+                            </select>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors border border-slate-200/60"
+                        @onclick="() => showAutoReloadModal = false">
+                    Cancel
+                </button>
+                <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-500/10 transition-all"
+                        @onclick="SaveAutoReloadSettings">
+                    Save Configuration
+                </button>
+            </div>
+        </div>
+    </div>
+}

@@ -26,6 +26,7 @@
                 <span class="bi bi-house-door-fill text-lg opacity-75"></span> Dashboard
             </NavLink>
 
+
             @if (AuthState.HasPermission("Card.View") || AuthState.HasPermission("TopUp.View") || AuthState.HasPermission("Transaction.View"))
             {
                 <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2 mt-6">Operations</div>

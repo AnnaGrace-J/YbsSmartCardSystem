@@ -62,16 +62,35 @@
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
                             <span class="bi bi-credit-card"></span>
                         </span>
-                        <select class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm appearance-none" @bind="request.CardId">
-                            <option value="0">-- Select a Card --</option>
-                            @foreach (var card in cards)
-                            {
-                                <option value="@card.CardId">@card.CardNum - @card.OwnerName (@card.Balance.ToString("N0") MMK)</option>
-                            }
-                        </select>
+                        <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
+                               placeholder="Search and select a card..."
+                               @bind="cardSearchText" @bind:event="oninput"
+                               @onfocus="ShowCardDropdown"
+                               @onblur="HideCardDropdown" />
                         <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
                             <span class="bi bi-chevron-down"></span>
                         </div>
+                        
+                        @if (isCardDropdownOpen)
+                        {
+                            <div class="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                                @if (FilteredCards.Any())
+                                {
+                                    @foreach (var card in FilteredCards)
+                                    {
+                                        <div class="px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0"
+                                             @onmousedown="() => SelectCard(card)">
+                                            <div class="text-sm font-medium text-slate-900">@card.CardNum - @card.OwnerName</div>
+                                            <div class="text-xs text-slate-500 mt-0.5">Balance: <span class="font-semibold text-emerald-600">@card.Balance.ToString("N0") MMK</span></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="px-4 py-3 text-sm text-slate-500 text-center">No cards found.</div>
+                                }
+                            </div>
+                        }
                     </div>
                 </div>
 

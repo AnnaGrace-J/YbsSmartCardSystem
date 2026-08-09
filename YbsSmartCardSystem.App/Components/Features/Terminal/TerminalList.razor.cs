@@ -28,6 +28,33 @@ public partial class TerminalList
             ? 1
             : (int)Math.Ceiling((double)response.Data.TotalCount / request.PageSize);
 
+    private string searchText = string.Empty;
+
+    private string StatusFilter
+    {
+        get => request.IsDeleted switch
+        {
+            false => "active",
+            true => "inactive",
+            _ => "all"
+        };
+        set
+        {
+            request.IsDeleted = value switch
+            {
+                "active" => false,
+                "inactive" => true,
+                _ => null
+            };
+        }
+    }
+
+    private async Task Search()
+    {
+        request.PageNo = 1;
+        await LoadTerminals();
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await LoadTerminals();
@@ -36,6 +63,7 @@ public partial class TerminalList
     private async Task LoadTerminals()
     {
         isLoading = true;
+        request.Search = searchText;
 
         try
         {

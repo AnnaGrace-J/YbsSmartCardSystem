@@ -203,6 +203,23 @@ public class TransactionService
                     && x.Terminal.DeleteFlag == false
                     && x.Terminal.Bus.DeleteFlag == false);
 
+            // Viewer users can only see transactions for their own card
+            if (_currentUser.IsViewer)
+            {
+                var viewerPhone = _currentUser.PhoneNumber;
+                if (string.IsNullOrEmpty(viewerPhone))
+                {
+                    return new Result<TransactionListResponseModel>
+                    {
+                        IsSuccess = true,
+                        StatusCode = 200,
+                        Message = "No transactions found.",
+                        Data = new TransactionListResponseModel { TotalCount = 0, Transactions = [] }
+                    };
+                }
+                query = query.Where(x => x.Card.MobileNo == viewerPhone);
+            }
+
             if (!string.IsNullOrWhiteSpace(request.CardNum))
             {
                 var cardNum = request.CardNum.Trim();

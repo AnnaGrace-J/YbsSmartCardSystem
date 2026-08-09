@@ -27,9 +27,10 @@ public partial class Register : ComponentBase
             return;
         }
 
-        if (Model.Password.Length < 6)
+        var passwordValidationError = GetPasswordValidationError(Model.Password);
+        if (passwordValidationError != null)
         {
-            ErrorMessage = "Password must be at least 6 characters.";
+            ErrorMessage = passwordValidationError;
             return;
         }
 
@@ -83,5 +84,28 @@ public partial class Register : ComponentBase
         }
 
         IsSubmitting = false;
+    }
+
+    private string? GetPasswordValidationError(string? password)
+    {
+        if (string.IsNullOrEmpty(password))
+            return "Password is required.";
+
+        if (password.Length < 6 || password.Length > 16)
+            return "Password length must be between 6 and 16 characters.";
+
+        if (!password.Any(char.IsDigit))
+            return "Password must contain at least one number.";
+
+        if (!password.Any(char.IsUpper))
+            return "Password must contain at least one uppercase letter.";
+
+        if (!password.Any(char.IsLower))
+            return "Password must contain at least one lowercase letter.";
+
+        if (!password.Any(c => !char.IsLetterOrDigit(c)))
+            return "Password must contain at least one special character.";
+
+        return null;
     }
 }

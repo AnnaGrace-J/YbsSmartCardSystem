@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace YbsSmartCardSystem.Database.AppDbContextModels;
@@ -18,6 +18,10 @@ public partial class TblTopUp
     public string? Remark { get; set; }
 
     public bool DeleteFlag { get; set; }
+
+    public int? CreatedBy { get; set; }
+
+    public virtual TblStaffUser? CreatedUser { get; set; }
 
     public virtual TblCard Card { get; set; } = null!;
 }

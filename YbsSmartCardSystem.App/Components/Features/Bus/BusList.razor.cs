@@ -18,6 +18,26 @@ namespace YbsSmartCardSystem.App.Components.Features.Bus
         private int? editingBusId;
         private string? message;
         private bool isSaving;
+        private string searchText = string.Empty;
+
+        private string StatusFilter
+        {
+            get => request.IsDeleted switch
+            {
+                false => "active",
+                true => "inactive",
+                _ => "all"
+            };
+            set
+            {
+                request.IsDeleted = value switch
+                {
+                    "active" => false,
+                    "inactive" => true,
+                    _ => null
+                };
+            }
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -26,7 +46,14 @@ namespace YbsSmartCardSystem.App.Components.Features.Bus
 
         private async Task LoadBuses()
         {
+            request.Search = searchText;
             response = await ApiService.GetBuses(request);
+        }
+
+        private async Task Search()
+        {
+            request.PageNo = 1;
+            await LoadBuses();
         }
 
         private void EditBus(BusModel bus)

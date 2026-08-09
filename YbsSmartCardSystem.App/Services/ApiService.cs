@@ -166,23 +166,30 @@ public class ApiService
             var httpClient = CreateClient();
 
             var search = string.IsNullOrWhiteSpace(request.Search) ? "" : $"&search={Uri.EscapeDataString(request.Search)}";
-            var url = $"{ApiEndpoints.CardList}?pageNo={request.PageNo}&pageSize={request.PageSize}{search}";
+            var dateFilter = request.FilterDate.HasValue ? $"&filterDate={request.FilterDate.Value:yyyy-MM-dd}" : "";
+            var isDeletedFilter = request.IsDeleted.HasValue ? $"&isDeleted={request.IsDeleted.Value}" : "";
+            var url = $"{ApiEndpoints.CardList}?pageNo={request.PageNo}&pageSize={request.PageSize}{search}{dateFilter}{isDeletedFilter}";
 
             var response = await httpClient.GetAsync(url);
-            var result = await response.Content.ReadFromJsonAsync<Result<CardListResponseModel>>();
-            return result ?? new Result<CardListResponseModel>
+            try
             {
-                IsSuccess = false,
-                Message   = "Invalid response from API."
-            };
+                var result = await response.Content.ReadFromJsonAsync<Result<CardListResponseModel>>();
+                return result ?? new Result<CardListResponseModel>
+                {
+                    IsSuccess = false,
+                    Message   = "Invalid response from API."
+                };
+            }
+            catch (Exception ex)
+            {
+                var raw = await response.Content.ReadAsStringAsync();
+                System.IO.File.WriteAllText(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "api_error_log.txt"), raw);
+                return new Result<CardListResponseModel> { IsSuccess = false, Message = $"Failed to reach API: {ex.Message}" };
+            }
         }
         catch (Exception ex)
         {
-            return new Result<CardListResponseModel>
-            {
-                IsSuccess = false,
-                Message   = $"Failed to reach API: {ex.Message}"
-            };
+            return new Result<CardListResponseModel> { IsSuccess = false, Message = ex.Message };
         }
     }
 
@@ -266,6 +273,52 @@ public class ApiService
         }
     }
 
+    public async Task<Result<CardModel>> CardDelete(int id)
+    {
+        try
+        {
+            var httpClient = CreateClient();
+            var response = await httpClient.DeleteAsync(ApiEndpoints.CardDetail(id));
+            var result = await response.Content.ReadFromJsonAsync<Result<CardModel>>();
+            return result ?? new Result<CardModel>
+            {
+                IsSuccess  = false,
+                Message    = "Invalid response from API."
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Result<CardModel>
+            {
+                IsSuccess  = false,
+                Message    = $"Failed to reach API: {ex.Message}"
+            };
+        }
+    }
+
+    public async Task<Result<CardModel?>> GetMyCard()
+    {
+        try
+        {
+            var httpClient = CreateClient();
+            var response = await httpClient.GetAsync("api/Card/my-card");
+            var result = await response.Content.ReadFromJsonAsync<Result<CardModel?>>();
+            return result ?? new Result<CardModel?>
+            {
+                IsSuccess = false,
+                Message   = "Invalid response from API."
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Result<CardModel?>
+            {
+                IsSuccess = false,
+                Message   = $"Failed to reach API: {ex.Message}"
+            };
+        }
+    }
+
     // ── TopUp ───────────────────────────────────────────────────────────────
 
     public async Task<Result<TopUpCreateResponseModel>> TopUpCreate(TopUpCreateRequestModel request)
@@ -297,7 +350,9 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var cardFilter = request.CardId > 0 ? $"&cardId={request.CardId}" : "";
-            var url = $"{ApiEndpoints.TopUpList}?pageNo={request.PageNo}&pageSize={request.PageSize}{cardFilter}";
+            var searchFilter = string.IsNullOrWhiteSpace(request.Search) ? "" : $"&search={Uri.EscapeDataString(request.Search)}";
+            var dateFilter = request.FilterDate.HasValue ? $"&filterDate={request.FilterDate.Value:yyyy-MM-dd}" : "";
+            var url = $"{ApiEndpoints.TopUpList}?pageNo={request.PageNo}&pageSize={request.PageSize}{cardFilter}{searchFilter}{dateFilter}";
             var response = await httpClient.GetAsync(url);
             var result = await response.Content.ReadFromJsonAsync<Result<TopUpListResponseModel>>();
             return result ?? new Result<TopUpListResponseModel>
@@ -323,7 +378,9 @@ public class ApiService
         try
         {
             var httpClient = CreateClient();
-            var url = $"{ApiEndpoints.BusList}?pageNo={request.PageNo}&pageSize={request.PageSize}";
+            var search = string.IsNullOrWhiteSpace(request.Search) ? "" : $"&search={Uri.EscapeDataString(request.Search)}";
+            var isDeletedFilter = request.IsDeleted.HasValue ? $"&isDeleted={request.IsDeleted.Value}" : "";
+            var url = $"{ApiEndpoints.BusList}?pageNo={request.PageNo}&pageSize={request.PageSize}{search}{isDeletedFilter}";
             var response = await httpClient.GetAsync(url);
             return await ReadResultAsync<BusListResponseModel>(response, "load buses");
         }
@@ -420,7 +477,9 @@ public class ApiService
         try
         {
             var httpClient = CreateClient();
-            var url = $"{ApiEndpoints.TerminalList}?pageNo={request.PageNo}&pageSize={request.PageSize}";
+            var search = string.IsNullOrWhiteSpace(request.Search) ? "" : $"&search={Uri.EscapeDataString(request.Search)}";
+            var isDeletedFilter = request.IsDeleted.HasValue ? $"&isDeleted={request.IsDeleted.Value}" : "";
+            var url = $"{ApiEndpoints.TerminalList}?pageNo={request.PageNo}&pageSize={request.PageSize}{search}{isDeletedFilter}";
             var response = await httpClient.GetAsync(url);
             return await ReadResultAsync<TerminalListResponseModel>(response, "load terminals");
         }

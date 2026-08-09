@@ -5,6 +5,8 @@ public class CardListRequestModel
     public int     PageNo   { get; set; } = 1;
     public int     PageSize { get; set; } = 10;
     public string? Search   { get; set; }
+    public DateTime? FilterDate { get; set; }
+    public bool?   IsDeleted { get; set; } = false;
 }
 
 public class CardListResponseModel
@@ -60,4 +62,10 @@ public class CardModel
     public string? MobileNo { get; set; }
 
     public decimal Balance { get; set; }
+
+    public string? CreatedByName { get; set; }
+
+    public string? CreatedByRole { get; set; }
+
+    public bool DeleteFlag { get; set; }
 }

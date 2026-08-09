@@ -382,7 +382,7 @@ public class RolePermissionService
         }
     }
 
-    public Result<UserRoleResponseModel> UpdateUserRoles(UserRoleUpdateRequestModel request)
+    public async Task<Result<UserRoleResponseModel>> UpdateUserRolesAsync(UserRoleUpdateRequestModel request)
     {
         try
         {
@@ -400,25 +400,49 @@ public class RolePermissionService
                 return new Result<UserRoleResponseModel> { IsSuccess = false, StatusCode = 400, Message = "One or more role IDs are invalid or inactive." };
             }
 
-            using var transaction = _db.Database.BeginTransaction();
+            using var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-                var existingUserRoles = _db.TblUserRoles.Where(x => x.UserId == request.UserId && !x.DeleteFlag).ToList();
+                var existingUserRoles = _db.TblUserRoles.Where(x => x.UserId == request.UserId).ToList();
 
-                // Soft delete ones not in new list
-                foreach (var eur in existingUserRoles)
+                var groupedUserRoles = existingUserRoles.GroupBy(x => x.RoleId).ToList();
+
+                // 1. Soft delete ones not in new list or handle duplicates
+                foreach (var group in groupedUserRoles)
                 {
-                    if (!request.RoleIds.Contains(eur.RoleId))
+                    var roleId = group.Key;
+                    var items = group.ToList();
+
+                    if (!request.RoleIds.Contains(roleId))
                     {
-                        eur.DeleteFlag = true;
+                        foreach (var item in items)
+                        {
+                            item.DeleteFlag = true;
+                        }
+                    }
+                    else
+                    {
+                        // Order active first, then reactivate the main one, soft-delete duplicates
+                        var sortedItems = items.OrderBy(x => x.DeleteFlag).ToList();
+                        var mainItem = sortedItems[0];
+                        if (mainItem.DeleteFlag)
+                        {
+                            mainItem.DeleteFlag = false;
+                            mainItem.CreatedDate = DateTime.Now;
+                        }
+
+                        for (int i = 1; i < sortedItems.Count; i++)
+                        {
+                            sortedItems[i].DeleteFlag = true;
+                        }
                     }
                 }
 
-                // Add missing ones
+                // 2. Add missing ones
                 foreach (var roleId in request.RoleIds)
                 {
-                    var eur = existingUserRoles.FirstOrDefault(x => x.RoleId == roleId);
-                    if (eur == null)
+                    var exists = existingUserRoles.Any(x => x.RoleId == roleId);
+                    if (!exists)
                     {
                         _db.TblUserRoles.Add(new TblUserRole
                         {
@@ -428,24 +452,18 @@ public class RolePermissionService
                             DeleteFlag = false
                         });
                     }
-                    else if (eur.DeleteFlag)
-                    {
-                        // Reactivate if previously soft deleted
-                        eur.DeleteFlag = false;
-                        eur.CreatedDate = DateTime.Now;
-                    }
                 }
 
-                _db.SaveChanges();
-                transaction.Commit();
+                await _db.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (Exception)
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 throw;
             }
 
-            _ = _audit.WriteAsync(new AuditLogWriteModel
+            await _audit.WriteAsync(new AuditLogWriteModel
             {
                 UserId      = _currentUser.UserId,
                 Action      = AuditActions.RoleChanged,
@@ -507,7 +525,7 @@ public class RolePermissionService
         }
     }
 
-    public Result<RolePermissionResponseModel> UpdateRolePermissions(RolePermissionUpdateRequestModel request)
+    public async Task<Result<RolePermissionResponseModel>> UpdateRolePermissionsAsync(RolePermissionUpdateRequestModel request)
     {
         try
         {
@@ -525,25 +543,49 @@ public class RolePermissionService
                 return new Result<RolePermissionResponseModel> { IsSuccess = false, StatusCode = 400, Message = "One or more permission IDs are invalid or inactive." };
             }
 
-            using var transaction = _db.Database.BeginTransaction();
+            using var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-                var existingRolePermissions = _db.TblRolePermissions.Where(x => x.RoleId == request.RoleId && !x.DeleteFlag).ToList();
+                var existingRolePermissions = _db.TblRolePermissions.Where(x => x.RoleId == request.RoleId).ToList();
 
-                // Soft delete ones not in new list
-                foreach (var erp in existingRolePermissions)
+                var groupedRolePermissions = existingRolePermissions.GroupBy(x => x.PermissionId).ToList();
+
+                // 1. Soft delete ones not in new list or handle duplicates
+                foreach (var group in groupedRolePermissions)
                 {
-                    if (!request.PermissionIds.Contains(erp.PermissionId))
+                    var permissionId = group.Key;
+                    var items = group.ToList();
+
+                    if (!request.PermissionIds.Contains(permissionId))
                     {
-                        erp.DeleteFlag = true;
+                        foreach (var item in items)
+                        {
+                            item.DeleteFlag = true;
+                        }
+                    }
+                    else
+                    {
+                        // Order active first, then reactivate the main one, soft-delete duplicates
+                        var sortedItems = items.OrderBy(x => x.DeleteFlag).ToList();
+                        var mainItem = sortedItems[0];
+                        if (mainItem.DeleteFlag)
+                        {
+                            mainItem.DeleteFlag = false;
+                            mainItem.CreatedDate = DateTime.Now;
+                        }
+
+                        for (int i = 1; i < sortedItems.Count; i++)
+                        {
+                            sortedItems[i].DeleteFlag = true;
+                        }
                     }
                 }
 
-                // Add missing ones
+                // 2. Add missing ones
                 foreach (var permissionId in request.PermissionIds)
                 {
-                    var erp = existingRolePermissions.FirstOrDefault(x => x.PermissionId == permissionId);
-                    if (erp == null)
+                    var exists = existingRolePermissions.Any(x => x.PermissionId == permissionId);
+                    if (!exists)
                     {
                         _db.TblRolePermissions.Add(new TblRolePermission
                         {
@@ -553,24 +595,18 @@ public class RolePermissionService
                             DeleteFlag = false
                         });
                     }
-                    else if (erp.DeleteFlag)
-                    {
-                        // Reactivate if previously soft deleted
-                        erp.DeleteFlag = false;
-                        erp.CreatedDate = DateTime.Now;
-                    }
                 }
 
-                _db.SaveChanges();
-                transaction.Commit();
+                await _db.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (Exception)
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 throw;
             }
 
-            _ = _audit.WriteAsync(new AuditLogWriteModel
+            await _audit.WriteAsync(new AuditLogWriteModel
             {
                 UserId      = _currentUser.UserId,
                 Action      = AuditActions.PermissionChanged,
@@ -584,9 +620,14 @@ public class RolePermissionService
 
             return GetRolePermissions(request.RoleId);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return new Result<RolePermissionResponseModel> { IsSuccess = false, StatusCode = 500, Message = "An unexpected error occurred." };
+            return new Result<RolePermissionResponseModel> 
+            { 
+                IsSuccess = false, 
+                StatusCode = 500, 
+                Message = $"An unexpected error occurred: {ex.Message} {(ex.InnerException != null ? " -> " + ex.InnerException.Message : "")}" 
+            };
         }
     }
 }

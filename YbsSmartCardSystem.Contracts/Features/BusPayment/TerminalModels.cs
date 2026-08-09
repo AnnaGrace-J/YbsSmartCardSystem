@@ -4,6 +4,8 @@ public class TerminalListRequestModel
 {
     public int PageNo { get; set; } = 1;
     public int PageSize { get; set; } = 10;
+    public string? Search { get; set; }
+    public bool? IsDeleted { get; set; } = false;
 }
 
 public class TerminalListResponseModel
@@ -44,4 +46,7 @@ public class TerminalModel
     public string BusNo { get; set; } = string.Empty;
     public string BusLicense { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+    public string? CreatedByName { get; set; }
+    public string? CreatedByRole { get; set; }
+    public bool DeleteFlag { get; set; }
 }

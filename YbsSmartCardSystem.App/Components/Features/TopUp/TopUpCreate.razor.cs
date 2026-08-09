@@ -21,13 +21,65 @@ namespace YbsSmartCardSystem.App.Components.Features.TopUp
         private bool isSuccess;
         private TopUpCreateResponseModel? responseData;
 
+        private string? cardSearchText;
+        private bool isCardDropdownOpen;
+
+        private IEnumerable<CardModel> FilteredCards
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(cardSearchText))
+                {
+                    return cards.Take(50);
+                }
+                var lower = cardSearchText.ToLowerInvariant();
+                return cards.Where(c => c.CardNum.ToLowerInvariant().Contains(lower) || c.OwnerName.ToLowerInvariant().Contains(lower)).Take(50);
+            }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             await LoadCards();
             if (CardId.HasValue && CardId.Value > 0)
             {
                 request.CardId = CardId.Value;
+                var card = cards.FirstOrDefault(c => c.CardId == request.CardId);
+                if (card != null)
+                {
+                    cardSearchText = $"{card.CardNum} - {card.OwnerName}";
+                }
             }
+        }
+
+        private void ShowCardDropdown()
+        {
+            isCardDropdownOpen = true;
+        }
+
+        private async Task HideCardDropdown()
+        {
+            await Task.Delay(200);
+            isCardDropdownOpen = false;
+
+            if (request.CardId > 0)
+            {
+                var card = cards.FirstOrDefault(c => c.CardId == request.CardId);
+                if (card != null)
+                {
+                    cardSearchText = $"{card.CardNum} - {card.OwnerName}";
+                }
+            }
+            else
+            {
+                cardSearchText = null;
+            }
+        }
+
+        private void SelectCard(CardModel card)
+        {
+            request.CardId = card.CardId;
+            cardSearchText = $"{card.CardNum} - {card.OwnerName}";
+            isCardDropdownOpen = false;
         }
 
         private async Task LoadCards()
@@ -90,6 +142,7 @@ namespace YbsSmartCardSystem.App.Components.Features.TopUp
             {
                 responseData = response.Data;
                 request = new TopUpCreateRequestModel(); // Reset form
+                cardSearchText = null;
             }
 
             isSaving = false;

@@ -76,6 +76,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.BusLicense).HasMaxLength(50);
             entity.Property(e => e.BusNo).HasMaxLength(50);
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.CreatedUser).WithMany()
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("FK_TblBus_TblStaffUser");
         });
 
         modelBuilder.Entity<TblCard>(entity =>
@@ -97,6 +101,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.MobileNo).HasMaxLength(20);
             entity.Property(e => e.OwnerName).HasMaxLength(100);
+
+            entity.HasOne(d => d.CreatedUser).WithMany()
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("FK_TblCard_TblStaffUser");
         });
 
         modelBuilder.Entity<TblCardRegistrationOtp>(entity =>
@@ -231,6 +239,10 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.BusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Terminal_Bus");
+
+            entity.HasOne(d => d.CreatedUser).WithMany()
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("FK_TblTerminal_TblStaffUser");
         });
 
         modelBuilder.Entity<TblTopUp>(entity =>
@@ -256,6 +268,10 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.CardId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TopUp_Card");
+
+            entity.HasOne(d => d.CreatedUser).WithMany()
+                .HasForeignKey(d => d.CreatedBy)
+                .HasConstraintName("FK_TblTopUp_TblStaffUser");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>

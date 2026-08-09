@@ -77,12 +77,12 @@ public class RolePermissionController : BaseController
 
     [HttpPut("Users/{userId}/Roles")]
     [RequirePermission(PermissionCodes.RolePermissionManage)]
-    public IActionResult UpdateUserRoles(int userId, [FromBody] UserRoleUpdateRequestModel request)
+    public async Task<IActionResult> UpdateUserRoles(int userId, [FromBody] UserRoleUpdateRequestModel request)
     {
         if (userId != request.UserId)
             return BadRequest("User ID in route does not match User ID in body.");
 
-        var result = _service.UpdateUserRoles(request);
+        var result = await _service.UpdateUserRolesAsync(request);
         return Execute(result);
     }
 
@@ -96,12 +96,12 @@ public class RolePermissionController : BaseController
 
     [HttpPut("Roles/{roleId}/Permissions")]
     [RequirePermission(PermissionCodes.RolePermissionManage)]
-    public IActionResult UpdateRolePermissions(int roleId, [FromBody] RolePermissionUpdateRequestModel request)
+    public async Task<IActionResult> UpdateRolePermissions(int roleId, [FromBody] RolePermissionUpdateRequestModel request)
     {
         if (roleId != request.RoleId)
             return BadRequest("Role ID in route does not match Role ID in body.");
 
-        var result = _service.UpdateRolePermissions(request);
+        var result = await _service.UpdateRolePermissionsAsync(request);
         return Execute(result);
     }
 }

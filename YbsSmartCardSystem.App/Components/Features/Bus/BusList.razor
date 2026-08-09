@@ -10,6 +10,27 @@
     }
 </PageHeader>
 
+<div class="mb-6 flex flex-col md:flex-row gap-3">
+    <div class="relative flex-1 max-w-md">
+        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+            <span class="bi bi-search"></span>
+        </span>
+        <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm" 
+               placeholder="Search by Bus No or Bus License..." @bind="searchText" @onkeyup="@(e => e.Key == "Enter" ? Search() : Task.CompletedTask)" />
+    </div>
+    <div class="relative w-full sm:w-48">
+        <select class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm"
+                @bind="StatusFilter" @bind:after="Search">
+            <option value="active">Active Buses</option>
+            <option value="inactive">Inactive Buses</option>
+            <option value="all">All Buses</option>
+        </select>
+    </div>
+    <button class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors border border-slate-200 shadow-sm" @onclick="Search">
+        Search
+    </button>
+</div>
+
 @if (editingBusId is not null)
 {
     <div class="bg-slate-50 rounded-xl p-6 mb-6 border border-slate-200 shadow-sm max-w-3xl">
@@ -72,6 +93,7 @@
                         <th class="px-6 py-4">No</th>
                         <th class="px-6 py-4">Bus No</th>
                         <th class="px-6 py-4">Bus License</th>
+                        <th class="px-6 py-4">Created By</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -89,18 +111,18 @@
                                         <div class="flex items-center gap-2">
                                             @if (AuthState.HasPermission("Bus.Update"))
                                             {
-                                                <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-400 hover:text-amber-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50"
+                                                <button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-400 hover:text-amber-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50"
                                                         @onclick="() => EditBus(item)"
                                                         disabled="@(editingBusId is not null)">
-                                                    <span class="bi bi-pencil"></span>
+                                                    <span class="bi bi-pencil"></span> Edit
                                                 </button>
                                             }
-                                            @if (AuthState.HasPermission("Bus.Delete"))
+                                            @if (AuthState.HasPermission("Bus.Delete") && !item.DeleteFlag)
                                             {
-                                                <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:border-rose-400 hover:text-rose-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50"
+                                                <button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-rose-400 hover:text-rose-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50"
                                                         @onclick="() => DeleteBus(item.BusId)"
                                                         disabled="@(editingBusId is not null)">
-                                                    <span class="bi bi-trash"></span>
+                                                    <span class="bi bi-trash"></span> Delete
                                                 </button>
                                             }
                                         </div>
@@ -110,12 +132,30 @@
                                 <td class="px-6 py-4 font-medium text-slate-900">
                                     <div class="flex items-center gap-2">
                                         <span class="bi bi-bus-front text-slate-400"></span> @item.BusNo
+                                        @if (item.DeleteFlag)
+                                        {
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">Deleted</span>
+                                        }
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-slate-500">
                                     <div class="inline-flex items-center px-2.5 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-slate-700 font-mono text-xs">
                                         @item.BusLicense
                                     </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if (!string.IsNullOrEmpty(item.CreatedByName))
+                                    {
+                                        <span class="text-slate-700 font-medium">@item.CreatedByName</span>
+                                        @if (!string.IsNullOrEmpty(item.CreatedByRole))
+                                        {
+                                            <span class="text-slate-400 text-xs ml-1">(@item.CreatedByRole)</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-slate-300">—</span>
+                                    }
                                 </td>
                             </tr>
                         }

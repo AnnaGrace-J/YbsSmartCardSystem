@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace YbsSmartCardSystem.Database.AppDbContextModels;
@@ -20,6 +20,10 @@ public partial class TblCard
     public DateTime? UpdatedDate { get; set; }
 
     public bool DeleteFlag { get; set; }
+
+    public int? CreatedBy { get; set; }
+
+    public virtual TblStaffUser? CreatedUser { get; set; }
 
     public virtual ICollection<TblTopUp> TblTopUps { get; set; } = new List<TblTopUp>();
 

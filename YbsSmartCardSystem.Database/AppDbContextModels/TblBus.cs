@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace YbsSmartCardSystem.Database.AppDbContextModels;
@@ -14,6 +14,10 @@ public partial class TblBus
     public DateTime CreatedDate { get; set; }
 
     public bool DeleteFlag { get; set; }
+
+    public int? CreatedBy { get; set; }
+
+    public virtual TblStaffUser? CreatedUser { get; set; }
 
     public virtual ICollection<TblTerminal> TblTerminals { get; set; } = new List<TblTerminal>();
 }

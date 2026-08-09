@@ -12,21 +12,24 @@
 </PageHeader>
 
 <div class="mb-6 flex flex-col md:flex-row gap-3">
+
+    
     <div class="relative flex-1 max-w-md">
-        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Filter by Card</label>
-        <select class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm appearance-none" @onchange="OnCardFilterChanged">
-            <option value="0">-- All Cards --</option>
-            @foreach (var card in cards)
-            {
-                <option value="@card.CardId" selected="@(selectedCardId == card.CardId)">
-                    @card.CardNum - @card.OwnerName
-                </option>
-            }
-        </select>
-        <div class="absolute right-3 bottom-3 pointer-events-none text-slate-400">
-            <span class="bi bi-chevron-down"></span>
-        </div>
+        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+            <span class="bi bi-search"></span>
+        </span>
+        <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm" 
+               placeholder="Search by Card No or Owner Name..." @bind="searchText" @onkeyup="@(e => e.Key == "Enter" ? Search() : Task.CompletedTask)" />
     </div>
+    
+    <div class="relative w-full sm:w-48">
+        <input type="date" class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm" 
+               @bind="request.FilterDate" @bind:after="Search" />
+    </div>
+    
+    <button class="inline-flex items-center justify-center h-10 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors border border-slate-200 shadow-sm" @onclick="Search">
+        Search
+    </button>
 </div>
 
 @if (response.IsSuccess)
@@ -43,6 +46,7 @@
                         <th class="px-6 py-4 text-right">Amount</th>
                         <th class="px-6 py-4">Date</th>
                         <th class="px-6 py-4">Remark</th>
+                        <th class="px-6 py-4">Created By</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -62,6 +66,20 @@
                                 </td>
                                 <td class="px-6 py-4 text-slate-500">@item.TopUpDate.ToString("MMM dd, yyyy HH:mm")</td>
                                 <td class="px-6 py-4 text-slate-500">@item.Remark</td>
+                                <td class="px-6 py-4">
+                                    @if (!string.IsNullOrEmpty(item.CreatedByName))
+                                    {
+                                        <span class="text-slate-700 font-medium">@item.CreatedByName</span>
+                                        @if (!string.IsNullOrEmpty(item.CreatedByRole))
+                                        {
+                                            <span class="text-slate-400 text-xs ml-1">(@item.CreatedByRole)</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-slate-300">—</span>
+                                    }
+                                </td>
                             </tr>
                         }
                     }

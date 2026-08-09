@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using YbsSmartCardSystem.Contracts.Features.Auth;
 using YbsSmartCardSystem.Contracts.Features.Card;
-using YbsSmartCardSystem.Contracts.Features.TopUp;
+using YbsSmartCardSystem.Domain.Common;
 using YbsSmartCardSystem.App.Services;
+using YbsSmartCardSystem.Contracts.Features.TopUp;
 
-namespace YbsSmartCardSystem.App.Components.Features.Auth
+namespace YbsSmartCardSystem.App.Components.Features.Card
 {
-    public partial class UserDashboard : ComponentBase
+    public partial class MyCards
     {
         [Inject]
         private ApiService ApiService { get; set; } = null!;
@@ -15,10 +15,11 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
         [Inject]
         private IJSRuntime JSRuntime { get; set; } = null!;
 
-        private UserDashboardResponseModel? DashboardData { get; set; }
-        private bool IsLoading { get; set; } = true;
-        private string? ErrorMessage { get; set; }
+        [Inject]
+        private NavigationManager NavigationManager { get; set; } = null!;
 
+        private CardModel? card;
+        private bool isLoading = true;
         private string? message;
         private bool isSuccess = true;
 
@@ -38,30 +39,43 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadDashboard();
+            await LoadMyCard();
         }
 
-        private async Task LoadDashboard()
+        private async Task LoadMyCard()
         {
-            IsLoading = true;
-            ErrorMessage = null;
-
-            var result = await Api.GetUserDashboard();
-            if (result.IsSuccess && result.Data != null)
+            isLoading = true;
+            message = null;
+            try
             {
-                DashboardData = result.Data;
+                var result = await ApiService.GetMyCard();
+                if (result.IsSuccess)
+                {
+                    card = result.Data;
+                    if (card != null)
+                    {
+                        newOwnerName = card.OwnerName;
+                    }
+                }
+                else
+                {
+                    message = result.Message;
+                    isSuccess = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ErrorMessage = result.Message ?? "Failed to load dashboard.";
+                message = $"An error occurred: {ex.Message}";
+                isSuccess = false;
             }
-
-            IsLoading = false;
+            finally
+            {
+                isLoading = false;
+            }
         }
 
         private void OpenRenameModal()
         {
-            var card = DashboardData?.Cards.FirstOrDefault();
             if (card == null) return;
             newOwnerName = card.OwnerName;
             showRenameModal = true;
@@ -69,7 +83,6 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
 
         private async Task RenameCard()
         {
-            var card = DashboardData?.Cards.FirstOrDefault();
             if (card == null || string.IsNullOrWhiteSpace(newOwnerName)) return;
 
             isRenaming = true;
@@ -105,20 +118,19 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
 
         private async Task ReportLost()
         {
-            var card = DashboardData?.Cards.FirstOrDefault();
             if (card == null) return;
 
             var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "WARNING: Reporting this card as lost will permanently deactivate it. Are you sure you want to proceed?");
             if (!confirmed) return;
 
-            IsLoading = true;
+            isLoading = true;
             message = null;
             try
             {
                 var result = await ApiService.CardDelete(card.CardId);
                 if (result.IsSuccess)
                 {
-                    DashboardData.Cards.Clear();
+                    card = null;
                     message = "Card has been reported lost and deactivated.";
                     isSuccess = true;
                 }
@@ -135,13 +147,12 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
             }
             finally
             {
-                IsLoading = false;
+                isLoading = false;
             }
         }
 
         private async Task SubmitTopUp()
         {
-            var card = DashboardData?.Cards.FirstOrDefault();
             if (card == null || topUpAmount <= 0) return;
 
             isToppingUp = true;
@@ -158,7 +169,7 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
                 {
                     card.Balance += topUpAmount;
                     showTopUpModal = false;
-                    message = $"Successfully topped up {FormatBalance(topUpAmount)}!";
+                    message = $"Successfully topped up {topUpAmount:N0} MMK!";
                     isSuccess = true;
                 }
                 else
@@ -169,7 +180,7 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
             }
             catch (Exception ex)
             {
-                message = $"Failed to perform top up: {ex.Message}";
+                message = $"Failed to top up: {ex.Message}";
                 isSuccess = false;
             }
             finally
@@ -182,7 +193,7 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
         {
             showAutoReloadModal = false;
             message = autoReloadEnabled 
-                ? $"Auto-reload set to top up {FormatBalance(autoReloadTopUpAmount)} when balance drops below {FormatBalance(autoReloadTriggerAmount)}."
+                ? $"Auto-reload set to top up {autoReloadTopUpAmount:N0} MMK when balance drops below {autoReloadTriggerAmount:N0} MMK."
                 : "Auto-reload disabled.";
             isSuccess = true;
         }
@@ -191,12 +202,17 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
         {
             if (string.IsNullOrEmpty(cardNum)) return "**** **** **** ----";
             if (cardNum.Length <= 4) return $"**** **** **** {cardNum}";
+            // mask digits except the last 4 digits
             return $"**** **** **** {cardNum.Substring(cardNum.Length - 4)}";
         }
 
         private string FormatBalance(decimal bal)
         {
-            return $"{bal:N0} MMK";
+            if (bal >= 500)
+            {
+                return $"${(bal / 1000m):N2}";
+            }
+            return $"${bal:N2}";
         }
     }
 }

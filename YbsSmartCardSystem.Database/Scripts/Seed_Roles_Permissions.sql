@@ -39,11 +39,6 @@ VALUES
 ('Card.Update', 'Update Cards', 'Card', 'Update', 'Ability to edit card details'),
 ('Card.Delete', 'Delete Cards', 'Card', 'Delete', 'Ability to delete cards'),
 
-('Package.View', 'View Packages', 'Package', 'View', 'Ability to view package list and details'),
-('Package.Create', 'Create Packages', 'Package', 'Create', 'Ability to register new packages'),
-('Package.Update', 'Update Packages', 'Package', 'Update', 'Ability to edit package details'),
-('Package.Delete', 'Delete Packages', 'Package', 'Delete', 'Ability to delete packages'),
-
 ('TopUp.View', 'View Top-Ups', 'TopUp', 'View', 'Ability to view top-up list and details'),
 ('TopUp.Create', 'Create Top-Ups', 'TopUp', 'Create', 'Ability to perform card top-up'),
 

@@ -24,7 +24,7 @@
             <div class="flex items-center gap-4 pl-4 border-l border-slate-100">
                 @if (AuthState.IsAuthenticated)
                 {
-                    <span class="inline-flex items-center justify-center h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-500 text-white font-bold text-sm shadow-md shadow-blue-500/20">
+                    <span class="inline-flex items-center justify-center h-9 w-9 rounded-full bg-blue-600 text-white font-medium text-sm">
                         @(AuthState.CurrentUser?.UserName?.FirstOrDefault() ?? 'U')
                     </span>
                 }

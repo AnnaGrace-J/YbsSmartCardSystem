@@ -20,9 +20,27 @@ public class PermissionChecker : IPermissionChecker
     {
         if (_currentUserService.IsViewer)
         {
-            return permissionCode == "Bus.View" || 
-                   permissionCode == "Terminal.View" || 
-                   permissionCode == "ViewerDashboard.View";
+            var viewerExists = await _db.TblViewerUsers
+                .AsNoTracking()
+                .AnyAsync(u => u.ViewerUserId == userId && u.IsActive && !u.DeleteFlag, cancellationToken);
+
+            if (!viewerExists)
+                return false;
+
+            var hasViewerPermission = await _db.TblRolePermissions
+                .AsNoTracking()
+                .Where(rp => !rp.DeleteFlag)
+                .Join(_db.TblRoles.Where(r => r.RoleCode == "Viewer" && r.IsActive && !r.DeleteFlag),
+                    rp => rp.RoleId,
+                    r => r.RoleId,
+                    (rp, r) => rp)
+                .Join(_db.TblPermissions.Where(p => p.IsActive && !p.DeleteFlag && p.PermissionCode == permissionCode),
+                    rp => rp.PermissionId,
+                    p => p.PermissionId,
+                    (rp, p) => p)
+                .AnyAsync(cancellationToken);
+
+            return hasViewerPermission;
         }
         // User must exist, be active, and not deleted
         var userExists = await _db.TblStaffUsers

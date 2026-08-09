@@ -97,7 +97,8 @@ public class TopUpService
                     Amount     = request.Amount,
                     TopUpDate  = DateTime.Now,
                     Remark     = string.IsNullOrWhiteSpace(request.Remark) ? null : request.Remark.Trim(),
-                    DeleteFlag = false
+                    DeleteFlag = false,
+                    CreatedBy  = _currentUser.UserId
                 };
                 _db.TblTopUps.Add(topUp);
 
@@ -162,9 +163,39 @@ public class TopUpService
                 .AsNoTracking()
                 .Where(x => x.DeleteFlag == false);
 
+            // Viewer users can only see top-ups for their own card
+            if (_currentUser.IsViewer)
+            {
+                var viewerPhone = _currentUser.PhoneNumber;
+                if (string.IsNullOrEmpty(viewerPhone))
+                {
+                    return new Result<TopUpListResponseModel>
+                    {
+                        IsSuccess = true,
+                        Message = "No top-ups found.",
+                        Data = new TopUpListResponseModel { TotalCount = 0, TopUps = [] }
+                    };
+                }
+                query = query.Where(x => x.Card.MobileNo == viewerPhone);
+            }
+
             if (request.CardId > 0)
             {
                 query = query.Where(x => x.CardId == request.CardId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                var search = request.Search.Trim();
+                query = query.Where(x => 
+                    x.Card.CardNum.Contains(search) || 
+                    x.Card.OwnerName.Contains(search));
+            }
+
+            if (request.FilterDate.HasValue)
+            {
+                var filterDate = request.FilterDate.Value.Date;
+                query = query.Where(x => x.TopUpDate.Date == filterDate);
             }
 
             var totalCount = query.Count();
@@ -182,7 +213,9 @@ public class TopUpService
                     OwnerName = t.Card.OwnerName,
                     Amount    = t.Amount,
                     TopUpDate = t.TopUpDate,
-                    Remark    = t.Remark
+                    Remark    = t.Remark,
+                    CreatedByName = t.CreatedUser != null ? t.CreatedUser.UserName : null,
+                    CreatedByRole = t.CreatedUser != null ? _db.TblUserRoles.Where(ur => ur.UserId == t.CreatedBy && !ur.DeleteFlag).Select(ur => ur.Role.RoleName).FirstOrDefault() : null
                 })
                 .ToList();
 

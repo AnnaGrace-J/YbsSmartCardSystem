@@ -19,6 +19,14 @@ namespace YbsSmartCardSystem.Api.Controllers
             _cardService = cardService;
         }
 
+        [HttpGet("my-card")]
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public IActionResult GetMyCard()
+        {
+            var result = _cardService.GetMyCard();
+            return Execute(result);
+        }
+
         [HttpGet]
         [RequirePermission(PermissionCodes.CardView)]
         public IActionResult CardList([FromQuery] CardListRequestModel request)

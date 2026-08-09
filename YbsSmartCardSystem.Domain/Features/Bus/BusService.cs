@@ -2,16 +2,19 @@ using YbsSmartCardSystem.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using YbsSmartCardSystem.Database.AppDbContextModels;
 using YbsSmartCardSystem.Contracts.Features.BusPayment;
+using YbsSmartCardSystem.Infrastructure.Services;
 
 namespace YbsSmartCardSystem.Domain.Features.Bus;
 
 public class BusService
 {
     private readonly AppDbContext _db;
+    private readonly ICurrentUserService _currentUser;
 
-    public BusService(AppDbContext db)
+    public BusService(AppDbContext db, ICurrentUserService currentUser)
     {
         _db = db;
+        _currentUser = currentUser;
     }
 
     public Result<BusListResponseModel> GetList(BusListRequestModel request)
@@ -20,7 +23,18 @@ public class BusService
         {
             var query = _db.TblBus
                 .AsNoTracking()
-                .Where(x => x.DeleteFlag == false);
+                .AsQueryable();
+
+            if (request.IsDeleted.HasValue)
+            {
+                query = query.Where(x => x.DeleteFlag == request.IsDeleted.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                var search = request.Search.Trim();
+                query = query.Where(x => x.BusNo.Contains(search) || x.BusLicense.Contains(search));
+            }
 
             var totalCount = query.Count();
 
@@ -32,7 +46,10 @@ public class BusService
                 {
                     BusId      = b.BusId,
                     BusNo      = b.BusNo,
-                    BusLicense = b.BusLicense
+                    BusLicense = b.BusLicense,
+                    CreatedByName = b.CreatedUser != null ? b.CreatedUser.UserName : null,
+                    CreatedByRole = b.CreatedUser != null ? _db.TblUserRoles.Where(ur => ur.UserId == b.CreatedBy && !ur.DeleteFlag).Select(ur => ur.Role.RoleName).FirstOrDefault() : null,
+                    DeleteFlag = b.DeleteFlag
                 })
                 .ToList();
 
@@ -187,7 +204,8 @@ public class BusService
                 BusNo       = busNo,
                 BusLicense  = busLicense,
                 CreatedDate = DateTime.Now,
-                DeleteFlag  = false
+                DeleteFlag  = false,
+                CreatedBy   = _currentUser.UserId
             };
 
             _db.TblBus.Add(bus);

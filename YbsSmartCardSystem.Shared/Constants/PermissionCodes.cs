@@ -8,11 +8,6 @@ public static class PermissionCodes
     public const string CardUpdate = "Card.Update";
     public const string CardDelete = "Card.Delete";
 
-    public const string PackageView   = "Package.View";
-    public const string PackageCreate = "Package.Create";
-    public const string PackageUpdate = "Package.Update";
-    public const string PackageDelete = "Package.Delete";
-
     public const string TopUpView   = "TopUp.View";
     public const string TopUpCreate = "TopUp.Create";
 

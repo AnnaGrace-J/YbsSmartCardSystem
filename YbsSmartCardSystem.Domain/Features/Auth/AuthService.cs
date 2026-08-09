@@ -127,12 +127,26 @@ public class AuthService
         {
             if (_currentUser.IsViewer)
             {
+                var viewerPermissions = _db.TblRolePermissions
+                    .AsNoTracking()
+                    .Where(rp => !rp.DeleteFlag)
+                    .Join(_db.TblRoles.Where(r => r.RoleCode == "Viewer" && r.IsActive && !r.DeleteFlag),
+                        rp => rp.RoleId,
+                        r => r.RoleId,
+                        (rp, r) => rp)
+                    .Join(_db.TblPermissions.Where(p => p.IsActive && !p.DeleteFlag),
+                        rp => rp.PermissionId,
+                        p => p.PermissionId,
+                        (rp, p) => p.PermissionCode)
+                    .Distinct()
+                    .ToList();
+
                 return new Result<CurrentUserPermissionsResponseModel>
                 {
                     IsSuccess = true,
                     Data = new CurrentUserPermissionsResponseModel
                     {
-                        Permissions = new List<string> { "Bus.View", "Terminal.View" }
+                        Permissions = viewerPermissions
                     },
                     Message = "Viewer permissions retrieved successfully.",
                     StatusCode = 200
@@ -194,8 +208,9 @@ public class AuthService
             if (string.IsNullOrWhiteSpace(phoneNumber) || phoneNumber.Length > 20)
                 return new Result<UserRegistrationSendOtpResponseModel> { IsSuccess = false, StatusCode = 400, Message = "Valid Phone number is required." };
             
-            if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 6)
-                return new Result<UserRegistrationSendOtpResponseModel> { IsSuccess = false, StatusCode = 400, Message = "Password must be at least 6 characters." };
+            var passwordValidation = ValidatePassword<UserRegistrationSendOtpResponseModel>(request.Password);
+            if (!passwordValidation.IsSuccess)
+                return passwordValidation;
 
             if (await _db.TblStaffUsers.AnyAsync(u => u.UserName == userName && !u.DeleteFlag) || 
                 await _db.TblViewerUsers.AnyAsync(u => u.UserName == userName && !u.DeleteFlag))
@@ -234,6 +249,10 @@ public class AuthService
             {
                 return new Result<UserRegisterResponseModel> { IsSuccess = false, StatusCode = 400, Message = "All fields are required." };
             }
+
+            var passwordValidation = ValidatePassword<UserRegisterResponseModel>(request.Password);
+            if (!passwordValidation.IsSuccess)
+                return passwordValidation;
 
             if (await _db.TblStaffUsers.AnyAsync(u => u.UserName == userName && !u.DeleteFlag) || 
                 await _db.TblViewerUsers.AnyAsync(u => u.UserName == userName && !u.DeleteFlag))
@@ -291,9 +310,26 @@ public class AuthService
             phoneNumber = NormalizePhoneNumber(phoneNumber);
 
             var user = await _db.TblViewerUsers.FirstOrDefaultAsync(u => u.PhoneNo == phoneNumber && !u.DeleteFlag && u.IsActive);
+            string userName = string.Empty;
+            int userId = 0;
+            string displayPhone = phoneNumber;
+
             if (user == null)
             {
-                return new Result<UserDashboardResponseModel> { IsSuccess = false, StatusCode = 404, Message = "Viewer user not found." };
+                var staffUser = await _db.TblStaffUsers.FirstOrDefaultAsync(u => u.PhoneNo == phoneNumber && !u.DeleteFlag && u.IsActive);
+                if (staffUser == null)
+                {
+                    return new Result<UserDashboardResponseModel> { IsSuccess = false, StatusCode = 404, Message = "User not found." };
+                }
+                userName = staffUser.UserName;
+                userId = staffUser.StaffUserId;
+                displayPhone = staffUser.PhoneNo ?? phoneNumber;
+            }
+            else
+            {
+                userName = user.UserName;
+                userId = user.ViewerUserId;
+                displayPhone = user.PhoneNo;
             }
 
             var cards = await _db.TblCards
@@ -310,9 +346,9 @@ public class AuthService
 
             var response = new UserDashboardResponseModel
             {
-                UserId = user.ViewerUserId,
-                UserName = user.UserName,
-                PhoneNumber = user.PhoneNo,
+                UserId = userId,
+                UserName = userName,
+                PhoneNumber = displayPhone,
                 Cards = cards
             };
 
@@ -336,5 +372,40 @@ public class AuthService
             .ToArray();
 
         return new string(chars);
+    }
+
+    private static Result<T> ValidatePassword<T>(string? password)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            return new Result<T> { IsSuccess = false, StatusCode = 400, Message = "Password is required." };
+        }
+
+        if (password.Length < 6 || password.Length > 16)
+        {
+            return new Result<T> { IsSuccess = false, StatusCode = 400, Message = "Password length must be between 6 and 16 characters." };
+        }
+
+        if (!password.Any(char.IsDigit))
+        {
+            return new Result<T> { IsSuccess = false, StatusCode = 400, Message = "Password must contain at least one number." };
+        }
+
+        if (!password.Any(char.IsUpper))
+        {
+            return new Result<T> { IsSuccess = false, StatusCode = 400, Message = "Password must contain at least one uppercase letter." };
+        }
+
+        if (!password.Any(char.IsLower))
+        {
+            return new Result<T> { IsSuccess = false, StatusCode = 400, Message = "Password must contain at least one lowercase letter." };
+        }
+
+        if (!password.Any(c => !char.IsLetterOrDigit(c)))
+        {
+            return new Result<T> { IsSuccess = false, StatusCode = 400, Message = "Password must contain at least one special character." };
+        }
+
+        return new Result<T> { IsSuccess = true };
     }
 }

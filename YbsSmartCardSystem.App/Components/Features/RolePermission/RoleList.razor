@@ -99,10 +99,10 @@ else
                                     @if (!role.IsSystemRole)
                                     {
                                         <a href="/roles/edit/@role.RoleId" class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-400 hover:text-amber-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm" title="Edit">
-                                            <span class="bi bi-pencil"></span>
+                                            <span class="bi bi-pencil me-1"></span> Edit
                                         </a>
                                         <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:border-rose-400 hover:text-rose-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm" @onclick="() => ConfirmDelete(role)" title="Delete">
-                                            <span class="bi bi-trash"></span>
+                                            <span class="bi bi-trash me-1"></span> Delete
                                         </button>
                                     }
                                 </div>

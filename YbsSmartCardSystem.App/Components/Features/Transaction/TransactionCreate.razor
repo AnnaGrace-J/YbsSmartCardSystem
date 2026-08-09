@@ -64,8 +64,16 @@
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
                             <span class="bi bi-credit-card-2-front"></span>
                         </span>
-                        <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm font-mono tracking-widest" 
-                               type="text" maxlength="50" @bind="request.CardNum" placeholder="Scan or enter card number" />
+                        @if (isCardBound)
+                        {
+                            <input class="w-full bg-slate-100 border border-slate-200 text-slate-500 rounded-xl pl-10 pr-4 py-3 cursor-not-allowed text-sm font-mono tracking-widest" 
+                                   type="text" value="@request.CardNum" readonly />
+                        }
+                        else
+                        {
+                            <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm font-mono tracking-widest" 
+                                   type="text" maxlength="50" @bind="request.CardNum" placeholder="Scan or enter card number" />
+                        }
                     </div>
                 </div>
 

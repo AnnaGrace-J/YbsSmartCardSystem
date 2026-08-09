@@ -13,6 +13,17 @@ public partial class TransactionCreate
     private string? message;
     private bool isSuccess;
     private bool isSaving;
+    private bool isCardBound;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ApiService.GetUserDashboard();
+        if (result.IsSuccess && result.Data?.Cards != null && result.Data.Cards.Any())
+        {
+            request.CardNum = result.Data.Cards.First().CardNum;
+            isCardBound = true;
+        }
+    }
 
     private bool Validate()
     {

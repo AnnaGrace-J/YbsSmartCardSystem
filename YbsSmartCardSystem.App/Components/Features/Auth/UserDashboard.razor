@@ -6,12 +6,7 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 
 <div class="p-6">
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <div>
-            <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Dashboard</h1>
-            <p class="text-slate-500 mt-1">Welcome back, <span class="font-semibold text-slate-700">@DashboardData?.UserName</span></p>
-        </div>
-    </div>
+    <PageHeader Title="Dashboard" Subtitle="@($"Welcome back, {DashboardData?.UserName}")" />
 
     @if (IsLoading)
     {
@@ -29,72 +24,48 @@
     else if (DashboardData != null)
     {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
-                    <span class="bi bi-person-fill"></span>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Username</p>
-                    <p class="text-lg font-bold text-slate-800">@DashboardData.UserName</p>
-                </div>
-            </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                    <span class="bi bi-telephone-fill"></span>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Phone Number</p>
-                    <p class="text-lg font-bold text-slate-800">@DashboardData.PhoneNumber</p>
-                </div>
-            </div>
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl">
-                    <span class="bi bi-credit-card-fill"></span>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-slate-500">Total Cards</p>
-                    <p class="text-lg font-bold text-slate-800">@DashboardData.Cards.Count</p>
-                </div>
-            </div>
+            <StatCard Title="Username" Value="@DashboardData.UserName" IconClass="bi bi-person-fill" />
+            <StatCard Title="Phone Number" Value="@DashboardData.PhoneNumber" IconClass="bi bi-telephone-fill" />
+            <StatCard Title="Total Cards" Value="@DashboardData.Cards.Count.ToString()" IconClass="bi bi-credit-card-fill" />
         </div>
 
-        <h2 class="text-xl font-bold text-slate-800 mb-4">Your Cards</h2>
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Your Card</h2>
         
         @if (DashboardData.Cards.Any())
         {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach (var card in DashboardData.Cards)
                 {
-                    <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+                    <div class="bg-gradient-to-br from-blue-700 to-indigo-900 rounded-[20px] p-6 shadow-[0_8px_30px_rgb(6,81,237,0.2)] border border-white/10 relative overflow-hidden group">
                         <!-- Card UI -->
-                        <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                             <span class="bi bi-credit-card-2-front-fill text-9xl text-white"></span>
                         </div>
                         
-                        <div class="relative z-10 flex justify-between items-start mb-8">
+                        <div class="relative z-10 flex justify-between items-start mb-10">
                             <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded bg-yellow-500/20 flex items-center justify-center">
-                                    <span class="bi bi-cpu text-yellow-500"></span>
+                                <div class="w-10 h-10 rounded bg-white/10 flex items-center justify-center backdrop-blur-md">
+                                    <span class="bi bi-layers-fill text-white"></span>
                                 </div>
-                                <span class="text-slate-300 font-medium text-sm tracking-widest">YBS SMART CARD</span>
+                                <span class="text-white/80 font-medium text-sm tracking-widest">YBS TRANSIT</span>
                             </div>
-                            <span class="bi bi-wifi text-slate-400 text-xl"></span>
+                            <span class="bi bi-wifi text-white/50 text-xl"></span>
                         </div>
                         
                         <div class="relative z-10 space-y-4">
                             <div>
-                                <p class="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Card Number</p>
-                                <p class="text-white font-mono text-xl tracking-wider">@card.CardNum</p>
+                                <p class="text-white/50 text-[10px] uppercase tracking-[0.2em] font-semibold mb-1">Card Number</p>
+                                <p class="text-white font-mono text-xl tracking-[0.15em]">@card.CardNum</p>
                             </div>
                             
-                            <div class="flex justify-between items-end pt-2">
+                            <div class="flex justify-between items-end pt-4">
                                 <div>
-                                    <p class="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Card Holder</p>
-                                    <p class="text-white font-medium uppercase">@card.OwnerName</p>
+                                    <p class="text-white/50 text-[10px] uppercase tracking-[0.2em] font-semibold mb-1">Card Holder</p>
+                                    <p class="text-white font-medium uppercase tracking-wider text-sm">@card.OwnerName</p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Balance</p>
-                                    <p class="text-emerald-400 font-bold text-lg">@card.Balance.ToString("C0")</p>
+                                    <p class="text-white/50 text-[10px] uppercase tracking-[0.2em] font-semibold mb-1">Balance</p>
+                                    <p class="text-teal-300 font-bold text-2xl tracking-tight">@card.Balance.ToString("C0")</p>
                                 </div>
                             </div>
                         </div>

@@ -68,15 +68,12 @@ public class AuthService
             var userId = staffUser != null ? staffUser.StaffUserId : viewerUser!.ViewerUserId;
             var userName = staffUser != null ? staffUser.UserName : viewerUser!.UserName;
             var actualPhoneNumber = staffUser != null ? staffUser.PhoneNo ?? string.Empty : viewerUser!.PhoneNo;
-            var fullName = staffUser != null ? staffUser.FullName : viewerUser!.FullName;
             var userType = staffUser != null ? "Staff" : "Viewer";
-
             var jwtUser = new JwtTokenUser
             {
                 UserId = userId,
                 UserName = userName,
                 PhoneNumber = actualPhoneNumber,
-                FullName = fullName,
                 UserType = userType,
                 Roles = roles
             };
@@ -110,7 +107,6 @@ public class AuthService
                 UserId = userId,
                 UserName = userName,
                 PhoneNumber = actualPhoneNumber,
-                FullName = fullName,
                 Token = tokenResult.Token,
                 ExpiresAt = tokenResult.ExpiresAt,
                 UserType = userType,
@@ -258,7 +254,6 @@ public class AuthService
             var newUser = new TblViewerUser
             {
                 UserName = userName,
-                FullName = userName, // Using UserName as default FullName
                 PhoneNo = phoneNumber,
                 PasswordHash = passwordHash,
                 IsActive = true,

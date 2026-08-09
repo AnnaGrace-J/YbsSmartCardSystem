@@ -1,91 +1,109 @@
 @page "/topup/new"
 
-<div class="container mt-4" style="max-width: 600px;">
-    <div class="card shadow-sm">
-        <div class="card-header bg-success text-white">
-            <h4 class="mb-0">New Card Top Up</h4>
-        </div>
-        <div class="card-body">
+<PageHeader Title="Card Top Up" Subtitle="Add funds to a passenger card" />
+
+<div class="max-w-2xl mt-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-6 md:p-8">
             @if (!string.IsNullOrEmpty(message))
             {
-                <div class="alert @(isSuccess ? "alert-success" : "alert-danger") shadow-sm">
-                    @message
+                <div class="mb-6 p-4 rounded-xl @(isSuccess ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-rose-50 text-rose-700 border-rose-200") border flex items-start gap-3">
+                    <span class="bi @(isSuccess ? "bi-check-circle" : "bi-exclamation-triangle") mt-0.5"></span>
+                    <span class="text-sm font-medium">@message</span>
                 </div>
             }
 
             @if (isSuccess && responseData != null)
             {
-                <div class="card bg-light border-success mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">Top Up Receipt</h5>
-                        <hr />
-                        <div class="row mb-1">
-                            <div class="col-sm-5 text-muted">Receipt No:</div>
-                            <div class="col-sm-7 fw-bold text-dark">@responseData.TopUpNo</div>
+                <div class="mb-8 bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700">
+                    <div class="flex items-center gap-3 mb-6 pb-6 border-b border-white/10">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                            <span class="bi bi-check-lg text-emerald-400 text-xl"></span>
                         </div>
-                        <div class="row mb-1">
-                            <div class="col-sm-5 text-muted">Card Number:</div>
-                            <div class="col-sm-7 fw-bold text-dark">@responseData.CardNum</div>
+                        <div>
+                            <h3 class="text-white font-semibold">Top Up Successful</h3>
+                            <p class="text-slate-400 text-xs mt-0.5">Receipt: @responseData.TopUpNo</p>
                         </div>
-                        <div class="row mb-1">
-                            <div class="col-sm-5 text-muted">Owner Name:</div>
-                            <div class="col-sm-7 text-dark">@responseData.OwnerName</div>
-                        </div>
-                        <div class="row mb-1">
-                            <div class="col-sm-5 text-muted">Top Up Amount:</div>
-                            <div class="col-sm-7 fw-bold text-success">@responseData.Amount.ToString("N2") MMK</div>
-                        </div>
-                        <div class="row mb-1">
-                            <div class="col-sm-5 text-muted">New Balance:</div>
-                            <div class="col-sm-7 fw-bold text-primary">@responseData.NewBalance.ToString("N2") MMK</div>
-                        </div>
-                        <div class="row mb-1">
-                            <div class="col-sm-5 text-muted">Date:</div>
-                            <div class="col-sm-7 text-dark">@responseData.TopUpDate.ToString("yyyy-MM-dd HH:mm:ss")</div>
-                        </div>
-                        @if (!string.IsNullOrEmpty(responseData.Remark))
-                        {
-                            <div class="row mb-1">
-                                <div class="col-sm-5 text-muted">Remark:</div>
-                                <div class="col-sm-7 text-dark">@responseData.Remark</div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Card Details</p>
+                                <p class="text-white font-mono">@responseData.CardNum</p>
+                                <p class="text-slate-300 text-sm mt-1">@responseData.OwnerName</p>
                             </div>
-                        }
+                            <div class="text-right">
+                                <p class="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Top Up Amount</p>
+                                <p class="text-emerald-400 font-bold text-xl">+@responseData.Amount.ToString("N0") MMK</p>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-white/10 flex justify-between items-center">
+                            <p class="text-slate-400 text-sm">New Balance</p>
+                            <p class="text-white font-bold text-xl">@responseData.NewBalance.ToString("N0") <span class="text-slate-400 text-sm font-normal">MMK</span></p>
+                        </div>
+                        
+                        <div class="pt-4 flex justify-between items-center text-xs text-slate-500">
+                            <span>@responseData.TopUpDate.ToString("MMM dd, yyyy HH:mm")</span>
+                            @if (!string.IsNullOrEmpty(responseData.Remark))
+                            {
+                                <span>Remark: @responseData.Remark</span>
+                            }
+                        </div>
                     </div>
                 </div>
             }
 
-            <div class="mb-3">
-                <label class="form-label fw-bold">Select Card <span class="text-danger">*</span></label>
-                <select class="form-select" @bind="request.CardId">
-                    <option value="0">-- Select a Card --</option>
-                    @foreach (var card in cards)
-                    {
-                        <option value="@card.CardId">@card.CardNum - @card.OwnerName (@card.Balance.ToString("N2") MMK)</option>
-                    }
-                </select>
-            </div>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Select Card <span class="text-rose-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <span class="bi bi-credit-card"></span>
+                        </span>
+                        <select class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm appearance-none" @bind="request.CardId">
+                            <option value="0">-- Select a Card --</option>
+                            @foreach (var card in cards)
+                            {
+                                <option value="@card.CardId">@card.CardNum - @card.OwnerName (@card.Balance.ToString("N0") MMK)</option>
+                            }
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                            <span class="bi bi-chevron-down"></span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-bold">Top Up Amount (MMK) <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" placeholder="Min 1,000 - Max 100,000" @bind="request.Amount" />
-                <div class="form-text text-muted">Amount must be between 1,000 MMK and 100,000 MMK.</div>
-            </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Top Up Amount (MMK) <span class="text-rose-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <span class="bi bi-cash"></span>
+                        </span>
+                        <input type="number" class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm" 
+                               placeholder="Min 1,000 - Max 100,000" @bind="request.Amount" />
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Amount must be between 1,000 MMK and 100,000 MMK.</p>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-bold">Remark</label>
-                <textarea class="form-control" rows="2" placeholder="Optional remark (Max 250 characters)" @bind="request.Remark"></textarea>
-            </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Remark</label>
+                    <textarea class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm" 
+                              rows="2" placeholder="Optional remark (Max 250 characters)" @bind="request.Remark"></textarea>
+                </div>
 
-            <div class="d-flex gap-2">
-                <button class="btn btn-success px-4" @onclick="Save" disabled="@isSaving">
-                    @(isSaving ? "Processing…" : "Top Up")
-                </button>
-                <NavLink class="btn btn-outline-secondary" href="/topups">
-                    Top Up History
-                </NavLink>
-                <NavLink class="btn btn-outline-dark ms-auto" href="/cards">
-                    Back to Cards
-                </NavLink>
+                <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
+                    <button class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-sm transition-all duration-200 disabled:opacity-50" @onclick="Save" disabled="@isSaving">
+                        @(isSaving ? "Processing…" : "Process Top Up")
+                    </button>
+                    <NavLink class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm transition-all duration-200 text-center" href="/topups">
+                        History
+                    </NavLink>
+                    <NavLink class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm transition-all duration-200 text-center" href="/cards">
+                        Cancel
+                    </NavLink>
+                </div>
             </div>
         </div>
     </div>

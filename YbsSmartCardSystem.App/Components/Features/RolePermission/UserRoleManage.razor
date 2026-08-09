@@ -3,50 +3,64 @@
 @inject YbsSmartCardSystem.App.Services.ApiService Api
 @inject NavigationManager NavManager
 
-<h3>Manage Roles for User: @UserName</h3>
+<PageHeader Title="User Roles" Subtitle="@($"Manage role assignments for user: {UserName}")" />
 
 @if (ErrorMessage != null)
 {
-    <div class="alert alert-danger">@ErrorMessage</div>
+    <div class="mb-6 mt-6 p-4 rounded-xl bg-rose-50 text-rose-700 text-sm border border-rose-200 flex items-center gap-2">
+        <span class="bi bi-exclamation-triangle"></span> @ErrorMessage
+    </div>
 }
 
 @if (IsLoading)
 {
-    <p>Loading roles...</p>
+    <div class="flex justify-center items-center py-12 mt-6">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    </div>
 }
 else
 {
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-light">
-            <h5 class="mb-0">Available Roles</h5>
-        </div>
-        <div class="card-body">
-            @if (!AvailableRoles.Any())
-            {
-                <p>No active roles available.</p>
-            }
-            else
-            {
-                @foreach (var role in AvailableRoles)
+    <div class="max-w-3xl mt-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                <h5 class="mb-0 text-sm font-semibold text-slate-800 uppercase tracking-wider">Available Roles</h5>
+            </div>
+            <div class="p-6">
+                @if (!AvailableRoles.Any())
                 {
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="role-@role.RoleId"
-                               checked="@SelectedRoleIds.Contains(role.RoleId)"
-                               @onchange="(e) => ToggleRole(role.RoleId, e.Value)" />
-                        <label class="form-check-label" for="role-@role.RoleId">
-                            <strong>@role.RoleName</strong> <br />
-                            <small class="text-muted">@role.RoleCode - @role.Description</small>
-                        </label>
+                    <div class="text-center py-6 text-slate-500 text-sm">
+                        No active roles available to assign.
                     </div>
                 }
-            }
+                else
+                {
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach (var role in AvailableRoles)
+                        {
+                            <div class="flex items-start gap-3 p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all cursor-pointer relative @(SelectedRoleIds.Contains(role.RoleId) ? "bg-blue-50/50 border-blue-300 ring-1 ring-blue-300" : "bg-white")">
+                                <div class="pt-0.5">
+                                    <input class="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500 focus:ring-2 mt-1" type="checkbox" id="role-@role.RoleId"
+                                           checked="@SelectedRoleIds.Contains(role.RoleId)"
+                                           @onchange="(e) => ToggleRole(role.RoleId, e.Value)" />
+                                </div>
+                                <label class="flex-1 cursor-pointer select-none" for="role-@role.RoleId">
+                                    <span class="block text-sm font-semibold text-slate-900 mb-1">@role.RoleName</span>
+                                    <span class="block text-xs font-mono text-slate-500 mb-1">@role.RoleCode</span>
+                                    <span class="block text-xs text-slate-600 line-clamp-2">@role.Description</span>
+                                </label>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex gap-3">
+                <button class="inline-flex items-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm disabled:opacity-50" @onclick="HandleSave" disabled="@IsSaving">
+                    @(IsSaving ? "Saving..." : "Save Changes")
+                </button>
+                <a href="/cards" class="inline-flex items-center px-6 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-xl border border-slate-200 transition-colors shadow-sm">
+                    Cancel
+                </a>
+            </div>
         </div>
-    </div>
-
-    <div class="d-flex gap-2">
-        <button class="btn btn-primary" @onclick="HandleSave" disabled="@IsSaving">
-            @(IsSaving ? "Saving..." : "Save Changes")
-        </button>
-        <a href="/cards" class="btn btn-secondary">Cancel</a>
     </div>
 }

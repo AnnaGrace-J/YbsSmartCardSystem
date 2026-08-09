@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace YbsSmartCardSystem.Database.AppDbContextModels;
@@ -9,11 +9,7 @@ public partial class TblStaffUser
 
     public string UserName { get; set; } = null!;
 
-    public string FullName { get; set; } = null!;
-
     public string? PhoneNo { get; set; }
-
-    public string? Email { get; set; }
 
     public string PasswordHash { get; set; } = null!;
 

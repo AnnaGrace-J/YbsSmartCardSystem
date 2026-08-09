@@ -2,51 +2,60 @@
 @inject ApiService ApiService
 @inject YbsSmartCardSystem.App.Services.AuthStateService AuthState
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Card List</h3>
+<PageHeader Title="Card Registry" Subtitle="Manage passenger cards and balances">
     @if (AuthState.HasPermission("Card.Register"))
     {
-        <NavLink class="btn btn-outline-success" href="/card/new">
-            New Card
+        <NavLink class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm" href="/card/new">
+            <span class="bi bi-plus-lg"></span> New Card
         </NavLink>
     }
-</div>
+</PageHeader>
 
-<div class="row g-2 mb-3">
-    <div class="col-md-6 d-flex gap-2">
-        <input class="form-control" placeholder="Search by Card No or Owner Name..." @bind="searchText" @onkeyup="@(e => e.Key == "Enter" ? Search() : Task.CompletedTask)" />
-        <button class="btn btn-outline-secondary" @onclick="Search">Search</button>
+<div class="mb-6 flex flex-col md:flex-row gap-3">
+    <div class="relative flex-1 max-w-md">
+        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+            <span class="bi bi-search"></span>
+        </span>
+        <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm" 
+               placeholder="Search by Card No or Owner Name..." @bind="searchText" @onkeyup="@(e => e.Key == "Enter" ? Search() : Task.CompletedTask)" />
     </div>
+    <button class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-colors border border-slate-200 shadow-sm" @onclick="Search">
+        Search
+    </button>
 </div>
 
 @if (editingCardId is not null)
 {
-    <div class="card mt-3 p-3">
-        <h5>Edit Card</h5>
+    <div class="bg-slate-50 rounded-xl p-6 mb-6 border border-slate-200 shadow-sm">
+        <h5 class="text-lg font-semibold text-slate-900 mb-4">Edit Card</h5>
 
         @if (!string.IsNullOrEmpty(message))
         {
-            <div class="alert alert-danger">@message</div>
+            <div class="mb-4 p-3 rounded-lg bg-rose-50 text-rose-700 text-sm border border-rose-200 flex items-center gap-2">
+                <span class="bi bi-exclamation-triangle"></span> @message
+            </div>
         }
 
-        <div class="mb-2">
-            <label>Card Number</label>
-            <input class="form-control" type="text" @bind="editCard.CardNum" />
-        </div>
-        <div class="mb-2">
-            <label>Owner Name</label>
-            <input class="form-control" type="text" @bind="editCard.OwnerName" />
-        </div>
-        <div class="mb-2">
-            <label>Mobile No</label>
-            <input class="form-control" type="text" @bind="editCard.MobileNo" />
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Card Number</label>
+                <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" type="text" @bind="editCard.CardNum" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Owner Name</label>
+                <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" type="text" @bind="editCard.OwnerName" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Mobile No</label>
+                <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" type="text" @bind="editCard.MobileNo" />
+            </div>
         </div>
 
-        <div class="d-flex gap-2 mt-2">
-            <button class="btn btn-primary" @onclick="UpdateCard" disabled="@isSaving">
+        <div class="flex gap-3">
+            <button class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="UpdateCard" disabled="@isSaving">
                 @(isSaving ? "Saving…" : "Update")
             </button>
-            <button class="btn btn-secondary" @onclick="CancelEdit" disabled="@isSaving">
+            <button class="inline-flex items-center px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg border border-slate-200 transition-colors shadow-sm disabled:opacity-50" @onclick="CancelEdit" disabled="@isSaving">
                 Cancel
             </button>
         </div>
@@ -55,73 +64,84 @@
 
 @if (!string.IsNullOrEmpty(message) && editingCardId is null)
 {
-    <div class="alert alert-info mt-2">@message</div>
+    <div class="mb-6 p-4 rounded-xl bg-blue-50 text-blue-700 text-sm border border-blue-200 flex items-center gap-2">
+        <span class="bi bi-info-circle"></span> @message
+    </div>
 }
 
 @if (response.IsSuccess)
 {
-    <table class="table table-responsive mt-3">
-        <thead>
-            <tr>
-                <th style="width: 200px;">Actions</th>
-                <th>No</th>
-                <th>Card No</th>
-                <th>FullName</th>
-                <th>MobileNo</th>
-                <th>Balance</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (response.Data is not null)
-            {
-                int rowNo = (request.PageNo - 1) * request.PageSize;
-                @foreach (var item in response.Data.Cards)
-                {
-                    <tr class="@(editingCardId == item.CardId ? "table-warning" : "")">
-                        <td>
-                            <div class="d-flex gap-1">
-                                <button class="btn btn-outline-warning btn-sm"
-                                        @onclick="() => EditCard(item)"
-                                        disabled="@(editingCardId is not null)">
-                                    Edit
-                                </button>
-                                <NavLink class="btn btn-outline-info btn-sm"
-                                         href="@($"/topup/new?cardId={item.CardId}")">
-                                    Top Up
-                                </NavLink>
-                            </div>
-                        </td>
-                        <td>@(++rowNo)</td>
-                        <td>@item.CardNum</td>
-                        <td>@item.OwnerName</td>
-                        <td>@item.MobileNo</td>
-                        <td>@item.Balance.ToString("N2") MMK</td>
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-600">
+                <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wider">
+                    <tr>
+                        <th class="px-6 py-4 w-48">Actions</th>
+                        <th class="px-6 py-4">No</th>
+                        <th class="px-6 py-4">Card No</th>
+                        <th class="px-6 py-4">FullName</th>
+                        <th class="px-6 py-4">MobileNo</th>
+                        <th class="px-6 py-4 text-right">Balance</th>
                     </tr>
-                }
-            }
-        </tbody>
-    </table>
-
-    @if (response.Data is not null)
-    {
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <div>
-                Total: <strong>@response.Data.TotalCount</strong> cards
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
-                    Previous
-                </button>
-                <span>Page @request.PageNo of @TotalPages</span>
-                <button class="btn btn-outline-primary btn-sm" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
-                    Next
-                </button>
-            </div>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @if (response.Data is not null)
+                    {
+                        int rowNo = (request.PageNo - 1) * request.PageSize;
+                        @foreach (var item in response.Data.Cards)
+                        {
+                            <tr class="hover:bg-slate-50/50 transition-colors @(editingCardId == item.CardId ? "bg-amber-50" : "")">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-400 hover:text-amber-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50"
+                                                @onclick="() => EditCard(item)"
+                                                disabled="@(editingCardId is not null)">
+                                            <span class="bi bi-pencil mr-1.5"></span> Edit
+                                        </button>
+                                        <NavLink class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:border-teal-500 hover:text-teal-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm"
+                                                 href="@($"/topup/new?cardId={item.CardId}")">
+                                            <span class="bi bi-wallet2 mr-1.5"></span> Top Up
+                                        </NavLink>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-400">@(++rowNo)</td>
+                                <td class="px-6 py-4 font-mono text-slate-900">@item.CardNum</td>
+                                <td class="px-6 py-4 font-medium text-slate-900">@item.OwnerName</td>
+                                <td class="px-6 py-4 text-slate-500">@item.MobileNo</td>
+                                <td class="px-6 py-4 text-right">
+                                    <span class="font-semibold text-slate-900">@item.Balance.ToString("N0")</span>
+                                    <span class="text-slate-400 text-xs ml-1">MMK</span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
-    }
+
+        @if (response.Data is not null)
+        {
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="text-sm text-slate-500">
+                    Total: <strong class="text-slate-900 font-semibold">@response.Data.TotalCount</strong> cards
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
+                        Previous
+                    </button>
+                    <span class="text-sm text-slate-600 font-medium px-2">Page @request.PageNo of @TotalPages</span>
+                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
+                        Next
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
 }
 else if (response.Message is not null)
 {
-    <div class="alert alert-danger mt-3">@response.Message</div>
+    <div class="mb-6 p-4 rounded-xl bg-rose-50 text-rose-700 text-sm border border-rose-200 flex items-center gap-2">
+        <span class="bi bi-exclamation-triangle"></span> @response.Message
+    </div>
 }
 

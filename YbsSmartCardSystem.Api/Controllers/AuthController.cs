@@ -40,8 +40,7 @@ public class AuthController : BaseController
         {
             UserId = userId,
             UserName = User.FindFirstValue(ClaimTypes.Name) ?? string.Empty,
-            PhoneNumber = User.FindFirstValue(ClaimTypes.MobilePhone) ?? string.Empty,
-            FullName = User.FindFirstValue("FullName") ?? string.Empty,
+            PhoneNumber = User.FindFirstValue("PhoneNumber") ?? string.Empty,
             Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList()
         };
 

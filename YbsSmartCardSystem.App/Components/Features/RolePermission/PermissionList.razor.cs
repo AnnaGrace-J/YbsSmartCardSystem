@@ -6,10 +6,11 @@ namespace YbsSmartCardSystem.App.Components.Features.RolePermission;
 
 public partial class PermissionList : ComponentBase
 {
-    private List<PermissionModel>? Permissions { get; set; }
+    private List<PermissionModel> Permissions { get; set; } = [];
     private PermissionListRequestModel Request { get; set; } = new() { PageNo = 1, PageSize = 10 };
     private int TotalCount { get; set; }
     private string? ErrorMessage { get; set; }
+    private bool IsLoading { get; set; } = true;
 
     private int MaxPage => (int)Math.Ceiling((double)TotalCount / Request.PageSize);
 
@@ -20,16 +21,32 @@ public partial class PermissionList : ComponentBase
 
     private async Task LoadPermissions()
     {
+        IsLoading = true;
         ErrorMessage = null;
-        var result = await Api.GetPermissions(Request);
-        if (result.IsSuccess && result.Data != null)
+        try
         {
-            Permissions = result.Data.Permissions;
-            TotalCount = result.Data.TotalCount;
+            var result = await Api.GetPermissions(Request);
+            if (result.IsSuccess && result.Data != null)
+            {
+                Permissions = result.Data.Permissions;
+                TotalCount = result.Data.TotalCount;
+            }
+            else
+            {
+                Permissions = [];
+                TotalCount = 0;
+                ErrorMessage = result.Message ?? "Failed to load permissions.";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            ErrorMessage = result.Message ?? "Failed to load permissions.";
+            Permissions = [];
+            TotalCount = 0;
+            ErrorMessage = $"Failed to load permissions: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 

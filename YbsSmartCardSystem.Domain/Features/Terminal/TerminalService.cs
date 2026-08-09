@@ -21,7 +21,7 @@ public class TerminalService
             var query = _db.TblTerminals
                 .AsNoTracking()
                 .Include(x => x.Bus)
-                .Where(x => x.DeleteFlag == false && x.Bus.DeleteFlag == false);
+                .Where(x => !x.DeleteFlag && !x.Bus.DeleteFlag);
 
             var totalCount = query.Count();
 

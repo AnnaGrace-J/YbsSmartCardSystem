@@ -26,21 +26,34 @@ public partial class UserRoleManage : ComponentBase
         IsLoading = true;
         ErrorMessage = null;
 
-        var allRolesResult = await Api.GetRoles(new RoleListRequestModel { PageNo = 1, PageSize = 100, IsActive = true });
-        var userRolesResult = await Api.GetUserRoles(UserId);
-
-        if (allRolesResult.IsSuccess && userRolesResult.IsSuccess && allRolesResult.Data != null && userRolesResult.Data != null)
+        try
         {
-            UserName = userRolesResult.Data.UserName;
-            SelectedRoleIds = new HashSet<int>(userRolesResult.Data.Roles.Select(x => x.RoleId));
-            AvailableRoles = allRolesResult.Data.Roles;
-        }
-        else
-        {
-            ErrorMessage = allRolesResult.Message ?? userRolesResult.Message ?? "Failed to load user roles data.";
-        }
+            var allRolesResult = await Api.GetRoles(new RoleListRequestModel { PageNo = 1, PageSize = 100, IsActive = true });
+            var userRolesResult = await Api.GetUserRoles(UserId);
 
-        IsLoading = false;
+            if (allRolesResult.IsSuccess && userRolesResult.IsSuccess && allRolesResult.Data != null && userRolesResult.Data != null)
+            {
+                UserName = userRolesResult.Data.UserName;
+                SelectedRoleIds = new HashSet<int>(userRolesResult.Data.Roles.Select(x => x.RoleId));
+                AvailableRoles = allRolesResult.Data.Roles;
+            }
+            else
+            {
+                AvailableRoles = [];
+                SelectedRoleIds = [];
+                ErrorMessage = allRolesResult.Message ?? userRolesResult.Message ?? "Failed to load user roles data.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to load user roles data: {ex.Message}";
+            AvailableRoles = [];
+            SelectedRoleIds = [];
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     private void ToggleRole(int roleId, object? checkedValue)
@@ -61,23 +74,29 @@ public partial class UserRoleManage : ComponentBase
         IsSaving = true;
         ErrorMessage = null;
 
-        var request = new UserRoleUpdateRequestModel
+        try
         {
-            UserId = UserId,
-            RoleIds = SelectedRoleIds.ToList()
-        };
+            var request = new UserRoleUpdateRequestModel
+            {
+                UserId = UserId,
+                RoleIds = SelectedRoleIds.ToList()
+            };
 
-        var result = await Api.UpdateUserRoles(request);
-        if (result.IsSuccess)
-        {
-            // Redirect back, or show success message.
-            NavManager.NavigateTo("/cards");
+            var result = await Api.UpdateUserRoles(request);
+            if (result.IsSuccess)
+            {
+                // Redirect back, or show success message.
+                NavManager.NavigateTo("/cards");
+                return;
+            }
+            else
+            {
+                ErrorMessage = result.Message ?? "Failed to update user roles.";
+            }
         }
-        else
+        finally
         {
-            ErrorMessage = result.Message ?? "Failed to update user roles.";
+            IsSaving = false;
         }
-
-        IsSaving = false;
     }
 }

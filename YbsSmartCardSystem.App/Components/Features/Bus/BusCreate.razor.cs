@@ -62,6 +62,7 @@ namespace YbsSmartCardSystem.App.Components.Features.Bus
             {
                 request = new BusCreateRequestModel();
                 NavigationManager.NavigateTo("/buses");
+                return;
             }
 
             isSaving = false;

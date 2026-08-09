@@ -72,12 +72,7 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var response = await httpClient.GetAsync(ApiEndpoints.Permissions);
-            var result = await response.Content.ReadFromJsonAsync<Result<CurrentUserPermissionsResponseModel>>();
-            return result ?? new Result<CurrentUserPermissionsResponseModel>
-            {
-                IsSuccess = false,
-                Message   = "Invalid response from API."
-            };
+            return await ReadResultAsync<CurrentUserPermissionsResponseModel>(response, "load permissions");
         }
         catch (Exception ex)
         {
@@ -330,13 +325,7 @@ public class ApiService
             var httpClient = CreateClient();
             var url = $"{ApiEndpoints.BusList}?pageNo={request.PageNo}&pageSize={request.PageSize}";
             var response = await httpClient.GetAsync(url);
-            var result = await response.Content.ReadFromJsonAsync<Result<BusListResponseModel>>();
-            return result ?? new Result<BusListResponseModel>
-            {
-                IsSuccess  = false,
-                StatusCode = (int)response.StatusCode,
-                Message    = "Invalid response from API."
-            };
+            return await ReadResultAsync<BusListResponseModel>(response, "load buses");
         }
         catch (Exception ex)
         {
@@ -433,13 +422,7 @@ public class ApiService
             var httpClient = CreateClient();
             var url = $"{ApiEndpoints.TerminalList}?pageNo={request.PageNo}&pageSize={request.PageSize}";
             var response = await httpClient.GetAsync(url);
-            var result = await response.Content.ReadFromJsonAsync<Result<TerminalListResponseModel>>();
-            return result ?? new Result<TerminalListResponseModel>
-            {
-                IsSuccess  = false,
-                StatusCode = (int)response.StatusCode,
-                Message    = "Invalid response from API."
-            };
+            return await ReadResultAsync<TerminalListResponseModel>(response, "load terminals");
         }
         catch (Exception ex)
         {
@@ -598,8 +581,7 @@ public class ApiService
             var url = $"{ApiEndpoints.RoleList}?pageNo={request.PageNo}&pageSize={request.PageSize}{search}{activeFilter}";
 
             var response = await httpClient.GetAsync(url);
-            var result = await response.Content.ReadFromJsonAsync<Result<RoleListResponseModel>>();
-            return result ?? new Result<RoleListResponseModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<RoleListResponseModel>(response, "load roles");
         }
         catch (Exception ex)
         {
@@ -613,8 +595,7 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var response = await httpClient.GetAsync(ApiEndpoints.RoleDetail(roleId));
-            var result = await response.Content.ReadFromJsonAsync<Result<RoleModel>>();
-            return result ?? new Result<RoleModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<RoleModel>(response, "load role details");
         }
         catch (Exception ex)
         {
@@ -628,8 +609,7 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var response = await httpClient.PostAsJsonAsync(ApiEndpoints.CreateRole, request);
-            var result = await response.Content.ReadFromJsonAsync<Result<RoleModel>>();
-            return result ?? new Result<RoleModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<RoleModel>(response, "create role");
         }
         catch (Exception ex)
         {
@@ -643,8 +623,7 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var response = await httpClient.PatchAsJsonAsync(ApiEndpoints.RoleDetail(roleId), request);
-            var result = await response.Content.ReadFromJsonAsync<Result<RoleModel>>();
-            return result ?? new Result<RoleModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<RoleModel>(response, "update role");
         }
         catch (Exception ex)
         {
@@ -658,8 +637,7 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var response = await httpClient.DeleteAsync(ApiEndpoints.RoleDetail(roleId));
-            var result = await response.Content.ReadFromJsonAsync<Result<RoleModel>>();
-            return result ?? new Result<RoleModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<RoleModel>(response, "delete role");
         }
         catch (Exception ex)
         {
@@ -678,8 +656,7 @@ public class ApiService
             var url = $"{ApiEndpoints.PermissionList}?pageNo={request.PageNo}&pageSize={request.PageSize}{search}{feature}{activeFilter}";
 
             var response = await httpClient.GetAsync(url);
-            var result = await response.Content.ReadFromJsonAsync<Result<PermissionListResponseModel>>();
-            return result ?? new Result<PermissionListResponseModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<PermissionListResponseModel>(response, "load permissions");
         }
         catch (Exception ex)
         {
@@ -693,8 +670,7 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var response = await httpClient.GetAsync(ApiEndpoints.UserRoles(userId));
-            var result = await response.Content.ReadFromJsonAsync<Result<UserRoleResponseModel>>();
-            return result ?? new Result<UserRoleResponseModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<UserRoleResponseModel>(response, "load user roles");
         }
         catch (Exception ex)
         {
@@ -708,8 +684,7 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var response = await httpClient.PutAsJsonAsync(ApiEndpoints.UserRoles(request.UserId), request);
-            var result = await response.Content.ReadFromJsonAsync<Result<UserRoleResponseModel>>();
-            return result ?? new Result<UserRoleResponseModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<UserRoleResponseModel>(response, "update user roles");
         }
         catch (Exception ex)
         {
@@ -723,8 +698,7 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var response = await httpClient.GetAsync(ApiEndpoints.RolePermissions(roleId));
-            var result = await response.Content.ReadFromJsonAsync<Result<RolePermissionResponseModel>>();
-            return result ?? new Result<RolePermissionResponseModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<RolePermissionResponseModel>(response, "load role permissions");
         }
         catch (Exception ex)
         {
@@ -738,13 +712,55 @@ public class ApiService
         {
             var httpClient = CreateClient();
             var response = await httpClient.PutAsJsonAsync(ApiEndpoints.RolePermissions(request.RoleId), request);
-            var result = await response.Content.ReadFromJsonAsync<Result<RolePermissionResponseModel>>();
-            return result ?? new Result<RolePermissionResponseModel> { IsSuccess = false, StatusCode = (int)response.StatusCode, Message = "Invalid response from API." };
+            return await ReadResultAsync<RolePermissionResponseModel>(response, "update role permissions");
         }
         catch (Exception ex)
         {
             return new Result<RolePermissionResponseModel> { IsSuccess = false, StatusCode = 500, Message = $"Failed to reach API: {ex.Message}" };
         }
+    }
+
+    private static async Task<Result<T>> ReadResultAsync<T>(HttpResponseMessage response, string action)
+    {
+        if (!response.IsSuccessStatusCode)
+        {
+            return new Result<T>
+            {
+                IsSuccess = false,
+                StatusCode = (int)response.StatusCode,
+                Message = GetHttpErrorMessage(response, action)
+            };
+        }
+
+        try
+        {
+            var result = await response.Content.ReadFromJsonAsync<Result<T>>();
+            return result ?? new Result<T>
+            {
+                IsSuccess = false,
+                StatusCode = (int)response.StatusCode,
+                Message = "Invalid response from API."
+            };
+        }
+        catch
+        {
+            return new Result<T>
+            {
+                IsSuccess = false,
+                StatusCode = (int)response.StatusCode,
+                Message = $"API returned an invalid response while trying to {action}."
+            };
+        }
+    }
+
+    private static string GetHttpErrorMessage(HttpResponseMessage response, string action)
+    {
+        return (int)response.StatusCode switch
+        {
+            401 => $"Please log in again to {action}.",
+            403 => $"You do not have permission to {action}.",
+            _   => $"API returned {(int)response.StatusCode} while trying to {action}."
+        };
     }
 }
 

@@ -6,11 +6,12 @@ namespace YbsSmartCardSystem.App.Components.Features.RolePermission;
 
 public partial class RoleList : ComponentBase
 {
-    private List<RoleModel>? Roles { get; set; }
+    private List<RoleModel> Roles { get; set; } = [];
     private RoleListRequestModel Request { get; set; } = new() { PageNo = 1, PageSize = 10 };
     private int TotalCount { get; set; }
     private string? ErrorMessage { get; set; }
     private string? IsActiveFilter { get; set; } = "";
+    private bool IsLoading { get; set; } = true;
 
     private bool ShowDeleteConfirm { get; set; }
     private RoleModel? RoleToDelete { get; set; }
@@ -24,6 +25,7 @@ public partial class RoleList : ComponentBase
 
     private async Task LoadRoles()
     {
+        IsLoading = true;
         ErrorMessage = null;
         if (bool.TryParse(IsActiveFilter, out var isActiveVal))
         {
@@ -34,15 +36,30 @@ public partial class RoleList : ComponentBase
             Request.IsActive = null;
         }
 
-        var result = await Api.GetRoles(Request);
-        if (result.IsSuccess && result.Data != null)
+        try
         {
-            Roles = result.Data.Roles;
-            TotalCount = result.Data.TotalCount;
+            var result = await Api.GetRoles(Request);
+            if (result.IsSuccess && result.Data != null)
+            {
+                Roles = result.Data.Roles;
+                TotalCount = result.Data.TotalCount;
+            }
+            else
+            {
+                Roles = [];
+                TotalCount = 0;
+                ErrorMessage = result.Message ?? "Failed to load roles.";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            ErrorMessage = result.Message ?? "Failed to load roles.";
+            Roles = [];
+            TotalCount = 0;
+            ErrorMessage = $"Failed to load roles: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 

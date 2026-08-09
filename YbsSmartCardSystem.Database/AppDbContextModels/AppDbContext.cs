@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -208,8 +208,6 @@ public partial class AppDbContext : DbContext
                 .HasFilter("([DeleteFlag]=(0))");
 
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-            entity.Property(e => e.Email).HasMaxLength(150);
-            entity.Property(e => e.FullName).HasMaxLength(150);
             entity.Property(e => e.LastLoginDate).HasColumnType("datetime");
             entity.Property(e => e.PasswordHash).HasMaxLength(500);
             entity.Property(e => e.PasswordSalt).HasMaxLength(500);
@@ -325,7 +323,6 @@ public partial class AppDbContext : DbContext
                 .HasFilter("([DeleteFlag]=(0))");
 
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-            entity.Property(e => e.FullName).HasMaxLength(150);
             entity.Property(e => e.LastLoginDate).HasColumnType("datetime");
             entity.Property(e => e.PasswordHash).HasMaxLength(500);
             entity.Property(e => e.PasswordSalt).HasMaxLength(500);

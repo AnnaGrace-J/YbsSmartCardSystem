@@ -11,7 +11,6 @@ public class AuthStateService
 
     public int? UserId => CurrentUser?.UserId;
     public string? UserName => CurrentUser?.UserName;
-    public string? FullName => CurrentUser?.FullName;
     public List<string> Roles => CurrentUser?.Roles ?? [];
 
     public event Action? OnChange;

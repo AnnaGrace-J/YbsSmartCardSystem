@@ -30,8 +30,7 @@ public class JwtTokenService : IJwtTokenService
         {
             new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
             new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-            new Claim("FullName", user.FullName),
+            new Claim("PhoneNumber", user.PhoneNumber),
             new Claim("UserType", user.UserType)
         };
 

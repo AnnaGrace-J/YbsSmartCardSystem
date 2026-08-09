@@ -1,35 +1,66 @@
 @page "/terminal/new"
 
-<h4>New Terminal</h4>
+<PageHeader Title="Register Terminal" Subtitle="Add a new card reader terminal" />
 
-@if (!string.IsNullOrWhiteSpace(message))
-{
-    <div class="alert @(isSuccess ? "alert-success" : "alert-danger")">@message</div>
-}
-
-<div class="mb-2">
-    <label>Terminal Serial Number <span class="text-danger">*</span></label>
-    <input class="form-control" type="text" maxlength="100" @bind="request.TerminalSerialNo" />
-</div>
-<div class="mb-2">
-    <label>Bus <span class="text-danger">*</span></label>
-    <select class="form-select" @bind="request.BusId">
-        <option value="0">-- Select Bus --</option>
-        @if (busOptions.Data is not null)
-        {
-            @foreach (var bus in busOptions.Data.Buses)
+<div class="max-w-2xl mt-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-6 md:p-8">
+            @if (!string.IsNullOrWhiteSpace(message))
             {
-                <option value="@bus.BusId">@bus.BusNo — @bus.BusLicense</option>
+                <div class="mb-6 p-4 rounded-xl @(isSuccess ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-rose-50 text-rose-700 border-rose-200") border flex items-start gap-3">
+                    <span class="bi @(isSuccess ? "bi-check-circle" : "bi-exclamation-triangle") mt-0.5"></span>
+                    <span class="text-sm font-medium">@message</span>
+                </div>
             }
-        }
-    </select>
-</div>
-<div class="mb-3 form-check">
-    <input class="form-check-input" type="checkbox" id="isActive" @bind="request.IsActive" />
-    <label class="form-check-label" for="isActive">Active</label>
-</div>
 
-<button class="btn btn-success" @onclick="Save" disabled="@isSaving">
-    @(isSaving ? "Saving…" : "Save")
-</button>
-<NavLink class="btn btn-outline-secondary ms-2" href="/terminals">Cancel</NavLink>
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Terminal Serial Number <span class="text-rose-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <span class="bi bi-upc-scan"></span>
+                        </span>
+                        <input class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm font-mono" 
+                               type="text" maxlength="100" @bind="request.TerminalSerialNo" placeholder="Enter terminal serial number" />
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Assign Bus</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <span class="bi bi-bus-front"></span>
+                        </span>
+                        <select class="w-full bg-white border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm appearance-none" @bind="request.BusId">
+                            <option value="0">-- Select Bus --</option>
+                            @if (busOptions.Data is not null)
+                            {
+                                @foreach (var bus in busOptions.Data.Buses)
+                                {
+                                    <option value="@bus.BusId">@bus.BusNo — @bus.BusLicense</option>
+                                }
+                            }
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                            <span class="bi bi-chevron-down"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2 pt-2 pb-2">
+                    <input class="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="isActive" @bind="request.IsActive" />
+                    <label class="text-sm font-medium text-slate-700" for="isActive">Terminal is Active</label>
+                </div>
+
+                <div class="flex gap-3 pt-4 border-t border-slate-100">
+                    <button class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-sm transition-all duration-200 disabled:opacity-50" @onclick="Save" disabled="@isSaving">
+                        @(isSaving ? "Saving…" : "Save Terminal")
+                    </button>
+                    <NavLink class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm transition-all duration-200 text-center" href="/terminals">
+                        Cancel
+                    </NavLink>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

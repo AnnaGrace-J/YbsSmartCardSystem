@@ -21,6 +21,7 @@ public partial class TerminalList
     private string? message;
     private bool isSuccess;
     private bool isSaving;
+    private bool isLoading = true;
 
     private int TotalPages =>
         response.Data is null || request.PageSize == 0
@@ -29,22 +30,53 @@ public partial class TerminalList
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadBusOptions();
         await LoadTerminals();
     }
 
     private async Task LoadTerminals()
     {
-        response = await ApiService.GetTerminals(request);
+        isLoading = true;
+
+        try
+        {
+            response = await ApiService.GetTerminals(request);
+        }
+        catch (Exception ex)
+        {
+            response = new Result<TerminalListResponseModel>
+            {
+                IsSuccess = false,
+                StatusCode = 500,
+                Message = $"Failed to load terminals: {ex.Message}"
+            };
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private async Task LoadBusOptions()
     {
-        busOptions = await ApiService.GetBuses(new BusListRequestModel { PageNo = 1, PageSize = 1000 });
+        var result = await ApiService.GetBuses(new BusListRequestModel { PageNo = 1, PageSize = 1000 });
+        if (result.IsSuccess)
+        {
+            busOptions = result;
+        }
+        else
+        {
+            message = result.Message ?? "Failed to load bus options.";
+            isSuccess = false;
+        }
     }
 
-    private void EditTerminal(TerminalModel terminal)
+    private async Task EditTerminal(TerminalModel terminal)
     {
+        if (busOptions.Data is null)
+        {
+            await LoadBusOptions();
+        }
+
         editingTerminalId    = terminal.TerminalId;
         editTerminalIsActive = terminal.IsActive;
         editTerminal = new TerminalPatchRequestModel

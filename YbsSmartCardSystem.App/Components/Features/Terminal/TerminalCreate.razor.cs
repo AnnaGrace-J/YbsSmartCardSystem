@@ -61,6 +61,7 @@ public partial class TerminalCreate
         if (result.IsSuccess)
         {
             NavigationManager.NavigateTo("/terminals");
+            return;
         }
 
         isSaving = false;

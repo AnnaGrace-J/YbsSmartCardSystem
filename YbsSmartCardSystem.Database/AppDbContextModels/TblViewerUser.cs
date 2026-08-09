@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace YbsSmartCardSystem.Database.AppDbContextModels;
@@ -8,8 +8,6 @@ public partial class TblViewerUser
     public int ViewerUserId { get; set; }
 
     public string UserName { get; set; } = null!;
-
-    public string FullName { get; set; } = null!;
 
     public string PhoneNo { get; set; } = null!;
 

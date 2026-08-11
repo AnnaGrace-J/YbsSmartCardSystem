@@ -1,7 +1,111 @@
 ﻿@page "/"
+@layout YbsSmartCardSystem.App.Components.Layout.EmptyLayout
+@inject YbsSmartCardSystem.App.Services.AuthStateService AuthState
+@inject NavigationManager NavManager
 
-<PageTitle>Home</PageTitle>
+<div class="min-h-screen bg-surface-container font-body-md text-on-surface">
+    <div class="max-w-5xl mx-auto px-6 py-6">
 
-<h1>Hello, world!</h1>
+        <!-- Top Bar -->
+        <header class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 bg-[#093072] rounded-full flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-outlined text-white" style="font-size: 20px;">commute</span>
+                </div>
+                <span class="font-headline-md text-headline-md text-[#093072]">TransitPay</span>
+            </div>
+            <nav class="flex items-center gap-2">
+                <a href="/login"
+                   class="px-4 py-2 rounded-lg font-label-md text-label-md text-[#093072] hover:bg-[#093072]/10 transition-colors">
+                    Log In
+                </a>
+                <a href="/register"
+                   class="px-4 py-2 rounded-lg bg-[#093072] hover:bg-[#093072]/90 text-on-primary font-label-md text-label-md transition-colors shadow-sm">
+                    Sign Up
+                </a>
+            </nav>
+        </header>
 
-Welcome to your new app.
+        <!-- Hero -->
+        <section class="mt-10 grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div class="flex flex-col gap-8">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/60 text-on-secondary-container font-label-sm text-label-sm self-start">
+                    <span class="material-symbols-outlined" style="font-size: 15px;">nfc</span>
+                    YBS Smart Card System
+                </span>
+
+                <ul class="flex flex-col gap-5">
+                    <li class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-xl bg-[#093072]/10 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-[#093072]" style="font-size: 20px;">credit_card</span>
+                        </span>
+                        <span class="font-body-md text-body-md text-on-surface">Track your card balance</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-xl bg-[#093072]/10 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-[#093072]" style="font-size: 20px;">receipt_long</span>
+                        </span>
+                        <span class="font-body-md text-body-md text-on-surface">Review your ride history</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Transit Card Mockup -->
+            <div class="relative flex justify-center">
+                <div class="relative w-full max-w-sm bg-gradient-to-br from-primary to-inverse-surface rounded-2xl p-6 sm:p-7 text-on-primary shadow-lg overflow-hidden">
+                    <div class="relative flex justify-between items-start">
+                        <div>
+                            <span class="font-label-sm text-label-sm tracking-widest text-on-primary/70 uppercase">TransitPay</span>
+                            <h3 class="font-headline-md text-headline-md mt-1">Commuter Card</h3>
+                        </div>
+                        <span class="material-symbols-outlined text-on-primary/90" style="font-size: 26px;">nfc</span>
+                    </div>
+
+                    <div class="relative mt-8 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-10 h-8 rounded-md bg-gradient-to-br from-amber-200 to-amber-400 border border-amber-500/50 relative overflow-hidden">
+                                <div class="absolute inset-0 flex flex-col justify-between p-[3px] opacity-70">
+                                    <div class="h-px bg-amber-800/50"></div>
+                                    <div class="h-px bg-amber-800/50"></div>
+                                </div>
+                            </div>
+                            <span class="material-symbols-outlined text-on-primary/80" style="font-size: 22px;">contactless</span>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-label-sm text-label-sm text-on-primary/60">Balance</p>
+                            <p class="font-headline-md text-headline-md">12,500</p>
+                        </div>
+                    </div>
+
+                    <div class="relative mt-8 flex justify-between items-end">
+                        <div>
+                            <p class="font-label-sm text-label-sm text-on-primary/60">Cardholder</p>
+                            <p class="font-label-md text-label-md mt-0.5">YBS Commuter</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-label-sm text-label-sm text-on-primary/60">Card Number</p>
+                            <p class="font-mono font-label-md text-label-md mt-0.5 tracking-widest">**** 2457</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-14 pt-5 border-t border-outline-variant/60 text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+                &copy; @DateTime.Now.Year YBS Smart Card System. All rights reserved.
+            </p>
+        </footer>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (AuthState.IsAuthenticated)
+        {
+            NavManager.NavigateTo("/dashboard");
+        }
+    }
+}

@@ -56,9 +56,9 @@
         }
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <StatCard Title="Username" Value="@DashboardData.UserName" IconClass="bi bi-person-fill" />
-            <StatCard Title="Phone Number" Value="@DashboardData.PhoneNumber" IconClass="bi bi-telephone-fill" />
-            <StatCard Title="Total Cards" Value="@DashboardData.Cards.Count.ToString()" IconClass="bi bi-credit-card-fill" />
+            <StatCard Title="Username" Value="@DashboardData.UserName" IconClass="bi bi-person-fill" IconBgClass="bg-sky-50 dark:bg-sky-950/40" IconTextClass="text-sky-600 dark:text-sky-400" />
+            <StatCard Title="Phone Number" Value="@DashboardData.PhoneNumber" IconClass="bi bi-telephone-fill" IconBgClass="bg-emerald-50 dark:bg-emerald-950/40" IconTextClass="text-emerald-600 dark:text-emerald-400" />
+            <StatCard Title="Total Cards" Value="@DashboardData.Cards.Count.ToString()" IconClass="bi bi-credit-card-fill" IconBgClass="bg-amber-50 dark:bg-amber-950/40" IconTextClass="text-amber-600 dark:text-amber-400" />
         </div>
 
         @if (DashboardData.Cards.Any())

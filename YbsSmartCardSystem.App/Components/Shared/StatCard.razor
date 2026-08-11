@@ -3,7 +3,7 @@
         <h3 class="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">@Title</h3>
         @if (!string.IsNullOrEmpty(IconClass))
         {
-            <div class="w-7 h-7 rounded-md bg-neutral-100 text-neutral-600 flex items-center justify-center">
+            <div class="w-7 h-7 rounded-md @IconBgClass @IconTextClass flex items-center justify-center">
                 <span class="@IconClass text-xs leading-none"></span>
             </div>
         }
@@ -22,4 +22,6 @@
     [Parameter] public string Value { get; set; } = "";
     [Parameter] public string Subtitle { get; set; } = "";
     [Parameter] public string IconClass { get; set; } = "";
+    [Parameter] public string IconBgClass { get; set; } = "bg-neutral-100";
+    [Parameter] public string IconTextClass { get; set; } = "text-neutral-600";
 }

@@ -1,9 +1,9 @@
-<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="mb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
     <div>
-        <h1 class="text-3xl font-bold text-slate-900 tracking-tight">@Title</h1>
+        <h1 class="text-xl font-bold text-neutral-900 tracking-tight">@Title</h1>
         @if (!string.IsNullOrEmpty(Subtitle))
         {
-            <p class="mt-2 text-slate-500">@Subtitle</p>
+            <p class="mt-1 text-[11px] font-medium text-neutral-500">@Subtitle</p>
         }
     </div>
     @if (ChildContent != null)

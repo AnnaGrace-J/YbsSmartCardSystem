@@ -6,19 +6,19 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 
 
-<div class="p-6 max-w-7xl mx-auto">
+<div class="max-w-5xl mx-auto p-3 sm:p-4 flex flex-col gap-4">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
         <PageHeader Title="Dashboard" Subtitle="@($"Welcome back, {DashboardData?.UserName}")" />
         @if (DashboardData != null && DashboardData.Cards.Any())
         {
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl px-6 py-3 flex items-center gap-3 shadow-sm">
-                <div class="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
-                    <span class="bi bi-wallet2 text-lg"></span>
+            <div class="bg-neutral-100/60 border border-neutral-200/80 rounded-md p-2 px-3 flex items-center gap-2.5 shadow-xs">
+                <div class="w-7 h-7 rounded-md bg-neutral-200/50 flex items-center justify-center text-neutral-700">
+                    <span class="bi bi-wallet2 text-xs"></span>
                 </div>
                 <div>
-                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-none mb-1">Available Balance</span>
-                    <span class="text-base font-extrabold text-blue-900 leading-none">
+                    <span class="block text-[10px] font-semibold text-neutral-500 uppercase tracking-wider leading-none mb-0.5">Available Balance</span>
+                    <span class="text-sm font-bold text-neutral-900 leading-none">
                         @FormatBalance(DashboardData.Cards.First().Balance)
                     </span>
                 </div>
@@ -29,14 +29,14 @@
     @if (IsLoading)
     {
         <div class="flex justify-center items-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-neutral-900"></div>
         </div>
     }
     else if (!string.IsNullOrEmpty(ErrorMessage))
     {
-        <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-3">
-            <span class="bi bi-exclamation-triangle-fill text-rose-500 mt-0.5"></span>
-            <span class="text-sm text-rose-700 font-medium">@ErrorMessage</span>
+        <div class="p-3 rounded-md bg-red-50 border border-red-200 flex items-start gap-2.5">
+            <span class="bi bi-exclamation-triangle-fill text-red-500 mt-0.5 text-xs"></span>
+            <span class="text-xs text-red-700 font-medium">@ErrorMessage</span>
         </div>
     }
     else if (DashboardData != null)
@@ -44,18 +44,18 @@
         <!-- Alert Feedback Message -->
         @if (!string.IsNullOrEmpty(message))
         {
-            <div class="mb-8 p-4 rounded-2xl border flex items-center justify-between transition-all @(isSuccess ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-rose-50 border-rose-200 text-rose-800") shadow-sm">
-                <div class="flex items-center gap-3">
-                    <span class="bi @(isSuccess ? "bi-check-circle-fill text-emerald-500" : "bi-exclamation-triangle-fill text-rose-500") text-xl"></span>
-                    <span class="text-sm font-semibold">@message</span>
+            <div class="p-3 rounded-md border flex items-center justify-between transition-all @(isSuccess ? "bg-emerald-50 border-emerald-200/60 text-emerald-800" : "bg-red-50 border-red-200/60 text-red-800") shadow-xs">
+                <div class="flex items-center gap-2.5">
+                    <span class="bi @(isSuccess ? "bi-check-circle-fill text-emerald-500" : "bi-exclamation-triangle-fill text-red-500") text-sm"></span>
+                    <span class="text-xs font-semibold">@message</span>
                 </div>
-                <button class="text-slate-400 hover:text-slate-600" @onclick="() => message = null">
-                    <span class="bi bi-x-lg"></span>
+                <button class="text-neutral-400 hover:text-neutral-600 transition-colors" @onclick="() => message = null">
+                    <span class="bi bi-x-lg text-xs"></span>
                 </button>
             </div>
         }
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <StatCard Title="Username" Value="@DashboardData.UserName" IconClass="bi bi-person-fill" />
             <StatCard Title="Phone Number" Value="@DashboardData.PhoneNumber" IconClass="bi bi-telephone-fill" />
             <StatCard Title="Total Cards" Value="@DashboardData.Cards.Count.ToString()" IconClass="bi bi-credit-card-fill" />
@@ -65,154 +65,97 @@
         {
             var card = DashboardData.Cards.First();
             
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
                 
                 <!-- Card Visual Column (5 cols) -->
-                <div class="lg:col-span-5 space-y-6">
-                    <div class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm">
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Your Card</span>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="bg-white border border-neutral-200/80 rounded-md p-3 sm:p-4 shadow-xs">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Your Card</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">Active</span>
                         </div>
                         
-                        <!-- Visual Card (Transit style with glow) -->
-                        <div class="relative group perspective">
-                            <div class="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-2xl p-6 text-white h-56 flex flex-col justify-between shadow-xl transition-all duration-300 transform group-hover:scale-[1.02] relative overflow-hidden">
-                                <!-- Background overlay pattern -->
-                                <div class="absolute inset-0 opacity-[0.08]" style="background-image: radial-gradient(circle, #fff 1.2px, transparent 1.2px); background-size: 16px 16px;"></div>
-                                <div class="absolute -right-16 -top-16 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
-                                <div class="absolute -left-16 -bottom-16 w-48 h-48 bg-indigo-500/20 rounded-full blur-2xl"></div>
-
-                                <!-- Top Row -->
-                                <div class="flex justify-between items-start z-10">
-                                    <div>
-                                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-blue-200/80">YBS SMART CARD</span>
-                                        <h4 class="text-lg font-black mt-0.5 text-white tracking-wide">COMMUTER</h4>
-                                    </div>
-                                    <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-                                        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
-                                            <path d="M5 12a7 7 0 0 1 0-10"/>
-                                            <path d="M8.5 12a12 12 0 0 1 0-15"/>
-                                            <path d="M12 12a17 17 0 0 1 0-20"/>
-                                        </svg>
-                                    </div>
+                        <!-- Visual Card (TransitPay Card matching Homepage mockup exactly) -->
+                        <div class="relative w-full max-w-sm bg-gradient-to-br from-primary to-inverse-surface rounded-2xl p-6 sm:p-7 text-on-primary shadow-lg overflow-hidden transition-all duration-150 hover:scale-[1.01] active:scale-[0.99]">
+                            <div class="relative flex justify-between items-start">
+                                <div>
+                                    <span class="font-label-sm text-label-sm tracking-widest text-on-primary/70 uppercase">TransitPay</span>
+                                    <h3 class="font-headline-md text-headline-md mt-1">Commuter Card</h3>
                                 </div>
+                                <span class="material-symbols-outlined text-on-primary/90" style="font-size: 26px;">nfc</span>
+                            </div>
 
-                                <!-- Middle Balance -->
-                                <div class="z-10 my-auto">
-                                    <span class="block text-[9px] font-bold text-blue-200/60 uppercase tracking-widest leading-none mb-1">Balance</span>
-                                    <span class="text-3xl font-black tracking-tight text-white leading-none">@FormatBalance(card.Balance)</span>
+                            <div class="relative mt-8 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-10 h-8 rounded-md bg-gradient-to-br from-amber-200 to-amber-400 border border-amber-500/50 relative overflow-hidden">
+                                        <div class="absolute inset-0 flex flex-col justify-between p-[3px] opacity-70">
+                                            <div class="h-px bg-amber-800/50"></div>
+                                            <div class="h-px bg-amber-800/50"></div>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-outlined text-on-primary/80" style="font-size: 22px;">contactless</span>
                                 </div>
+                                <div class="text-right">
+                                    <p class="font-label-sm text-label-sm text-on-primary/60">Balance</p>
+                                    <p class="font-headline-md text-headline-md">@FormatBalance(card.Balance)</p>
+                                </div>
+                            </div>
 
-                                <!-- Bottom Row -->
-                                <div class="flex justify-between items-end z-10">
-                                    <div>
-                                        <p class="text-[9px] font-bold text-blue-200/50 uppercase tracking-widest mb-0.5">Cardholder</p>
-                                        <p class="font-bold text-sm tracking-wide text-white truncate max-w-[180px]">@card.OwnerName</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-[9px] font-bold text-blue-200/50 uppercase tracking-widest mb-0.5">Card Number</p>
-                                        <p class="font-mono text-sm tracking-widest font-bold text-white">@FormatCardNum(card.CardNum)</p>
-                                    </div>
+                            <div class="relative mt-8 flex justify-between items-end">
+                                <div>
+                                    <p class="font-label-sm text-label-sm text-on-primary/60">Cardholder</p>
+                                    <p class="font-label-md text-label-md mt-0.5">@card.OwnerName</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-label-sm text-label-sm text-on-primary/60">Card Number</p>
+                                    <p class="font-mono font-label-md text-label-md mt-0.5 tracking-widest">@FormatCardNum(card.CardNum)</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Card Quick Details Info list -->
-                        <div class="mt-6 space-y-3.5 border-t border-slate-100 pt-5">
-                            <div class="flex justify-between items-center text-sm">
-                                <span class="text-slate-400 font-medium">Card Number</span>
-                                <span class="font-mono text-slate-800 font-bold">@card.CardNum</span>
+                        <div class="mt-3 space-y-2 border-t border-neutral-200/60 pt-3">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-neutral-500 font-medium">Card Number</span>
+                                <span class="font-mono text-neutral-800 font-semibold">@card.CardNum</span>
                             </div>
-                            <div class="flex justify-between items-center text-sm">
-                                <span class="text-slate-400 font-medium">Holder Name</span>
-                                <span class="text-slate-800 font-bold">@card.OwnerName</span>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-neutral-500 font-medium">Holder Name</span>
+                                <span class="text-neutral-800 font-semibold">@card.OwnerName</span>
                             </div>
-                            <div class="flex justify-between items-center text-sm">
-                                <span class="text-slate-400 font-medium">Registered Phone</span>
-                                <span class="font-mono text-slate-800 font-bold">@card.MobileNo</span>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-neutral-500 font-medium">Registered Phone</span>
+                                <span class="font-mono text-neutral-800 font-semibold">@card.MobileNo</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Actions / Controls Column (7 cols) -->
-                <div class="lg:col-span-7 space-y-6">
-                    <!-- Shared Wallet & Reload Control -->
-                    @* <div class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm">
-                        <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <span class="bi bi-wallet2 text-blue-600"></span>
-                            <span>Wallet & Reload Settings</span>
-                        </h2>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                            <!-- Quick Balance & Add Funds -->
-                            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 flex flex-col justify-between">
-                                <div>
-                                    <span class="text-xs font-semibold text-slate-500 block mb-1">Available Funds</span>
-                                    <span class="text-3xl font-extrabold text-slate-900 tracking-tight">@FormatBalance(card.Balance)</span>
-                                    <div class="flex items-center gap-1.5 mt-2">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                        <span class="text-[11px] text-slate-500 font-medium">Auto-Reload Sync Enabled</span>
-                                    </div>
-                                </div>
-                                <button class="w-full mt-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
-                                        @onclick="() => showTopUpModal = true">
-                                    <span class="bi bi-plus-circle-fill text-sm"></span>
-                                    <span>Add Funds Now</span>
-                                </button>
-                            </div>
-
-                            <!-- Auto-Reload Settings Card -->
-                            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 flex flex-col justify-between">
-                                <div>
-                                    <span class="text-xs font-semibold text-slate-500 block mb-1">Auto-Reload Settings</span>
-                                    @if (autoReloadEnabled)
-                                    {
-                                        <div class="space-y-1 mt-1">
-                                            <span class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100 uppercase tracking-wide">Active</span>
-                                            <p class="text-sm text-slate-800 font-semibold mt-1">Top up @FormatBalance(autoReloadTopUpAmount)</p>
-                                            <p class="text-xs text-slate-500">Trigger: Drops below @FormatBalance(autoReloadTriggerAmount)</p>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="space-y-1 mt-1">
-                                            <span class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-wide">Disabled</span>
-                                            <p class="text-sm text-slate-800 font-semibold mt-1">Auto-reload is off</p>
-                                            <p class="text-xs text-slate-500">Configure to automatically top up your balance</p>
-                                        </div>
-                                    }
-                                </div>
-                                <button class="w-full mt-5 py-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
-                                        @onclick="() => showAutoReloadModal = true">
-                                    <span class="bi bi-gear-fill text-sm"></span>
-                                    <span>Configure Reload</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div> *@
-
+                <div class="lg:col-span-7 space-y-4">
                     <!-- Card Management Card -->
-                    <div class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm">
-                        <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <span class="bi bi-shield-check text-blue-600"></span>
+                    <div class="bg-white border border-neutral-200/80 rounded-md p-3 sm:p-4 shadow-xs">
+                        <h2 class="text-sm font-semibold text-neutral-800 mb-3 flex items-center gap-1.5">
+                            <span class="bi bi-shield-check text-neutral-600 text-sm"></span>
                             <span>Card Control Center</span>
                         </h2>
-                        <div class="grid grid-cols-2 gap-4">
-                            <button class="flex flex-col items-center justify-center p-4 bg-slate-50 hover:bg-blue-50/50 border border-slate-150 hover:border-blue-200 text-slate-700 hover:text-blue-700 text-xs font-bold rounded-2xl transition-all shadow-sm gap-2"
+                        
+                        <div class="flex items-center gap-2">
+                            <button class="h-8 px-3 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded-md shadow-xs transition-all active:scale-[0.98] flex items-center gap-1.5"
+                                    @onclick="() => showTopUpModal = true">
+                                <i class="bi bi-cash-stack"></i>
+                                <span>Add Funds</span>
+                            </button>
+
+                            <button class="h-8 px-3 text-xs font-medium bg-neutral-100 text-neutral-700 hover:bg-neutral-200/80 border border-neutral-200/60 rounded-md transition-all active:scale-[0.98] flex items-center gap-1.5"
                                     @onclick="OpenRenameModal">
-                                <span class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center text-lg mb-1">
-                                    <i class="bi bi-pencil-square"></i>
-                                </span>
-                                <span>Rename Owner</span>
+                                <i class="bi bi-pencil-square"></i>
+                                <span>Rename Card</span>
                             </button>
                             
-                            <button class="flex flex-col items-center justify-center p-4 bg-slate-50 hover:bg-rose-50/30 border border-slate-150 hover:border-rose-200 text-slate-700 hover:text-rose-700 text-xs font-bold rounded-2xl transition-all shadow-sm gap-2"
+                            <button class="h-8 px-3 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-all active:scale-[0.98] flex items-center gap-1.5 ml-auto"
                                     @onclick="ReportLost">
-                                <span class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center text-lg mb-1">
-                                    <i class="bi bi-shield-slash"></i>
-                                </span>
+                                <i class="bi bi-shield-slash"></i>
                                 <span>Deactivate / Lost</span>
                             </button>
                         </div>
@@ -224,15 +167,15 @@
         else
         {
             <!-- Empty State / Link Card -->
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center max-w-lg mx-auto shadow-sm">
-                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
-                    <span class="bi bi-credit-card-2-front-fill text-3xl"></span>
+            <div class="bg-white border border-neutral-200/80 rounded-md p-6 text-center max-w-md mx-auto shadow-xs">
+                <div class="w-12 h-12 bg-neutral-100 text-neutral-600 rounded-md flex items-center justify-center mx-auto mb-4">
+                    <span class="bi bi-credit-card-2-front-fill text-xl"></span>
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">No Registered Card Found</h3>
-                <p class="text-slate-500 mb-6 text-sm leading-relaxed">
-                    There are no cards registered to your phone number. Register your physical card now to activate virtual wallet access and manage auto-reload settings.
+                <h3 class="text-base font-semibold text-neutral-950 mb-1">No Registered Card Found</h3>
+                <p class="text-xs text-neutral-500 mb-4 leading-normal">
+                    There are no cards registered to your phone number. Register your physical card now to activate virtual wallet access.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <div class="flex flex-col sm:flex-row gap-2 justify-center">
                 </div>
             </div>
         }
@@ -246,36 +189,36 @@
 <!-- 1. Rename Card Modal -->
 @if (showRenameModal)
 {
-    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 max-w-md w-full p-6 animate-in fade-in duration-200">
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-lg font-bold text-slate-900">Rename Card Owner</h3>
-                <button class="text-slate-400 hover:text-slate-600" @onclick="() => showRenameModal = false">
-                    <span class="bi bi-x-lg text-lg"></span>
+    <div class="fixed inset-0 bg-neutral-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-md shadow-md border border-neutral-200/80 max-w-sm w-full p-4 animate-in fade-in duration-100">
+            <div class="flex justify-between items-start mb-3">
+                <h3 class="text-sm font-semibold text-neutral-900">Rename Card Owner</h3>
+                <button class="text-neutral-400 hover:text-neutral-600" @onclick="() => showRenameModal = false">
+                    <span class="bi bi-x-lg text-xs"></span>
                 </button>
             </div>
             
-            <div class="mb-5">
-                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">New Owner Name</label>
+            <div class="flex flex-col gap-1 mb-4">
+                <label class="text-[11px] font-medium text-neutral-600">New Owner Name</label>
                 <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                        <span class="bi bi-person"></span>
+                    <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-neutral-400">
+                        <span class="bi bi-person text-xs"></span>
                     </span>
-                    <input class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all"
+                    <input class="w-full h-8 bg-white border border-neutral-200 rounded-md pl-8 pr-2.5 text-xs text-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:border-neutral-900 transition-all placeholder:text-neutral-400"
                            type="text" maxlength="100" @bind="newOwnerName" placeholder="Enter owner name" />
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3">
-                <button class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors border border-slate-200/60"
+            <div class="flex justify-end gap-2">
+                <button class="h-8 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-100 rounded-md transition-colors active:scale-[0.98]"
                         @onclick="() => showRenameModal = false" disabled="@isRenaming">
                     Cancel
                 </button>
-                <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-500/10 transition-all flex items-center gap-2"
+                <button class="h-8 px-3 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded-md shadow-xs transition-all active:scale-[0.98] flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
                         @onclick="RenameCard" disabled="@(isRenaming || string.IsNullOrWhiteSpace(newOwnerName))">
                     @if (isRenaming)
                     {
-                        <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                        <span class="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></span>
                     }
                     Save Changes
                 </button>
@@ -287,59 +230,59 @@
 <!-- 2. Add Funds Modal -->
 @if (showTopUpModal)
 {
-    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 max-w-md w-full p-6 animate-in fade-in duration-200">
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-lg font-bold text-slate-900">Add Funds to Card</h3>
-                <button class="text-slate-400 hover:text-slate-600" @onclick="() => showTopUpModal = false">
-                    <span class="bi bi-x-lg text-lg"></span>
+    <div class="fixed inset-0 bg-neutral-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-md shadow-md border border-neutral-200/80 max-w-sm w-full p-4 animate-in fade-in duration-100">
+            <div class="flex justify-between items-start mb-3">
+                <h3 class="text-sm font-semibold text-neutral-900">Add Funds to Card</h3>
+                <button class="text-neutral-400 hover:text-neutral-600" @onclick="() => showTopUpModal = false">
+                    <span class="bi bi-x-lg text-xs"></span>
                 </button>
             </div>
 
             <!-- Top Up Amount Selections -->
-            <div class="space-y-4 mb-6">
+            <div class="flex flex-col gap-3.5 mb-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Select Amount</label>
-                    <div class="grid grid-cols-2 gap-2.5">
-                        <button class="py-2.5 rounded-xl border text-sm font-bold transition-all @(topUpAmount == 5000 ? "bg-blue-50 border-blue-500 text-blue-700" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100")"
+                    <label class="text-[11px] font-medium text-neutral-600 block mb-1">Select Amount</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="h-8 rounded-md border text-xs font-semibold transition-all active:scale-[0.98] @(topUpAmount == 5000 ? "bg-neutral-100 border-neutral-400 text-neutral-900" : "bg-neutral-50 border-neutral-200/60 text-neutral-700 hover:bg-neutral-100")"
                                 @onclick="() => topUpAmount = 5000">
                             5,000 MMK
                         </button>
-                        <button class="py-2.5 rounded-xl border text-sm font-bold transition-all @(topUpAmount == 10000 ? "bg-blue-50 border-blue-500 text-blue-700" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100")"
+                        <button class="h-8 rounded-md border text-xs font-semibold transition-all active:scale-[0.98] @(topUpAmount == 10000 ? "bg-neutral-100 border-neutral-400 text-neutral-900" : "bg-neutral-50 border-neutral-200/60 text-neutral-700 hover:bg-neutral-100")"
                                 @onclick="() => topUpAmount = 10000">
                             10,000 MMK
                         </button>
-                        <button class="py-2.5 rounded-xl border text-sm font-bold transition-all @(topUpAmount == 20000 ? "bg-blue-50 border-blue-500 text-blue-700" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100")"
+                        <button class="h-8 rounded-md border text-xs font-semibold transition-all active:scale-[0.98] @(topUpAmount == 20000 ? "bg-neutral-100 border-neutral-400 text-neutral-900" : "bg-neutral-50 border-neutral-200/60 text-neutral-700 hover:bg-neutral-100")"
                                 @onclick="() => topUpAmount = 20000">
                             20,000 MMK
                         </button>
-                        <button class="py-2.5 rounded-xl border text-sm font-bold transition-all @(topUpAmount == 50000 ? "bg-blue-50 border-blue-500 text-blue-700" : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100")"
+                        <button class="h-8 rounded-md border text-xs font-semibold transition-all active:scale-[0.98] @(topUpAmount == 50000 ? "bg-neutral-100 border-neutral-400 text-neutral-900" : "bg-neutral-50 border-neutral-200/60 text-neutral-700 hover:bg-neutral-100")"
                                 @onclick="() => topUpAmount = 50000">
-                            5,0000 MMK
+                            50,000 MMK
                         </button>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Custom Amount (MMK)</label>
+                <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-medium text-neutral-600">Custom Amount (MMK)</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm font-semibold">MMK</span>
-                        <input class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-12 pr-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all font-semibold"
+                        <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-neutral-400 text-xs font-semibold">MMK</span>
+                        <input class="w-full h-8 bg-white border border-neutral-200 rounded-md pl-10 pr-2.5 text-xs text-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:border-neutral-900 transition-all font-semibold"
                                type="number" step="500" min="500" @bind="topUpAmount" placeholder="Enter amount" />
                     </div>
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3">
-                <button class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors border border-slate-200/60"
+            <div class="flex justify-end gap-2">
+                <button class="h-8 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-100 rounded-md transition-colors active:scale-[0.98]"
                         @onclick="() => showTopUpModal = false" disabled="@isToppingUp">
                     Cancel
                 </button>
-                <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-500/10 transition-all flex items-center gap-2"
+                <button class="h-8 px-3 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded-md shadow-xs transition-all active:scale-[0.98] flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
                         @onclick="SubmitTopUp" disabled="@(isToppingUp || topUpAmount <= 0)">
                     @if (isToppingUp)
                     {
-                        <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                        <span class="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></span>
                     }
                     Confirm Deposit
                 </button>
@@ -348,64 +291,33 @@
     </div>
 }
 
-<!-- 3. Auto Reload Modal -->
-@if (showAutoReloadModal)
+<!-- 3. Deactivate / Lost Modal -->
+@if (showDeactivateModal)
 {
-    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 max-w-md w-full p-6 animate-in fade-in duration-200">
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-lg font-bold text-slate-900">Auto-Reload Settings</h3>
-                <button class="text-slate-400 hover:text-slate-600" @onclick="() => showAutoReloadModal = false">
-                    <span class="bi bi-x-lg text-lg"></span>
+    <div class="fixed inset-0 bg-neutral-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-md shadow-md border border-neutral-200/80 max-w-sm w-full p-4 animate-in fade-in duration-100">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="text-sm font-semibold text-neutral-900 flex items-center gap-1.5">
+                    <span class="bi bi-exclamation-triangle-fill text-red-500 text-sm"></span>
+                    Deactivate Smart Card?
+                </h3>
+                <button class="text-neutral-400 hover:text-neutral-600" @onclick="() => showDeactivateModal = false">
+                    <span class="bi bi-x-lg text-xs"></span>
                 </button>
             </div>
+            
+            <p class="text-xs text-neutral-500 mb-4 leading-normal">
+                WARNING: Reporting this card as lost will permanently deactivate it. All card details will be cleared and this action cannot be undone. Are you sure you want to proceed?
+            </p>
 
-            <div class="space-y-4 mb-6">
-                <!-- Toggle Switch -->
-                <div class="flex items-center justify-between py-2 border-b border-slate-100">
-                    <div>
-                        <p class="text-sm font-bold text-slate-900">Enable Auto-Reload</p>
-                        <p class="text-xs text-slate-500">Automatically top up your card when it runs low</p>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" @bind="autoReloadEnabled" class="sr-only peer">
-                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    </label>
-                </div>
-
-                @if (autoReloadEnabled)
-                {
-                    <div class="space-y-4 animate-in slide-in-from-top-2 duration-200">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">When Balance Drops Below</label>
-                            <select class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-white transition-all font-semibold"
-                                    @bind="autoReloadTriggerAmount">
-                                <option value="5000">5,000 MMK</option>
-                                <option value="10000">10,000 MMK</option>
-                                <option value="20000">20,000 MMK</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Top Up Amount</label>
-                            <select class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:bg-white transition-all font-semibold"
-                                    @bind="autoReloadTopUpAmount">
-                                <option value="10000">10,000 MMK</option>
-                                <option value="20000">20,000 MMK</option>
-                                <option value="50000">50,000 MMK</option>
-                            </select>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            <div class="flex justify-end gap-3">
-                <button class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors border border-slate-200/60"
-                        @onclick="() => showAutoReloadModal = false">
+            <div class="flex justify-end gap-2">
+                <button class="h-8 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-100 rounded-md transition-colors active:scale-[0.98]"
+                        @onclick="() => showDeactivateModal = false">
                     Cancel
                 </button>
-                <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-500/10 transition-all"
-                        @onclick="SaveAutoReloadSettings">
-                    Save Configuration
+                <button class="h-8 px-3 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-all active:scale-[0.98] flex items-center gap-1.5"
+                        @onclick="ConfirmReportLost">
+                    Confirm Deactivate
                 </button>
             </div>
         </div>

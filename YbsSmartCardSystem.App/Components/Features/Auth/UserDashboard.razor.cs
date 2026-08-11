@@ -31,10 +31,7 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
         private decimal topUpAmount = 10000;
         private bool isToppingUp = false;
 
-        private bool showAutoReloadModal = false;
-        private bool autoReloadEnabled = true;
-        private decimal autoReloadTriggerAmount = 10000;
-        private decimal autoReloadTopUpAmount = 20000;
+        private bool showDeactivateModal = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -103,14 +100,19 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
             }
         }
 
-        private async Task ReportLost()
+        private void ReportLost()
+        {
+            var card = DashboardData?.Cards.FirstOrDefault();
+            if (card == null) return;
+            showDeactivateModal = true;
+        }
+
+        private async Task ConfirmReportLost()
         {
             var card = DashboardData?.Cards.FirstOrDefault();
             if (card == null) return;
 
-            var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "WARNING: Reporting this card as lost will permanently deactivate it. Are you sure you want to proceed?");
-            if (!confirmed) return;
-
+            showDeactivateModal = false;
             IsLoading = true;
             message = null;
             try
@@ -118,7 +120,7 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
                 var result = await ApiService.CardDelete(card.CardId);
                 if (result.IsSuccess)
                 {
-                    DashboardData.Cards.Clear();
+                    DashboardData?.Cards.Clear();
                     message = "Card has been reported lost and deactivated.";
                     isSuccess = true;
                 }
@@ -176,15 +178,6 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
             {
                 isToppingUp = false;
             }
-        }
-
-        private void SaveAutoReloadSettings()
-        {
-            showAutoReloadModal = false;
-            message = autoReloadEnabled 
-                ? $"Auto-reload set to top up {FormatBalance(autoReloadTopUpAmount)} when balance drops below {FormatBalance(autoReloadTriggerAmount)}."
-                : "Auto-reload disabled.";
-            isSuccess = true;
         }
 
         private string FormatCardNum(string? cardNum)

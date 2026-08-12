@@ -2,15 +2,21 @@
 @inject NavigationManager NavManager
 @implements IDisposable
 
-<div class="h-16 flex items-center justify-between px-6 border-b border-white/10 bg-black/15">
+<div class="h-16 flex items-center justify-between px-6 border-b border-neutral-200/80 bg-gradient-to-r from-white/70 via-transparent to-transparent relative">
     <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 bg-white/15 rounded-full flex items-center justify-center border border-white/25">
-            <span class="material-symbols-outlined text-white" style="font-size: 18px;">commute</span>
+        <div class="relative">
+            <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-amber-400 via-orange-400 to-rose-500 opacity-60 blur-[6px]"></div>
+            <div class="relative w-9 h-9 bg-gradient-to-br from-[#2a3450] to-[#20283c] rounded-full flex items-center justify-center border border-white/60 shadow-md">
+                <span class="material-symbols-outlined text-amber-300 drop-shadow" style="font-size: 18px;">commute</span>
+            </div>
         </div>
-        <a class="text-lg font-bold text-white tracking-tight" href="">TransitPay</a>
+        <div class="leading-tight">
+            <a class="text-lg font-bold text-neutral-900 tracking-tight" href="">TransitPay</a>
+            <p class="text-[10px] text-neutral-500 font-medium uppercase tracking-[0.18em]">Smart Card Suite</p>
+        </div>
     </div>
     <!-- Mobile Menu Toggle -->
-    <button class="md:hidden text-white/80 hover:text-white transition-colors" onclick="document.getElementById('mobile-nav').classList.toggle('hidden')">
+    <button class="md:hidden text-neutral-600 hover:text-neutral-900 transition-colors p-2 rounded-lg hover:bg-neutral-200/70 active:scale-95" onclick="document.getElementById('mobile-nav').classList.toggle('hidden')">
         <span class="bi bi-list text-2xl"></span>
     </button>
 </div>
@@ -20,95 +26,131 @@
 
         @if (AuthState.IsAuthenticated)
         {
-            <div class="text-xs font-semibold text-white/45 uppercase tracking-wider px-3 mb-2 mt-4">Personal</div>
+            <div class="flex items-center gap-2 px-3 mb-2 mt-4">
+                <span class="h-3.5 w-1 rounded-full bg-gradient-to-b from-amber-500/80 to-transparent"></span>
+                <span class="text-[10px] font-semibold text-neutral-500 uppercase tracking-[0.18em]">Personal</span>
+            </div>
             
-            <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/dashboard">
-                <span class="bi bi-house-door-fill text-lg opacity-75"></span> Dashboard
+            <NavLink class="@NavLinkClass" href="/dashboard">
+                <span class="@NavIndicator"></span>
+                <span class="@NavIcon"><span class="bi bi-house-door-fill"></span></span>
+                Dashboard
             </NavLink>
 
 
             @if (AuthState.HasPermission("Card.View") || AuthState.HasPermission("TopUp.View") || AuthState.HasPermission("Transaction.View"))
             {
-                <div class="text-xs font-semibold text-white/45 uppercase tracking-wider px-3 mb-2 mt-6">Operations</div>
+                <div class="flex items-center gap-2 px-3 mb-2 mt-6">
+                    <span class="h-3.5 w-1 rounded-full bg-gradient-to-b from-amber-500/80 to-transparent"></span>
+                    <span class="text-[10px] font-semibold text-neutral-500 uppercase tracking-[0.18em]">Operations</span>
+                </div>
             }
 
             @if (AuthState.HasPermission("Card.View"))
             {
-                <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/cards">
-                    <span class="bi bi-credit-card-fill text-lg opacity-75"></span> Card List
+                <NavLink class="@NavLinkClass" href="/cards">
+                    <span class="@NavIndicator"></span>
+                    <span class="@NavIcon"><span class="bi bi-credit-card-fill"></span></span>
+                    Card List
                 </NavLink>
             }
 
             @if (AuthState.HasPermission("TopUp.View") || AuthState.HasPermission("TopUp.Create"))
             {
-                <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/topups">
-                    <span class="bi bi-wallet2 text-lg opacity-75"></span> Top Up History
+                <NavLink class="@NavLinkClass" href="/topups">
+                    <span class="@NavIndicator"></span>
+                    <span class="@NavIcon"><span class="bi bi-wallet2"></span></span>
+                    Top Up History
                 </NavLink>
             }
 
             @if (AuthState.HasPermission("BusPayment.Create"))
             {
-                <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/transactions/new">
-                    <span class="bi bi-nfc text-lg opacity-75"></span> Bus Payment (Tap)
+                <NavLink class="@NavLinkClass" href="/transactions/new">
+                    <span class="@NavIndicator"></span>
+                    <span class="@NavIcon"><span class="bi bi-nfc"></span></span>
+                    Bus Payment (Tap)
                 </NavLink>
             }
 
             @if (AuthState.HasPermission("Transaction.View"))
             {
-                <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/transactions">
-                    <span class="bi bi-clock-history text-lg opacity-75"></span> Transactions
+                <NavLink class="@NavLinkClass" href="/transactions">
+                    <span class="@NavIndicator"></span>
+                    <span class="@NavIcon"><span class="bi bi-clock-history"></span></span>
+                    Transactions
                 </NavLink>
             }
 
             @if (AuthState.HasPermission("Bus.View") || AuthState.HasPermission("Terminal.View"))
             {
-                <div class="text-xs font-semibold text-white/45 uppercase tracking-wider px-3 mb-2 mt-6">Fleet & Devices</div>
+                <div class="flex items-center gap-2 px-3 mb-2 mt-6">
+                    <span class="h-3.5 w-1 rounded-full bg-gradient-to-b from-amber-500/80 to-transparent"></span>
+                    <span class="text-[10px] font-semibold text-neutral-500 uppercase tracking-[0.18em]">Fleet & Devices</span>
+                </div>
             }
 
             @if (AuthState.HasPermission("Bus.View"))
             {
-                <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/buses">
-                    <span class="bi bi-bus-front-fill text-lg opacity-75"></span> Bus List
+                <NavLink class="@NavLinkClass" href="/buses">
+                    <span class="@NavIndicator"></span>
+                    <span class="@NavIcon"><span class="bi bi-bus-front-fill"></span></span>
+                    Bus List
                 </NavLink>
             }
 
             @if (AuthState.HasPermission("Terminal.View"))
             {
-                <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/terminals">
-                    <span class="bi bi-terminal-fill text-lg opacity-75"></span> Terminal List
+                <NavLink class="@NavLinkClass" href="/terminals">
+                    <span class="@NavIndicator"></span>
+                    <span class="@NavIcon"><span class="bi bi-terminal-fill"></span></span>
+                    Terminal List
                 </NavLink>
             }
 
             @if (AuthState.HasPermission("RolePermission.View") || AuthState.HasPermission("AuditLog.View"))
             {
-                <div class="text-xs font-semibold text-white/45 uppercase tracking-wider px-3 mb-2 mt-6">Administration</div>
+                <div class="flex items-center gap-2 px-3 mb-2 mt-6">
+                    <span class="h-3.5 w-1 rounded-full bg-gradient-to-b from-amber-500/80 to-transparent"></span>
+                    <span class="text-[10px] font-semibold text-neutral-500 uppercase tracking-[0.18em]">Administration</span>
+                </div>
             }
 
             @if (AuthState.HasPermission("RolePermission.View"))
             {
-                <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/roles">
-                    <span class="bi bi-shield-lock-fill text-lg opacity-75"></span> Roles
+                <NavLink class="@NavLinkClass" href="/roles">
+                    <span class="@NavIndicator"></span>
+                    <span class="@NavIcon"><span class="bi bi-shield-lock-fill"></span></span>
+                    Roles
                 </NavLink>
 
-                <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/permissions">
-                    <span class="bi bi-key-fill text-lg opacity-75"></span> Permissions
+                <NavLink class="@NavLinkClass" href="/permissions">
+                    <span class="@NavIndicator"></span>
+                    <span class="@NavIcon"><span class="bi bi-key-fill"></span></span>
+                    Permissions
                 </NavLink>
             }
 
             @if (AuthState.HasPermission("AuditLog.View"))
             {
-                <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/auditlogs">
-                    <span class="bi bi-journal-text text-lg opacity-75"></span> Audit Log
+                <NavLink class="@NavLinkClass" href="/auditlogs">
+                    <span class="@NavIndicator"></span>
+                    <span class="@NavIcon"><span class="bi bi-journal-text"></span></span>
+                    Audit Log
                 </NavLink>
             }
         }
         else
         {
-            <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/login">
-                <span class="bi bi-person-fill text-lg opacity-75"></span> Login
+            <NavLink class="@NavLinkClass" href="/login">
+                <span class="@NavIndicator"></span>
+                <span class="@NavIcon"><span class="bi bi-person-fill"></span></span>
+                Login
             </NavLink>
-            <NavLink class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all border-l-4 border-transparent [&.active]:bg-white/15 [&.active]:text-white [&.active]:border-amber-400" href="/register">
-                <span class="bi bi-person-plus-fill text-lg opacity-75"></span> Register
+            <NavLink class="@NavLinkClass" href="/register">
+                <span class="@NavIndicator"></span>
+                <span class="@NavIcon"><span class="bi bi-person-plus-fill"></span></span>
+                Register
             </NavLink>
         }
 
@@ -117,14 +159,20 @@
 
 @if (AuthState.IsAuthenticated)
 {
-    <div class="p-4 mt-auto border-t border-white/10 bg-black/10">
-        <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-rose-500/20 hover:text-rose-300 transition-colors" @onclick="HandleLogout">
-            <span class="bi bi-box-arrow-right text-lg"></span> Logout
+    <div class="p-4 mt-auto border-t border-neutral-200/80 bg-gradient-to-b from-white/30 to-neutral-200/40">
+        <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-rose-600 hover:bg-gradient-to-r hover:from-rose-500/10 hover:to-transparent border border-transparent hover:border-rose-300/70 transition-all duration-200 active:scale-[0.98]" @onclick="HandleLogout">
+            <span class="bi bi-box-arrow-right text-base"></span> Logout
         </button>
     </div>
 }
 
 @code {
+    private const string NavLinkClass = "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all duration-200 hover:bg-neutral-200/60 [&.active]:bg-gradient-to-r [&.active]:from-amber-400/25 [&.active]:via-white/60 [&.active]:to-transparent [&.active]:text-neutral-900 [&.active]:shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]";
+
+    private const string NavIcon = "relative flex items-center justify-center w-8 h-8 rounded-lg bg-neutral-200/60 border border-neutral-300/80 text-amber-600 text-base transition-all duration-200 group-hover:bg-white group-hover:border-neutral-300 group-hover:text-amber-500 group-hover:scale-105 group-hover:shadow-[0_0_14px_rgba(251,191,36,0.35)] group-[.active]:bg-amber-100 group-[.active]:border-amber-300 group-[.active]:text-amber-700 group-[.active]:shadow-[0_0_16px_rgba(251,191,36,0.4)]";
+
+    private const string NavIndicator = "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 rounded-full bg-gradient-to-b from-amber-500 to-orange-600 opacity-0 transition-all duration-300 group-hover:opacity-70 group-hover:h-4 group-[.active]:opacity-100 group-[.active]:h-6 shadow-[0_0_10px_rgba(251,191,36,0.7)]";
+
     protected override void OnInitialized()
     {
         AuthState.OnChange += StateHasChanged;

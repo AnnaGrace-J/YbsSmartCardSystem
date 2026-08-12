@@ -11,10 +11,10 @@
 
             <!-- Header -->
             <div class="text-center flex flex-col gap-sm items-center">
-                <div class="w-10 h-10 bg-[#093072] rounded-full flex items-center justify-center text-white mb-1.5">
+                <div class="w-10 h-10 bg-[#222a3d] rounded-full flex items-center justify-center text-white mb-1.5">
                     <span class="material-symbols-outlined" style="font-size: 22px; font-variation-settings: 'FILL' 1;">commute</span>
                 </div>
-                <h1 class="font-headline-md text-headline-md text-[#093072]">TransitPay</h1>
+                <h1 class="font-headline-md text-headline-md text-[#222a3d]">TransitPay</h1>
                 <p class="font-body-md text-body-md text-on-surface-variant">Create your account for frictionless mobility.</p>
             </div>
 
@@ -39,7 +39,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">person</span>
                                 </div>
-                                <InputText id="username" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#093072] focus:border-[#093072] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                                <InputText id="username" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
                                            placeholder="johndoe" @bind-Value="Model.UserName" />
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">phone</span>
                                 </div>
-                                <InputText id="phone" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#093072] focus:border-[#093072] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                                <InputText id="phone" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
                                            placeholder="e.g. 09123456789" @bind-Value="Model.PhoneNumber" />
                             </div>
                         </div>
@@ -63,7 +63,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">lock</span>
                                 </div>
-                                <InputText id="password" type="password" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#093072] focus:border-[#093072] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                                <InputText id="password" type="password" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
                                            placeholder="••••••••" @bind-Value="Model.Password" />
                             </div>
                         </div>
@@ -75,14 +75,14 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">lock_reset</span>
                                 </div>
-                                <InputText id="confirm_password" type="password" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#093072] focus:border-[#093072] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                                <InputText id="confirm_password" type="password" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
                                            placeholder="••••••••" @bind-Value="ConfirmPassword" />
                             </div>
                         </div>
 
                         <!-- Action -->
                         <button type="submit"
-                                class="mt-sm w-full bg-[#093072] hover:bg-[#093072]/90 text-on-primary font-label-md text-label-md py-2.5 px-4 rounded-md transition-all duration-200 active:scale-95 shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+                                class="mt-sm w-full bg-[#222a3d] hover:bg-[#2d3650] text-on-primary font-label-md text-label-md py-2.5 px-4 rounded-md transition-all duration-200 active:scale-95 shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
                                 disabled="@IsSubmitting">
                             @if (IsSubmitting)
                             {
@@ -120,13 +120,13 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">pin</span>
                                 </div>
-                                <InputText id="otp" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#093072] focus:border-[#093072] transition-colors placeholder:text-on-surface-variant/50 font-body-md tracking-[0.5em] text-center"
+                                <InputText id="otp" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md tracking-[0.5em] text-center"
                                            placeholder="000000" @bind-Value="Model.OtpCode" maxlength="6" />
                             </div>
                         </div>
 
                         <button type="submit"
-                                class="mt-sm w-full bg-[#093072] hover:bg-[#093072]/90 text-on-primary font-label-md text-label-md py-2.5 px-4 rounded-md transition-all duration-200 active:scale-95 shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+                                class="mt-sm w-full bg-[#222a3d] hover:bg-[#2d3650] text-on-primary font-label-md text-label-md py-2.5 px-4 rounded-md transition-all duration-200 active:scale-95 shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
                                 disabled="@IsSubmitting">
                             @if (IsSubmitting)
                             {
@@ -141,7 +141,7 @@
                         </button>
 
                         <div class="text-center">
-                            <button type="button" class="text-[#093072] hover:text-[#093072]/80 font-label-md transition-colors" @onclick="() => CurrentStep = 1">
+                            <button type="button" class="text-[#222a3d] hover:text-[#2d3650] font-label-md transition-colors" @onclick="() => CurrentStep = 1">
                                 &larr; Back
                             </button>
                         </div>
@@ -153,7 +153,7 @@
             <div class="text-center pt-sm border-t border-outline-variant/50">
                 <p class="font-body-md text-body-md text-on-surface-variant">
                     Already have an account?
-                    <a class="text-[#093072] hover:text-[#093072]/80 font-label-md transition-colors" href="/login">Log In</a>
+                    <a class="text-[#222a3d] hover:text-[#2d3650] font-label-md transition-colors" href="/login">Log In</a>
                 </p>
             </div>
         </div>

@@ -141,12 +141,6 @@
                         </h2>
                         
                         <div class="flex items-center gap-2">
-                            <button class="h-8 px-3 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded-md shadow-xs transition-all active:scale-[0.98] flex items-center gap-1.5"
-                                    @onclick="() => showTopUpModal = true">
-                                <i class="bi bi-cash-stack"></i>
-                                <span>Add Funds</span>
-                            </button>
-
                             <button class="h-8 px-3 text-xs font-medium bg-neutral-100 text-neutral-700 hover:bg-neutral-200/80 border border-neutral-200/60 rounded-md transition-all active:scale-[0.98] flex items-center gap-1.5"
                                     @onclick="OpenRenameModal">
                                 <i class="bi bi-pencil-square"></i>
@@ -227,71 +221,7 @@
     </div>
 }
 
-<!-- 2. Add Funds Modal -->
-@if (showTopUpModal)
-{
-    <div class="fixed inset-0 bg-neutral-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-md shadow-md border border-neutral-200/80 max-w-sm w-full p-4 animate-in fade-in duration-100">
-            <div class="flex justify-between items-start mb-3">
-                <h3 class="text-sm font-semibold text-neutral-900">Add Funds to Card</h3>
-                <button class="text-neutral-400 hover:text-neutral-600" @onclick="() => showTopUpModal = false">
-                    <span class="bi bi-x-lg text-xs"></span>
-                </button>
-            </div>
-
-            <!-- Top Up Amount Selections -->
-            <div class="flex flex-col gap-3.5 mb-4">
-                <div>
-                    <label class="text-[11px] font-medium text-neutral-600 block mb-1">Select Amount</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button class="h-8 rounded-md border text-xs font-semibold transition-all active:scale-[0.98] @(topUpAmount == 5000 ? "bg-neutral-100 border-neutral-400 text-neutral-900" : "bg-neutral-50 border-neutral-200/60 text-neutral-700 hover:bg-neutral-100")"
-                                @onclick="() => topUpAmount = 5000">
-                            5,000 MMK
-                        </button>
-                        <button class="h-8 rounded-md border text-xs font-semibold transition-all active:scale-[0.98] @(topUpAmount == 10000 ? "bg-neutral-100 border-neutral-400 text-neutral-900" : "bg-neutral-50 border-neutral-200/60 text-neutral-700 hover:bg-neutral-100")"
-                                @onclick="() => topUpAmount = 10000">
-                            10,000 MMK
-                        </button>
-                        <button class="h-8 rounded-md border text-xs font-semibold transition-all active:scale-[0.98] @(topUpAmount == 20000 ? "bg-neutral-100 border-neutral-400 text-neutral-900" : "bg-neutral-50 border-neutral-200/60 text-neutral-700 hover:bg-neutral-100")"
-                                @onclick="() => topUpAmount = 20000">
-                            20,000 MMK
-                        </button>
-                        <button class="h-8 rounded-md border text-xs font-semibold transition-all active:scale-[0.98] @(topUpAmount == 50000 ? "bg-neutral-100 border-neutral-400 text-neutral-900" : "bg-neutral-50 border-neutral-200/60 text-neutral-700 hover:bg-neutral-100")"
-                                @onclick="() => topUpAmount = 50000">
-                            50,000 MMK
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-medium text-neutral-600">Custom Amount (MMK)</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-neutral-400 text-xs font-semibold">MMK</span>
-                        <input class="w-full h-8 bg-white border border-neutral-200 rounded-md pl-10 pr-2.5 text-xs text-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:border-neutral-900 transition-all font-semibold"
-                               type="number" step="500" min="500" @bind="topUpAmount" placeholder="Enter amount" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-end gap-2">
-                <button class="h-8 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-100 rounded-md transition-colors active:scale-[0.98]"
-                        @onclick="() => showTopUpModal = false" disabled="@isToppingUp">
-                    Cancel
-                </button>
-                <button class="h-8 px-3 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded-md shadow-xs transition-all active:scale-[0.98] flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
-                        @onclick="SubmitTopUp" disabled="@(isToppingUp || topUpAmount <= 0)">
-                    @if (isToppingUp)
-                    {
-                        <span class="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></span>
-                    }
-                    Confirm Deposit
-                </button>
-            </div>
-        </div>
-    </div>
-}
-
-<!-- 3. Deactivate / Lost Modal -->
+<!-- 2. Deactivate / Lost Modal -->
 @if (showDeactivateModal)
 {
     <div class="fixed inset-0 bg-neutral-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">

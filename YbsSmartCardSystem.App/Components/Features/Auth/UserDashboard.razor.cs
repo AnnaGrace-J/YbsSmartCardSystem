@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using YbsSmartCardSystem.Contracts.Features.Auth;
 using YbsSmartCardSystem.Contracts.Features.Card;
-using YbsSmartCardSystem.Contracts.Features.TopUp;
 using YbsSmartCardSystem.App.Services;
 
 namespace YbsSmartCardSystem.App.Components.Features.Auth
@@ -26,10 +25,6 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
         private bool showRenameModal = false;
         private string newOwnerName = "";
         private bool isRenaming = false;
-
-        private bool showTopUpModal = false;
-        private decimal topUpAmount = 10000;
-        private bool isToppingUp = false;
 
         private bool showDeactivateModal = false;
 
@@ -138,45 +133,6 @@ namespace YbsSmartCardSystem.App.Components.Features.Auth
             finally
             {
                 IsLoading = false;
-            }
-        }
-
-        private async Task SubmitTopUp()
-        {
-            var card = DashboardData?.Cards.FirstOrDefault();
-            if (card == null || topUpAmount <= 0) return;
-
-            isToppingUp = true;
-            message = null;
-            try
-            {
-                var request = new TopUpCreateRequestModel
-                {
-                    CardId = card.CardId,
-                    Amount = topUpAmount
-                };
-                var result = await ApiService.TopUpCreate(request);
-                if (result.IsSuccess)
-                {
-                    card.Balance += topUpAmount;
-                    showTopUpModal = false;
-                    message = $"Successfully topped up {FormatBalance(topUpAmount)}!";
-                    isSuccess = true;
-                }
-                else
-                {
-                    message = result.Message;
-                    isSuccess = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                message = $"Failed to perform top up: {ex.Message}";
-                isSuccess = false;
-            }
-            finally
-            {
-                isToppingUp = false;
             }
         }
 

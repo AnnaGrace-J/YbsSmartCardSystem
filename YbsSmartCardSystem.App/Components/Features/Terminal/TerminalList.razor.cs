@@ -22,6 +22,7 @@ public partial class TerminalList
     private bool isSuccess;
     private bool isSaving;
     private bool isLoading = true;
+    private string? copiedItem;
 
     private int TotalPages =>
         response.Data is null || request.PageSize == 0
@@ -202,6 +203,27 @@ public partial class TerminalList
         {
             request.PageNo++;
             await LoadTerminals();
+        }
+    }
+
+    private async Task CopyText(string key, string text)
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("copyToClipboard", text);
+        }
+        catch
+        {
+            return;
+        }
+
+        copiedItem = key;
+        StateHasChanged();
+        await Task.Delay(1200);
+        if (copiedItem == key)
+        {
+            copiedItem = null;
+            StateHasChanged();
         }
     }
 }

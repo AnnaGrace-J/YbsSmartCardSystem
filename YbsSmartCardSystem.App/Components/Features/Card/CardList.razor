@@ -92,13 +92,14 @@
             <table class="w-full text-left text-sm text-slate-600">
                 <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wider">
                     <tr>
-                        <th class="px-6 py-4 w-40">ACTIONS</th>
                         <th class="px-6 py-4">NO</th>
+                        <th class="px-6 py-4">TOP UP</th>
                         <th class="px-6 py-4">CARD NO</th>
                         <th class="px-6 py-4">FULLNAME</th>
                         <th class="px-6 py-4">MOBILENO</th>
                         <th class="px-6 py-4 text-right">BALANCE</th>
                         <th class="px-6 py-4">CREATED BY</th>
+                        <th class="px-6 py-4">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -108,44 +109,44 @@
                         @foreach (var item in response.Data.Cards)
                         {
                             <tr class="hover:bg-slate-50/50 transition-colors @(editingCardId == item.CardId ? "bg-amber-50" : "")">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        <button class="inline-flex items-center justify-center h-8 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-md transition-colors shadow-sm disabled:opacity-50"
-                                                @onclick="() => EditCard(item)"
-                                                disabled="@(editingCardId is not null)">
-                                            Edit
-                                        </button>
-                                        <NavLink class="inline-flex items-center justify-center h-8 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium rounded-md transition-colors shadow-sm"
-                                                 href="@($"/topup/new?cardId={item.CardId}")">
-                                            Top Up
-                                        </NavLink>
-                                        @if (AuthState.HasPermission("Card.Delete") && !item.DeleteFlag)
-                                        {
-                                            <button class="inline-flex items-center justify-center h-8 px-3 bg-white border border-slate-200 hover:border-rose-400 hover:text-rose-600 text-slate-700 text-xs font-medium rounded-md transition-colors shadow-sm disabled:opacity-50"
-                                                    @onclick="() => DeleteCard(item.CardId)"
-                                                    disabled="@(editingCardId is not null)">
-                                                Delete
-                                            </button>
-                                        }
-                                    </div>
+                                <td class="px-6 py-4 text-slate-400 whitespace-nowrap">@(++rowNo)</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <NavLink class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-[#f0f4ff] hover:bg-[#e1e9ff] text-[#0052cc] text-xs font-semibold rounded-md border border-[#d2e0ff] transition-all duration-200 active:scale-95 shadow-sm"
+                                             href="@($"/topup/new?cardId={item.CardId}")">
+                                        <span class="bi bi-plus-circle text-sm"></span>
+                                        Top Up
+                                    </NavLink>
                                 </td>
-                                <td class="px-6 py-4 text-slate-400">@(++rowNo)</td>
-                                <td class="px-6 py-4 font-mono text-slate-900">
+                                <td class="px-6 py-4 font-mono text-slate-900 whitespace-nowrap">
                                     <div class="flex items-center gap-2">
                                         @item.CardNum
+                                        <button class="inline-flex items-center justify-center h-6 w-6 rounded border transition-all duration-200 active:scale-95 shadow-sm @(copiedItem == $"card-{item.CardId}" ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-50/50 hover:border-blue-300")"
+                                                @onclick="@(() => CopyText($"card-{item.CardId}", item.CardNum))"
+                                                title="Copy card number">
+                                            <span class="bi @(copiedItem == $"card-{item.CardId}" ? "bi-check" : "bi-copy") text-[10px]"></span>
+                                        </button>
                                         @if (item.DeleteFlag)
                                         {
                                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">Deleted</span>
                                         }
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 font-bold text-slate-900">@item.OwnerName</td>
-                                <td class="px-6 py-4 font-mono text-slate-500">@item.MobileNo</td>
-                                <td class="px-6 py-4 text-right">
+                                <td class="px-6 py-4 font-bold text-slate-900 whitespace-nowrap">@item.OwnerName</td>
+                                <td class="px-6 py-4 font-mono text-slate-500 whitespace-nowrap">
+                                    <div class="flex items-center gap-2">
+                                        @item.MobileNo
+                                        <button class="inline-flex items-center justify-center h-6 w-6 rounded border transition-all duration-200 active:scale-95 shadow-sm @(copiedItem == $"mobile-{item.CardId}" ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-50/50 hover:border-blue-300")"
+                                                @onclick="@(() => CopyText($"mobile-{item.CardId}", item.MobileNo ?? ""))"
+                                                title="Copy mobile number">
+                                            <span class="bi @(copiedItem == $"mobile-{item.CardId}" ? "bi-check" : "bi-copy") text-[10px]"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-right whitespace-nowrap">
                                     <span class="font-bold text-slate-900">@item.Balance.ToString("N0")</span>
                                     <span class="text-slate-400 text-xs ml-1">MMK</span>
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     @if (!string.IsNullOrEmpty(item.CreatedByName))
                                     {
                                         <span class="text-slate-700 font-medium">@item.CreatedByName</span>
@@ -159,6 +160,25 @@
                                         <span class="text-slate-300">—</span>
                                     }
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center gap-2">
+                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-white hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200 hover:border-amber-400 hover:text-amber-600 transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50"
+                                                @onclick="() => EditCard(item)"
+                                                disabled="@(editingCardId is not null)">
+                                            <span class="bi bi-pencil text-sm text-amber-600"></span>
+                                            Edit
+                                        </button>
+                                        @if (AuthState.HasPermission("Card.Delete") && !item.DeleteFlag)
+                                        {
+                                            <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-white hover:bg-red-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200 hover:border-rose-400 hover:text-rose-600 transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50"
+                                                    @onclick="() => DeleteCard(item.CardId)"
+                                                    disabled="@(editingCardId is not null)">
+                                                <span class="bi bi-trash text-sm text-rose-500"></span>
+                                                Delete
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
                             </tr>
                         }
                     }
@@ -170,7 +190,7 @@
         {
             <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="text-sm text-slate-500">
-                    Total: <strong class="text-slate-900">@response.Data.TotalCount</strong> cards
+                    Total: <strong class="text-slate-900">@response.Data.TotalCount</strong> cards &middot; 10 per page
                 </div>
                 <div class="flex items-center gap-2">
                     <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-md transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">

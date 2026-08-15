@@ -14,6 +14,7 @@ public partial class TransactionCreate
     private bool isSuccess;
     private bool isSaving;
     private bool isCardBound;
+    private bool showPayConfirm;
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,6 +59,16 @@ public partial class TransactionCreate
         }
 
         return true;
+    }
+
+    private void ShowPayConfirm() => showPayConfirm = true;
+
+    private void CancelPay() => showPayConfirm = false;
+
+    private async Task ConfirmPay()
+    {
+        showPayConfirm = false;
+        await Save();
     }
 
     private async Task Save()

@@ -5,59 +5,68 @@
 @inject YbsSmartCardSystem.App.Services.AuthStateService AuthState
 @inject NavigationManager NavManager
 
-<div class="bg-surface-container min-h-screen flex items-center justify-center p-md font-body-md text-on-surface">
-    <main class="w-full max-w-sm mx-auto">
+<div class="relative min-h-screen bg-gradient-to-br from-[#eef1f9] via-[#dbe2f1] to-[#c3cee5] font-sans flex items-center justify-center p-6 overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div class="absolute -top-32 -left-24 w-80 h-80 rounded-full bg-sky-200/50 blur-3xl"></div>
+        <div class="absolute -bottom-24 -right-20 w-80 h-80 rounded-full bg-indigo-200/40 blur-3xl"></div>
+    </div>
 
-        <div class="bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant p-md md:p-lg flex flex-col gap-md">
+    <main class="relative w-full max-w-sm mx-auto">
+        <div class="bg-white rounded-2xl shadow-xl shadow-slate-300/40 border border-white/60 p-6 sm:p-8 flex flex-col gap-6">
 
             <!-- Header -->
-            <div class="text-center flex flex-col gap-sm items-center">
-                <div class="w-10 h-10 bg-[#222a3d] rounded-full flex items-center justify-center text-white mb-1.5">
-                    <span class="material-symbols-outlined" style="font-size: 22px; font-variation-settings: 'FILL' 1;">commute</span>
+            <div class="text-center flex flex-col gap-3 items-center">
+                <div class="relative">
+                    <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-amber-400 via-orange-400 to-rose-500 opacity-60 blur-[6px]"></div>
+                    <div class="relative w-12 h-12 bg-gradient-to-br from-[#2a3450] to-[#20283c] rounded-full flex items-center justify-center border border-white/60 shadow-md">
+                        <span class="material-symbols-outlined text-amber-300 drop-shadow" style="font-size: 22px;">commute</span>
+                    </div>
                 </div>
-                <h1 class="font-headline-md text-headline-md text-[#222a3d]">TransitPay</h1>
-                <p class="font-body-md text-body-md text-on-surface-variant">Welcome back. Sign in to your account.</p>
+                <div>
+                    <h1 class="text-xl font-bold text-neutral-900 tracking-tight">TransitPay</h1>
+                    <p class="text-sm text-neutral-500 mt-1">Welcome back. Sign in to your account.</p>
+                </div>
             </div>
 
             @if (!string.IsNullOrEmpty(ErrorMessage))
             {
-                <div class="flex items-start gap-2 p-3 rounded-md bg-error-container text-on-error-container font-body-md text-body-md">
-                    <span class="material-symbols-outlined mt-0.5" style="font-size: 18px;">error</span>
-                    <span>@ErrorMessage</span>
+                <div class="flex items-start gap-3 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700">
+                    <span class="bi bi-exclamation-triangle-fill mt-0.5 text-rose-500"></span>
+                    <span class="text-sm font-medium">@ErrorMessage</span>
                 </div>
             }
 
             <EditForm Model="@Model" OnValidSubmit="HandleSubmit" FormName="LoginForm">
                 <AntiforgeryToken />
                 <DataAnnotationsValidator />
-                <div class="flex flex-col gap-md">
+                <div class="flex flex-col gap-4">
                     <!-- Phone Number -->
-                    <div class="flex flex-col gap-xs">
-                        <label class="font-label-md text-label-md text-on-surface" for="login-phone">Phone Number</label>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-neutral-500 uppercase tracking-wider" for="login-phone">Phone Number</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">phone</span>
-                            </div>
-                            <InputText id="login-phone" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
+                                <span class="bi bi-phone"></span>
+                            </span>
+                            <InputText id="login-phone" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
                                        placeholder="e.g. 09123456789" @bind-Value="Model.PhoneNumber" />
                         </div>
                     </div>
 
                     <!-- Password -->
-                    <div class="flex flex-col gap-xs">
-                        <label class="font-label-md text-label-md text-on-surface" for="login-password">Password</label>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-neutral-500 uppercase tracking-wider" for="login-password">Password</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">lock</span>
-                            </div>
-                            <InputText id="login-password" type="password" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
+                                <span class="bi bi-lock-fill"></span>
+                            </span>
+                            <InputText id="login-password" type="password" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
                                        placeholder="••••••••" @bind-Value="Model.Password" />
                         </div>
                     </div>
 
                     <!-- Action -->
                     <button type="submit"
-                            class="mt-sm w-full bg-[#222a3d] hover:bg-[#2d3650] text-on-primary font-label-md text-label-md py-2.5 px-4 rounded-md transition-all duration-200 active:scale-95 shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+                            class="mt-1 w-full bg-gradient-to-br from-[#2a3450] to-[#20283c] hover:from-[#333f63] hover:to-[#262e44] text-white font-semibold rounded-xl py-3 shadow-md shadow-slate-300/50 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
                             disabled="@IsSubmitting">
                         @if (IsSubmitting)
                         {
@@ -67,17 +76,17 @@
                         else
                         {
                             <span>Sign In</span>
-                            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+                            <span class="bi bi-arrow-right"></span>
                         }
                     </button>
                 </div>
             </EditForm>
 
             <!-- Footer -->
-            <div class="text-center pt-sm border-t border-outline-variant/50">
-                <p class="font-body-md text-body-md text-on-surface-variant">
+            <div class="text-center pt-4 border-t border-neutral-100">
+                <p class="text-sm text-neutral-500">
                     Don't have an account?
-                    <a class="text-[#222a3d] hover:text-[#2d3650] font-label-md transition-colors" href="/register">Sign Up</a>
+                    <a class="text-amber-600 hover:text-amber-700 font-semibold transition-colors" href="/register">Sign Up</a>
                 </p>
             </div>
         </div>

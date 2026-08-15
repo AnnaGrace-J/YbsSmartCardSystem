@@ -125,13 +125,13 @@ else
             <table class="w-full text-left text-sm text-slate-600">
                 <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold tracking-wider">
                     <tr>
-                        <th class="px-6 py-4 w-40">Actions</th>
                         <th class="px-6 py-4">No</th>
                         <th class="px-6 py-4">Serial Number</th>
                         <th class="px-6 py-4">Bus No</th>
                         <th class="px-6 py-4">Bus License</th>
                         <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4">Created By</th>
+                        <th class="px-6 py-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -141,33 +141,22 @@ else
                         rowNo++;
                         var localTerminal = terminal;
                         <tr class="hover:bg-slate-50/50 transition-colors @(editingTerminalId == localTerminal.TerminalId ? "bg-amber-50" : "")">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    @if (AuthState.HasPermission("Terminal.Update"))
-                                    {
-                                        <button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-400 hover:text-amber-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => EditTerminal(localTerminal)">
-                                            <span class="bi bi-pencil"></span> Edit
-                                        </button>
-                                    }
-                                    @if (AuthState.HasPermission("Terminal.Delete") && !localTerminal.DeleteFlag)
-                                    {
-                                        <button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-rose-400 hover:text-rose-600 text-slate-600 text-xs font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => DeleteTerminal(localTerminal.TerminalId)">
-                                            <span class="bi bi-trash"></span> Delete
-                                        </button>
-                                    }
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-slate-400">@rowNo</td>
-                            <td class="px-6 py-4 font-mono text-slate-900">
+                            <td class="px-6 py-4 text-slate-400 whitespace-nowrap">@rowNo</td>
+                            <td class="px-6 py-4 font-mono text-slate-900 whitespace-nowrap">
                                 <div class="flex items-center gap-2">
                                     @terminal.TerminalSerialNo
+                                    <button class="inline-flex items-center justify-center h-6 w-6 rounded border transition-all duration-200 active:scale-95 shadow-sm @(copiedItem == $"terminal-{localTerminal.TerminalId}" ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-50/50 hover:border-blue-300")"
+                                            @onclick="@(() => CopyText($"terminal-{localTerminal.TerminalId}", localTerminal.TerminalSerialNo))"
+                                            title="Copy serial number">
+                                        <span class="bi @(copiedItem == $"terminal-{localTerminal.TerminalId}" ? "bi-check" : "bi-copy") text-[10px]"></span>
+                                    </button>
                                     @if (terminal.DeleteFlag)
                                     {
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">Deleted</span>
                                     }
                                 </div>
                             </td>
-                            <td class="px-6 py-4 font-medium text-slate-900">
+                            <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
                                 @if (!string.IsNullOrEmpty(terminal.BusNo))
                                 {
                                     <div class="flex items-center gap-2">
@@ -179,15 +168,22 @@ else
                                     <span class="text-slate-400 italic">Unassigned</span>
                                 }
                             </td>
-                            <td class="px-6 py-4 text-slate-500">
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 @if (!string.IsNullOrEmpty(terminal.BusLicense))
                                 {
-                                    <div class="inline-flex items-center px-2.5 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-slate-700 font-mono text-xs">
-                                        @terminal.BusLicense
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-slate-700 font-mono text-xs">
+                                            @terminal.BusLicense
+                                        </span>
+                                        <button class="inline-flex items-center justify-center h-6 w-6 rounded border transition-all duration-200 active:scale-95 shadow-sm @(copiedItem == $"buslicense-{localTerminal.TerminalId}" ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-50/50 hover:border-blue-300")"
+                                                @onclick="@(() => CopyText($"buslicense-{localTerminal.TerminalId}", terminal.BusLicense))"
+                                                title="Copy bus license">
+                                            <span class="bi @(copiedItem == $"buslicense-{localTerminal.TerminalId}" ? "bi-check" : "bi-copy") text-[10px]"></span>
+                                        </button>
                                     </div>
                                 }
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 @if (terminal.IsActive)
                                 {
                                     <StatusBadge Type="success" Text="Active" />
@@ -197,7 +193,7 @@ else
                                     <StatusBadge Type="neutral" Text="Inactive" />
                                 }
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 @if (!string.IsNullOrEmpty(terminal.CreatedByName))
                                 {
                                     <span class="text-slate-700 font-medium">@terminal.CreatedByName</span>
@@ -211,6 +207,22 @@ else
                                     <span class="text-slate-300">—</span>
                                 }
                             </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+                                    @if (AuthState.HasPermission("Terminal.Update"))
+                                    {
+                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-white hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200 hover:border-amber-400 hover:text-amber-600 transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50" @onclick="() => EditTerminal(localTerminal)" disabled="@(editingTerminalId is not null)">
+                                            <span class="bi bi-pencil text-sm text-amber-600"></span> Edit
+                                        </button>
+                                    }
+                                    @if (AuthState.HasPermission("Terminal.Delete") && !localTerminal.DeleteFlag)
+                                    {
+                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-white hover:bg-red-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200 hover:border-rose-400 hover:text-rose-600 transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50" @onclick="() => DeleteTerminal(localTerminal.TerminalId)" disabled="@(editingTerminalId is not null)">
+                                            <span class="bi bi-trash text-sm text-rose-500"></span> Delete
+                                        </button>
+                                    }
+                                </div>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -218,7 +230,10 @@ else
         </div>
 
         <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2 w-full justify-end">
+            <div class="text-sm text-slate-500">
+                Total: <strong class="text-slate-900 font-semibold">@response.Data.TotalCount</strong> terminals &middot; 10 per page
+            </div>
+            <div class="flex items-center gap-2">
                 <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="PrevPage" disabled="@(request.PageNo <= 1)">
                     Previous
                 </button>

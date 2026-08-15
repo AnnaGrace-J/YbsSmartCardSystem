@@ -68,7 +68,7 @@
             {
                 <NavLink class="@NavLinkClass" href="/transactions/new">
                     <span class="@NavIndicator"></span>
-                    <span class="@NavIcon"><span class="bi bi-nfc"></span></span>
+                    <span class="@NavIcon"><span class="bi bi-bus-front"></span></span>
                     Bus Payment (Tap)
                 </NavLink>
             }
@@ -160,13 +160,37 @@
 @if (AuthState.IsAuthenticated)
 {
     <div class="p-4 mt-auto border-t border-neutral-200/80 bg-gradient-to-b from-white/30 to-neutral-200/40">
-        <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-rose-600 hover:bg-gradient-to-r hover:from-rose-500/10 hover:to-transparent border border-transparent hover:border-rose-300/70 transition-all duration-200 active:scale-[0.98]" @onclick="HandleLogout">
+        <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-rose-600 hover:bg-gradient-to-r hover:from-rose-500/10 hover:to-transparent border border-transparent hover:border-rose-300/70 transition-all duration-200 active:scale-[0.98]" @onclick="ShowLogoutConfirm">
             <span class="bi bi-box-arrow-right text-base"></span> Logout
         </button>
     </div>
 }
 
+@if (_showLogoutConfirm)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" @onclick="CancelLogout"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-sm p-6">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0">
+                    <span class="bi bi-box-arrow-right text-rose-600"></span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-neutral-900">Log out?</h3>
+                    <p class="text-sm text-neutral-500 mt-1">Are you sure you want to log out of TransitPay?</p>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 transition-colors" @onclick="CancelLogout">Cancel</button>
+                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 transition-colors" @onclick="HandleLogout">Log out</button>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
+    private bool _showLogoutConfirm;
+
     private const string NavLinkClass = "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all duration-200 hover:bg-neutral-200/60 [&.active]:bg-gradient-to-r [&.active]:from-amber-400/25 [&.active]:via-white/60 [&.active]:to-transparent [&.active]:text-neutral-900 [&.active]:shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]";
 
     private const string NavIcon = "relative flex items-center justify-center w-8 h-8 rounded-lg bg-neutral-200/60 border border-neutral-300/80 text-amber-600 text-base transition-all duration-200 group-hover:bg-white group-hover:border-neutral-300 group-hover:text-amber-500 group-hover:scale-105 group-hover:shadow-[0_0_14px_rgba(251,191,36,0.35)] group-[.active]:bg-amber-100 group-[.active]:border-amber-300 group-[.active]:text-amber-700 group-[.active]:shadow-[0_0_16px_rgba(251,191,36,0.4)]";
@@ -177,6 +201,10 @@
     {
         AuthState.OnChange += StateHasChanged;
     }
+
+    private void ShowLogoutConfirm() => _showLogoutConfirm = true;
+
+    private void CancelLogout() => _showLogoutConfirm = false;
 
     private void HandleLogout()
     {

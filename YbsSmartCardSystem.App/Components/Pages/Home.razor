@@ -3,88 +3,115 @@
 @inject YbsSmartCardSystem.App.Services.AuthStateService AuthState
 @inject NavigationManager NavManager
 
-<div class="min-h-screen bg-surface-container font-body-md text-on-surface">
-    <div class="max-w-5xl mx-auto px-6 py-6">
+<div class="relative min-h-screen bg-gradient-to-b from-[#eef1f9] via-[#e2e8f5] to-[#cdd6ea] font-sans text-neutral-900 overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div class="absolute -top-32 -right-24 w-96 h-96 rounded-full bg-sky-200/40 blur-3xl"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-indigo-200/40 blur-3xl"></div>
+    </div>
+
+    <div class="relative max-w-5xl mx-auto px-6 py-6">
 
         <!-- Top Bar -->
         <header class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 bg-[#222a3d] rounded-full flex items-center justify-center shadow-sm">
-                    <span class="material-symbols-outlined text-white" style="font-size: 20px;">commute</span>
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-amber-400 via-orange-400 to-rose-500 opacity-60 blur-[6px]"></div>
+                    <div class="relative w-9 h-9 bg-gradient-to-br from-[#2a3450] to-[#20283c] rounded-full flex items-center justify-center border border-white/60 shadow-md">
+                        <span class="material-symbols-outlined text-amber-300 drop-shadow" style="font-size: 18px;">commute</span>
+                    </div>
                 </div>
-                <span class="font-headline-md text-headline-md text-[#222a3d]">TransitPay</span>
+                <div class="leading-tight">
+                    <span class="text-lg font-bold text-neutral-900 tracking-tight">TransitPay</span>
+                    <p class="text-[10px] text-neutral-500 font-medium uppercase tracking-[0.18em]">Smart Card Suite</p>
+                </div>
             </div>
             <nav class="flex items-center gap-2">
                 <a href="/login"
-                   class="px-4 py-2 rounded-lg font-label-md text-label-md text-[#222a3d] hover:bg-[#222a3d]/10 transition-colors">
+                   class="px-4 py-2 rounded-xl text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-white/70 transition-colors">
                     Log In
                 </a>
                 <a href="/register"
-                   class="px-4 py-2 rounded-lg bg-[#222a3d] hover:bg-[#2d3650] text-on-primary font-label-md text-label-md transition-colors shadow-sm">
+                   class="px-4 py-2 rounded-xl bg-gradient-to-br from-[#2a3450] to-[#20283c] hover:from-[#333f63] hover:to-[#262e44] text-white text-sm font-semibold transition-all duration-200 shadow-md shadow-slate-300/50 active:scale-[0.98]">
                     Sign Up
                 </a>
             </nav>
         </header>
 
         <!-- Hero -->
-        <section class="mt-10 grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <section class="mt-12 grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div class="flex flex-col gap-8">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/60 text-on-secondary-container font-label-sm text-label-sm self-start">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/70 border border-amber-200/80 text-amber-700 text-xs font-semibold uppercase tracking-wide self-start shadow-sm">
                     <span class="material-symbols-outlined" style="font-size: 15px;">nfc</span>
                     YBS Smart Card System
                 </span>
 
-                <ul class="flex flex-col gap-5">
-                    <li class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-[#222a3d]/10 flex items-center justify-center shrink-0">
-                            <span class="material-symbols-outlined text-[#222a3d]" style="font-size: 20px;">credit_card</span>
+                <div>
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900 leading-tight">
+                        Tap, ride, and<br />go anywhere in Yangon.
+                    </h2>
+                    <p class="text-neutral-600 mt-4 max-w-md">
+                        Your all-in-one smart card suite for fares, top-ups, and trip history — right from your pocket.
+                    </p>
+                </div>
+
+                <ul class="flex flex-col gap-4">
+                    <li class="flex items-center gap-3.5">
+                        <span class="w-10 h-10 rounded-xl bg-amber-100/70 border border-amber-200/70 flex items-center justify-center shrink-0">
+                            <span class="bi bi-credit-card-fill text-amber-600"></span>
                         </span>
-                        <span class="font-body-md text-body-md text-on-surface">Track your card balance</span>
+                        <span class="text-neutral-700">Track your card balance</span>
                     </li>
-                    <li class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-[#222a3d]/10 flex items-center justify-center shrink-0">
-                            <span class="material-symbols-outlined text-[#222a3d]" style="font-size: 20px;">receipt_long</span>
+                    <li class="flex items-center gap-3.5">
+                        <span class="w-10 h-10 rounded-xl bg-amber-100/70 border border-amber-200/70 flex items-center justify-center shrink-0">
+                            <span class="bi bi-clock-history text-amber-600"></span>
                         </span>
-                        <span class="font-body-md text-body-md text-on-surface">Review your ride history</span>
+                        <span class="text-neutral-700">Review your ride history</span>
                     </li>
+                    @* <li class="flex items-center gap-3.5">
+                        <span class="w-10 h-10 rounded-xl bg-amber-100/70 border border-amber-200/70 flex items-center justify-center shrink-0">
+                            <span class="bi bi-wallet2 text-amber-600"></span>
+                        </span>
+                        <span class="text-neutral-700">Top up from anywhere</span>
+                    </li> *@
                 </ul>
             </div>
 
             <!-- Transit Card Mockup -->
             <div class="relative flex justify-center">
-                <div class="relative w-full max-w-sm bg-gradient-to-br from-primary to-inverse-surface rounded-2xl p-6 sm:p-7 text-on-primary shadow-lg overflow-hidden">
+                <div class="absolute -inset-6 bg-gradient-to-tr from-amber-200/40 via-transparent to-sky-200/40 blur-2xl rounded-3xl pointer-events-none" aria-hidden="true"></div>
+                <div class="relative w-full max-w-sm bg-gradient-to-br from-[#2a3450] to-[#1a2035] rounded-2xl p-6 sm:p-7 text-white shadow-2xl shadow-slate-400/40 border border-white/10 overflow-hidden">
                     <div class="relative flex justify-between items-start">
                         <div>
-                            <span class="font-label-sm text-label-sm tracking-widest text-on-primary/70 uppercase">TransitPay</span>
-                            <h3 class="font-headline-md text-headline-md mt-1">Commuter Card</h3>
+                            <span class="text-[11px] font-semibold tracking-widest text-amber-300/90 uppercase">TransitPay</span>
+                            <h3 class="text-xl font-bold mt-1">Commuter Card</h3>
                         </div>
-                        <span class="material-symbols-outlined text-on-primary/90" style="font-size: 26px;">nfc</span>
+                        <span class="material-symbols-outlined text-amber-300/90" style="font-size: 26px;">contactless</span>
                     </div>
 
                     <div class="relative mt-8 flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <div class="w-10 h-8 rounded-md bg-gradient-to-br from-amber-200 to-amber-400 border border-amber-500/50 relative overflow-hidden">
+                            <div class="w-10 h-8 rounded-md bg-gradient-to-br from-amber-300 to-amber-500 border border-amber-200/60 relative overflow-hidden shadow-inner">
                                 <div class="absolute inset-0 flex flex-col justify-between p-[3px] opacity-70">
                                     <div class="h-px bg-amber-800/50"></div>
                                     <div class="h-px bg-amber-800/50"></div>
                                 </div>
                             </div>
-                            <span class="material-symbols-outlined text-on-primary/80" style="font-size: 22px;">contactless</span>
+                            <span class="material-symbols-outlined text-white/70" style="font-size: 22px;">contactless</span>
                         </div>
                         <div class="text-right">
-                            <p class="font-label-sm text-label-sm text-on-primary/60">Balance</p>
-                            <p class="font-headline-md text-headline-md">12,500</p>
+                            <p class="text-[11px] text-white/60 font-medium">Balance</p>
+                            <p class="text-2xl font-bold text-amber-300">12,500</p>
                         </div>
                     </div>
 
                     <div class="relative mt-8 flex justify-between items-end">
                         <div>
-                            <p class="font-label-sm text-label-sm text-on-primary/60">Cardholder</p>
-                            <p class="font-label-md text-label-md mt-0.5">YBS Commuter</p>
+                            <p class="text-[11px] text-white/60 font-medium">Cardholder</p>
+                            <p class="text-sm font-semibold mt-0.5">YBS Commuter</p>
                         </div>
                         <div class="text-right">
-                            <p class="font-label-sm text-label-sm text-on-primary/60">Card Number</p>
-                            <p class="font-mono font-label-md text-label-md mt-0.5 tracking-widest">**** 2457</p>
+                            <p class="text-[11px] text-white/60 font-medium">Card Number</p>
+                            <p class="text-sm font-mono mt-0.5 tracking-widest">**** 2457</p>
                         </div>
                     </div>
                 </div>
@@ -92,8 +119,8 @@
         </section>
 
         <!-- Footer -->
-        <footer class="mt-14 pt-5 border-t border-outline-variant/60 text-center">
-            <p class="font-body-md text-body-md text-on-surface-variant">
+        <footer class="mt-14 pt-5 border-t border-neutral-300/40 text-center">
+            <p class="text-sm text-neutral-500">
                 &copy; @DateTime.Now.Year YBS Smart Card System. All rights reserved.
             </p>
         </footer>

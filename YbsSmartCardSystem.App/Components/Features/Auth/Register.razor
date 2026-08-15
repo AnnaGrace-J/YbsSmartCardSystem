@@ -4,25 +4,34 @@
 @inject YbsSmartCardSystem.App.Services.ApiService Api
 @inject NavigationManager NavManager
 
-<div class="bg-surface-container min-h-screen flex items-center justify-center p-md font-body-md text-on-surface">
-    <main class="w-full max-w-sm mx-auto">
+<div class="relative min-h-screen bg-gradient-to-br from-[#eef1f9] via-[#dbe2f1] to-[#c3cee5] font-sans flex items-center justify-center p-6 overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div class="absolute -top-32 -left-24 w-80 h-80 rounded-full bg-sky-200/50 blur-3xl"></div>
+        <div class="absolute -bottom-24 -right-20 w-80 h-80 rounded-full bg-indigo-200/40 blur-3xl"></div>
+    </div>
 
-        <div class="bg-surface-container-lowest rounded-lg shadow-sm border border-outline-variant p-md md:p-lg flex flex-col gap-md">
+    <main class="relative w-full max-w-sm mx-auto">
+        <div class="bg-white rounded-2xl shadow-xl shadow-slate-300/40 border border-white/60 p-6 sm:p-8 flex flex-col gap-6">
 
             <!-- Header -->
-            <div class="text-center flex flex-col gap-sm items-center">
-                <div class="w-10 h-10 bg-[#222a3d] rounded-full flex items-center justify-center text-white mb-1.5">
-                    <span class="material-symbols-outlined" style="font-size: 22px; font-variation-settings: 'FILL' 1;">commute</span>
+            <div class="text-center flex flex-col gap-3 items-center">
+                <div class="relative">
+                    <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-amber-400 via-orange-400 to-rose-500 opacity-60 blur-[6px]"></div>
+                    <div class="relative w-12 h-12 bg-gradient-to-br from-[#2a3450] to-[#20283c] rounded-full flex items-center justify-center border border-white/60 shadow-md">
+                        <span class="material-symbols-outlined text-amber-300 drop-shadow" style="font-size: 22px;">commute</span>
+                    </div>
                 </div>
-                <h1 class="font-headline-md text-headline-md text-[#222a3d]">TransitPay</h1>
-                <p class="font-body-md text-body-md text-on-surface-variant">Create your account for frictionless mobility.</p>
+                <div>
+                    <h1 class="text-xl font-bold text-neutral-900 tracking-tight">TransitPay</h1>
+                    <p class="text-sm text-neutral-500 mt-1">Create your account for frictionless mobility.</p>
+                </div>
             </div>
 
             @if (!string.IsNullOrEmpty(ErrorMessage))
             {
-                <div class="flex items-start gap-2 p-3 rounded-md bg-error-container text-on-error-container font-body-md text-body-md">
-                    <span class="material-symbols-outlined mt-0.5" style="font-size: 18px;">error</span>
-                    <span>@ErrorMessage</span>
+                <div class="flex items-start gap-3 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700">
+                    <span class="bi bi-exclamation-triangle-fill mt-0.5 text-rose-500"></span>
+                    <span class="text-sm font-medium">@ErrorMessage</span>
                 </div>
             }
 
@@ -31,58 +40,58 @@
                 <EditForm Model="@Model" OnValidSubmit="HandleSendOtp" FormName="RegisterForm">
                     <AntiforgeryToken />
                     <DataAnnotationsValidator />
-                    <div class="flex flex-col gap-md">
+                    <div class="flex flex-col gap-4">
                         <!-- Username -->
-                        <div class="flex flex-col gap-xs">
-                            <label class="font-label-md text-label-md text-on-surface" for="username">Username</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-neutral-500 uppercase tracking-wider" for="username">Username</label>
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">person</span>
-                                </div>
-                                <InputText id="username" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
+                                    <span class="bi bi-person-fill"></span>
+                                </span>
+                                <InputText id="username" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
                                            placeholder="johndoe" @bind-Value="Model.UserName" />
                             </div>
                         </div>
 
                         <!-- Phone Number -->
-                        <div class="flex flex-col gap-xs">
-                            <label class="font-label-md text-label-md text-on-surface" for="phone">Phone Number</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-neutral-500 uppercase tracking-wider" for="phone">Phone Number</label>
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">phone</span>
-                                </div>
-                                <InputText id="phone" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
+                                    <span class="bi bi-phone"></span>
+                                </span>
+                                <InputText id="phone" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
                                            placeholder="e.g. 09123456789" @bind-Value="Model.PhoneNumber" />
                             </div>
                         </div>
 
                         <!-- Password -->
-                        <div class="flex flex-col gap-xs">
-                            <label class="font-label-md text-label-md text-on-surface" for="password">Password</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-neutral-500 uppercase tracking-wider" for="password">Password</label>
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">lock</span>
-                                </div>
-                                <InputText id="password" type="password" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
+                                    <span class="bi bi-lock-fill"></span>
+                                </span>
+                                <InputText id="password" type="password" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
                                            placeholder="••••••••" @bind-Value="Model.Password" />
                             </div>
                         </div>
 
                         <!-- Confirm Password -->
-                        <div class="flex flex-col gap-xs">
-                            <label class="font-label-md text-label-md text-on-surface" for="confirm_password">Confirm Password</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-neutral-500 uppercase tracking-wider" for="confirm_password">Confirm Password</label>
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">lock_reset</span>
-                                </div>
-                                <InputText id="confirm_password" type="password" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md"
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
+                                    <span class="bi bi-shield-lock-fill"></span>
+                                </span>
+                                <InputText id="confirm_password" type="password" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
                                            placeholder="••••••••" @bind-Value="ConfirmPassword" />
                             </div>
                         </div>
 
                         <!-- Action -->
                         <button type="submit"
-                                class="mt-sm w-full bg-[#222a3d] hover:bg-[#2d3650] text-on-primary font-label-md text-label-md py-2.5 px-4 rounded-md transition-all duration-200 active:scale-95 shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+                                class="mt-1 w-full bg-gradient-to-br from-[#2a3450] to-[#20283c] hover:from-[#333f63] hover:to-[#262e44] text-white font-semibold rounded-xl py-3 shadow-md shadow-slate-300/50 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
                                 disabled="@IsSubmitting">
                             @if (IsSubmitting)
                             {
@@ -92,7 +101,7 @@
                             else
                             {
                                 <span>Send OTP</span>
-                                <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+                                <span class="bi bi-arrow-right"></span>
                             }
                         </button>
                     </div>
@@ -101,32 +110,32 @@
             else if (CurrentStep == 2)
             {
                 <!-- OTP verification -->
-                <div class="text-center flex flex-col gap-sm items-center">
-                    <div class="w-12 h-12 bg-secondary-container/50 rounded-full flex items-center justify-center text-secondary mb-2">
-                        <span class="material-symbols-outlined" style="font-size: 26px; font-variation-settings: 'FILL' 1;">mark_email_read</span>
+                <div class="text-center flex flex-col gap-3 items-center">
+                    <div class="w-12 h-12 bg-emerald-100 border border-emerald-200 rounded-full flex items-center justify-center text-emerald-600">
+                        <span class="bi bi-envelope-check-fill" style="font-size: 20px;"></span>
                     </div>
-                    <p class="font-body-md text-body-md text-on-surface-variant">
+                    <p class="text-sm text-neutral-500">
                         We've sent a verification code to<br />
-                        <strong class="text-on-surface">@Model.PhoneNumber</strong>
+                        <strong class="text-neutral-900">@Model.PhoneNumber</strong>
                     </p>
                 </div>
 
                 <EditForm Model="@Model" OnValidSubmit="HandleRegister" FormName="OtpForm">
                     <AntiforgeryToken />
-                    <div class="flex flex-col gap-md">
-                        <div class="flex flex-col gap-xs">
-                            <label class="font-label-md text-label-md text-on-surface" for="otp">Verification Code</label>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-neutral-500 uppercase tracking-wider" for="otp">Verification Code</label>
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">pin</span>
-                                </div>
-                                <InputText id="otp" class="block w-full pl-10 pr-3 py-1.5 border border-outline-variant rounded-md bg-surface-bright text-on-surface focus:ring-2 focus:ring-[#222a3d] focus:border-[#222a3d] transition-colors placeholder:text-on-surface-variant/50 font-body-md tracking-[0.5em] text-center"
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
+                                    <span class="bi bi-shield-check"></span>
+                                </span>
+                                <InputText id="otp" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm tracking-[0.5em] text-center"
                                            placeholder="000000" @bind-Value="Model.OtpCode" maxlength="6" />
                             </div>
                         </div>
 
                         <button type="submit"
-                                class="mt-sm w-full bg-[#222a3d] hover:bg-[#2d3650] text-on-primary font-label-md text-label-md py-2.5 px-4 rounded-md transition-all duration-200 active:scale-95 shadow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+                                class="mt-1 w-full bg-gradient-to-br from-[#2a3450] to-[#20283c] hover:from-[#333f63] hover:to-[#262e44] text-white font-semibold rounded-xl py-3 shadow-md shadow-slate-300/50 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
                                 disabled="@IsSubmitting">
                             @if (IsSubmitting)
                             {
@@ -136,13 +145,13 @@
                             else
                             {
                                 <span>Verify & Register</span>
-                                <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+                                <span class="bi bi-arrow-right"></span>
                             }
                         </button>
 
                         <div class="text-center">
-                            <button type="button" class="text-[#222a3d] hover:text-[#2d3650] font-label-md transition-colors" @onclick="() => CurrentStep = 1">
-                                &larr; Back
+                            <button type="button" class="inline-flex items-center gap-1.5 text-amber-600 hover:text-amber-700 font-semibold transition-colors" @onclick="() => CurrentStep = 1">
+                                <span class="bi bi-arrow-left"></span> Back
                             </button>
                         </div>
                     </div>
@@ -150,10 +159,10 @@
             }
 
             <!-- Footer -->
-            <div class="text-center pt-sm border-t border-outline-variant/50">
-                <p class="font-body-md text-body-md text-on-surface-variant">
+            <div class="text-center pt-4 border-t border-neutral-100">
+                <p class="text-sm text-neutral-500">
                     Already have an account?
-                    <a class="text-[#222a3d] hover:text-[#2d3650] font-label-md transition-colors" href="/login">Log In</a>
+                    <a class="text-amber-600 hover:text-amber-700 font-semibold transition-colors" href="/login">Log In</a>
                 </p>
             </div>
         </div>

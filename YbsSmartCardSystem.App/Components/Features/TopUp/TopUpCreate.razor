@@ -45,7 +45,7 @@
                         </div>
                         
                         <div class="pt-4 flex justify-between items-center text-xs text-slate-500">
-                            <span>@responseData.TopUpDate.ToString("MMM dd, yyyy HH:mm")</span>
+                            <span>@responseData.TopUpDate.ToString("dd/MM/yyyy HH:mm")</span>
                             @if (!string.IsNullOrEmpty(responseData.Remark))
                             {
                                 <span>Remark: @responseData.Remark</span>

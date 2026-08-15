@@ -16,6 +16,7 @@ namespace YbsSmartCardSystem.App.Components.Features.Card
         private string? message;
         private bool isSaving;
         private string searchText = string.Empty;
+        private string? copiedItem;
 
         private string StatusFilter
         {
@@ -111,6 +112,27 @@ namespace YbsSmartCardSystem.App.Components.Features.Card
 
         [Microsoft.AspNetCore.Components.Inject]
         private Microsoft.JSInterop.IJSRuntime JSRuntime { get; set; } = null!;
+
+        private async Task CopyText(string key, string text)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("copyToClipboard", text);
+            }
+            catch
+            {
+                return;
+            }
+
+            copiedItem = key;
+            StateHasChanged();
+            await Task.Delay(1200);
+            if (copiedItem == key)
+            {
+                copiedItem = null;
+                StateHasChanged();
+            }
+        }
 
         private async Task DeleteCard(int id)
         {

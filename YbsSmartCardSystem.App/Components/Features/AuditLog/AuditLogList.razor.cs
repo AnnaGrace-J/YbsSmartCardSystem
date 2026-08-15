@@ -81,6 +81,32 @@ public partial class AuditLogList : ComponentBase, IDisposable
         ExpandedId = ExpandedId == id ? null : id;
     }
 
+    private string GetActionBadgeClass(string action)
+    {
+        return action.ToLowerInvariant() switch
+        {
+            "delete" or "remove" => "bg-rose-50 text-rose-700 border-rose-200",
+            "create" or "register" or "add" => "bg-emerald-50 text-emerald-700 border-emerald-200",
+            "update" or "edit" or "patch" or "topup" => "bg-amber-50 text-amber-800 border-amber-500/50",
+            "login" => "bg-blue-50 text-blue-700 border-blue-200",
+            "logout" => "bg-slate-100 text-slate-600 border-slate-200",
+            _ => "bg-slate-100 text-slate-700 border-slate-200"
+        };
+    }
+
+    private string GetActionIcon(string action)
+    {
+        return action.ToLowerInvariant() switch
+        {
+            "delete" or "remove" => "bi-trash",
+            "create" or "register" or "add" => "bi-plus-lg",
+            "update" or "edit" or "patch" or "topup" => "bi-pencil",
+            "login" => "bi-box-arrow-in-right",
+            "logout" => "bi-box-arrow-right",
+            _ => "bi-activity"
+        };
+    }
+
     public void Dispose()
     {
         AuthState.OnChange -= StateHasChanged;

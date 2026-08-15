@@ -3,7 +3,7 @@ namespace YbsSmartCardSystem.Contracts.Features.AuditLog;
 public class AuditLogListRequestModel
 {
     public int    PageNo      { get; set; } = 1;
-    public int    PageSize    { get; set; } = 20;
+    public int    PageSize    { get; set; } = 10;
     public int?   UserId      { get; set; }
     public string? Action     { get; set; }
     public string? FeatureName { get; set; }

@@ -19,6 +19,7 @@ namespace YbsSmartCardSystem.App.Components.Features.Bus
         private string? message;
         private bool isSaving;
         private string searchText = string.Empty;
+        private string? copiedItem;
 
         private string StatusFilter
         {
@@ -160,6 +161,27 @@ namespace YbsSmartCardSystem.App.Components.Features.Bus
             {
                 if (response.Data == null || response.Data.TotalCount == 0) return 1;
                 return (int)Math.Ceiling((double)response.Data.TotalCount / request.PageSize);
+            }
+        }
+
+        private async Task CopyText(string key, string text)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("copyToClipboard", text);
+            }
+            catch
+            {
+                return;
+            }
+
+            copiedItem = key;
+            StateHasChanged();
+            await Task.Delay(1200);
+            if (copiedItem == key)
+            {
+                copiedItem = null;
+                StateHasChanged();
             }
         }
     }

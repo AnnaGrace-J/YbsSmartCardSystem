@@ -29,8 +29,16 @@ namespace YbsSmartCardSystem.App.Components.Features.TopUp
 
         private string? searchText;
 
-        private async Task Search()
+private async Task Search()
         {
+            request.PageNo = 1;
+            await LoadTopUps();
+        }
+
+        private async Task Clear()
+        {
+            searchText = null;
+            request.FilterDate = null;
             request.PageNo = 1;
             await LoadTopUps();
         }

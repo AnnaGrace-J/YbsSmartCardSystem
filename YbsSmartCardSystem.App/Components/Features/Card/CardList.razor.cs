@@ -54,6 +54,15 @@ namespace YbsSmartCardSystem.App.Components.Features.Card
             await LoadCards();
         }
 
+        private async Task Clear()
+        {
+            searchText = string.Empty;
+            request.IsDeleted = null;
+            request.FilterDate = null;
+            request.PageNo = 1;
+            await LoadCards();
+        }
+
         private async Task ChangePage(int pageNo)
         {
             if (pageNo < 1 || (response.Data != null && pageNo > TotalPages)) return;

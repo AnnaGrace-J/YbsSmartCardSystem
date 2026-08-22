@@ -58,10 +58,10 @@
                     </div>
                     
                     <div class="flex gap-3 pt-4">
-                        <button class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-sm transition-all duration-200 disabled:opacity-50" @onclick="SendOtp" disabled="@isProcessing">
+                        <button class="flex-1 py-3 btn-primary font-semibold rounded-xl shadow-sm" @onclick="SendOtp" disabled="@isProcessing">
                             @(isProcessing ? "Sending OTP..." : "Send OTP")
                         </button>
-                        <NavLink class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm transition-all duration-200 text-center" href="/cards">Cancel</NavLink>
+                        <NavLink class="px-6 py-3 btn-secondary font-medium rounded-xl shadow-sm text-center" href="/cards">Cancel</NavLink>
                     </div>
                 </div>
             }
@@ -83,10 +83,10 @@
                     </div>
                     
                     <div class="flex gap-3 pt-4">
-                        <button class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-sm transition-all duration-200 disabled:opacity-50" @onclick="VerifyOtp" disabled="@isProcessing">
+                        <button class="flex-1 py-3 btn-primary font-semibold rounded-xl shadow-sm" @onclick="VerifyOtp" disabled="@isProcessing">
                             @(isProcessing ? "Verifying..." : "Verify OTP")
                         </button>
-                        <button class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm transition-all duration-200" @onclick="() => currentStep = 1">Back</button>
+                        <button class="px-6 py-3 btn-secondary font-medium rounded-xl shadow-sm" @onclick="() => currentStep = 1">Back</button>
                     </div>
                 </div>
             }
@@ -123,7 +123,7 @@
                     </div>
                     
                     <div class="pt-4">
-                        <button class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow-sm transition-all duration-200 disabled:opacity-50" @onclick="CreateCard" disabled="@isProcessing">
+                        <button class="w-full py-3 btn-primary font-semibold rounded-xl shadow-sm" @onclick="CreateCard" disabled="@isProcessing">
                             @(isProcessing ? "Creating Card..." : "Complete Registration")
                         </button>
                     </div>
@@ -144,7 +144,7 @@
                     </div>
                     
                     <div>
-                        <NavLink class="inline-flex px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-sm transition-all duration-200" href="/cards">Back to Card List</NavLink>
+                        <NavLink class="inline-flex px-8 py-3 btn-primary font-semibold rounded-xl shadow-sm" href="/cards">Back to Card List</NavLink>
                     </div>
                 </div>
             }

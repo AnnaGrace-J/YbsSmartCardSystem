@@ -49,10 +49,10 @@ else
     </div>
 
     <div class="flex gap-3 mt-8 pt-6 border-t border-slate-200">
-        <button class="inline-flex items-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm disabled:opacity-50" @onclick="HandleSave" disabled="@IsSaving">
+        <button class="inline-flex items-center px-6 py-2.5 btn-primary text-sm font-medium rounded-xl shadow-sm" @onclick="HandleSave" disabled="@IsSaving">
             @(IsSaving ? "Saving..." : "Save Changes")
         </button>
-        <a href="/roles" class="inline-flex items-center px-6 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-xl border border-slate-200 transition-colors shadow-sm">
+        <a href="/roles" class="inline-flex items-center px-6 py-2.5 btn-secondary text-sm font-medium rounded-xl shadow-sm">
             Back to Roles
         </a>
     </div>

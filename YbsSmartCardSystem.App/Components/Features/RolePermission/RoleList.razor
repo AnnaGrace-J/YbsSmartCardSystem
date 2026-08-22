@@ -4,7 +4,7 @@
 @inject NavigationManager NavManager
 
 <PageHeader Title="Role Management" Subtitle="Manage system roles and permissions">
-    <NavLink class="inline-flex items-center gap-2 px-4 py-2 bg-[#f0f4ff] hover:bg-[#e1e9ff] text-[#0052cc] text-sm font-semibold rounded-xl border border-[#d2e0ff] transition-all duration-200 active:scale-95 shadow-sm" href="/roles/create">
+    <NavLink class="inline-flex items-center gap-2 px-4 py-2 btn-primary text-sm font-semibold rounded-xl shadow-sm" href="/roles/create">
         <span class="bi bi-plus-lg"></span> Create Role
     </NavLink>
 </PageHeader>
@@ -25,6 +25,14 @@
         <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
             <span class="bi bi-chevron-down"></span>
         </div>
+    </div>
+    <div class="flex items-end gap-2">
+        <button class="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" @onclick="Search">
+            Search
+        </button>
+        <button class="inline-flex items-center px-4 py-2 btn-secondary text-sm font-medium rounded-xl shadow-sm" @onclick="Clear">
+            Clear
+        </button>
     </div>
 </div>
 
@@ -104,18 +112,18 @@ else
                             </td>
                             <td class="px-6 py-4 text-right whitespace-nowrap">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="/roles/permissions/@role.RoleId" title="Permissions" class="inline-flex items-center justify-center gap-1.5 h-8 px-2.5 bg-[#f0f4ff] hover:bg-[#e1e9ff] text-[#0052cc] text-xs font-semibold rounded-lg border border-[#d2e0ff] transition-all duration-200 active:scale-95">
-                                        <span class="bi bi-shield-lock text-xs"></span> Perms
-                                    </a>
                                     @if (!role.IsSystemRole)
                                     {
-                                        <a href="/roles/edit/@role.RoleId" title="Edit" class="inline-flex items-center justify-center h-8 w-8 bg-white hover:bg-slate-100 text-slate-500 hover:border-amber-400 hover:text-amber-600 rounded-lg border border-slate-200 transition-all duration-200 active:scale-95 shadow-sm">
+                                        <a href="/roles/edit/@role.RoleId" title="Edit" class="inline-flex items-center justify-center h-8 w-8 btn-secondary rounded-lg shadow-sm">
                                             <span class="bi bi-pencil text-sm text-amber-600"></span>
                                         </a>
-                                        <button class="inline-flex items-center justify-center h-8 w-8 bg-white hover:bg-red-100 text-slate-500 hover:border-rose-400 hover:text-rose-600 rounded-lg border border-slate-200 transition-all duration-200 active:scale-95 shadow-sm" @onclick="() => ConfirmDelete(role)" title="Delete">
+                                        <button class="inline-flex items-center justify-center h-8 w-8 btn-danger rounded-lg shadow-sm" @onclick="() => ConfirmDelete(role)" title="Delete">
                                             <span class="bi bi-trash text-sm text-rose-500"></span>
                                         </button>
                                     }
+                                    <a href="/roles/permissions/@role.RoleId" title="Permissions" class="inline-flex items-center justify-center gap-1.5 h-8 px-2.5 btn-secondary text-xs font-semibold rounded-lg">
+                                        <span class="bi bi-shield-lock text-xs"></span> Perms
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -129,11 +137,11 @@ else
                 Total: <strong class="text-slate-900">@TotalCount</strong> roles &middot; 10 per page
             </div>
             <div class="flex items-center gap-2">
-                <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" disabled="@(Request.PageNo == 1)" @onclick="PrevPage">
+                <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" disabled="@(Request.PageNo == 1)" @onclick="PrevPage">
                     Previous
                 </button>
                 <span class="text-sm text-slate-600 font-medium px-2">Page @Request.PageNo of @MaxPage</span>
-                <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" disabled="@(Request.PageNo >= MaxPage)" @onclick="NextPage">
+                <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" disabled="@(Request.PageNo >= MaxPage)" @onclick="NextPage">
                     Next
                 </button>
             </div>
@@ -154,8 +162,8 @@ else
                 <p class="text-rose-500 text-xs font-medium">This will also deactivate this role's user and permission assignments.</p>
             </div>
             <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
-                <button class="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg border border-slate-200 transition-colors shadow-sm" @onclick="CancelDelete">Cancel</button>
-                <button class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm" @onclick="DeleteRole">Delete</button>
+                <button class="px-4 py-2 btn-secondary text-sm font-medium rounded-lg shadow-sm" @onclick="CancelDelete">Cancel</button>
+                <button class="px-4 py-2 btn-danger text-sm font-medium rounded-lg shadow-sm" @onclick="DeleteRole">Delete</button>
             </div>
         </div>
     </div>

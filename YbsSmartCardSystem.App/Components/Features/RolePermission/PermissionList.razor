@@ -17,6 +17,14 @@
         </span>
         <input type="text" class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm" placeholder="Filter by feature name..." @bind="Request.FeatureName" @bind:event="oninput" @onkeyup="HandleSearch" />
     </div>
+    <div class="flex items-end gap-2">
+        <button class="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" @onclick="Search">
+            Search
+        </button>
+        <button class="inline-flex items-center px-4 py-2 btn-secondary text-sm font-medium rounded-xl shadow-sm" @onclick="Clear">
+            Clear
+        </button>
+    </div>
 </div>
 
 @if (ErrorMessage != null)
@@ -100,11 +108,11 @@ else
                 Total: <strong class="text-slate-900">@TotalCount</strong> permissions &middot; 10 per page
             </div>
             <div class="flex items-center gap-2">
-                <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" disabled="@(Request.PageNo == 1)" @onclick="PrevPage">
+                <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" disabled="@(Request.PageNo == 1)" @onclick="PrevPage">
                     Previous
                 </button>
                 <span class="text-sm text-slate-600 font-medium px-2">Page @Request.PageNo of @MaxPage</span>
-                <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" disabled="@(Request.PageNo >= MaxPage)" @onclick="NextPage">
+                <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" disabled="@(Request.PageNo >= MaxPage)" @onclick="NextPage">
                     Next
                 </button>
             </div>

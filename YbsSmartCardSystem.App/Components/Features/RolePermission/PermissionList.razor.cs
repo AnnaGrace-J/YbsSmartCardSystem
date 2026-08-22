@@ -50,6 +50,20 @@ public partial class PermissionList : ComponentBase
         }
     }
 
+    private async Task Search()
+    {
+        Request.PageNo = 1;
+        await LoadPermissions();
+    }
+
+    private async Task Clear()
+    {
+        Request.Search = null;
+        Request.FeatureName = null;
+        Request.PageNo = 1;
+        await LoadPermissions();
+    }
+
     private async Task HandleSearch(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")

@@ -5,7 +5,7 @@
 <PageHeader Title="Card Registry" Subtitle="Manage passenger cards and balances">
     @if (AuthState.HasPermission("Card.Register"))
     {
-        <NavLink class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm" href="/card/new">
+        <NavLink class="inline-flex items-center gap-2 px-4 py-2 btn-primary text-sm font-medium rounded-lg shadow-sm" href="/card/new">
             <span class="bi bi-plus-lg"></span> New Card
         </NavLink>
     }
@@ -31,9 +31,14 @@
         <input type="date" class="w-full bg-white border border-slate-200 text-slate-900 rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm shadow-sm" 
                @bind="request.FilterDate" @bind:after="Search" />
     </div>
-    <button class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors border border-slate-200 shadow-sm" @onclick="Search">
-        Search
-    </button>
+    <div class="flex items-end gap-2">
+        <button class="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" @onclick="Search">
+            Search
+        </button>
+        <button class="inline-flex items-center px-4 py-2 btn-secondary text-sm font-medium rounded-xl shadow-sm" @onclick="Clear">
+            Clear
+        </button>
+    </div>
 </div>
 
 @if (editingCardId is not null)
@@ -68,10 +73,10 @@
         </div>
 
         <div class="flex gap-3">
-            <button class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="UpdateCard" disabled="@isSaving">
+            <button class="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-lg shadow-sm" @onclick="UpdateCard" disabled="@isSaving">
                 @(isSaving ? "Saving…" : "Update")
             </button>
-            <button class="inline-flex items-center px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg border border-slate-200 transition-colors shadow-sm disabled:opacity-50" @onclick="CancelEdit" disabled="@isSaving">
+            <button class="inline-flex items-center px-4 py-2 btn-secondary text-sm font-medium rounded-lg shadow-sm" @onclick="CancelEdit" disabled="@isSaving">
                 Cancel
             </button>
         </div>
@@ -111,7 +116,7 @@
                             <tr class="hover:bg-slate-50/50 transition-colors @(editingCardId == item.CardId ? "bg-amber-50" : "")">
                                 <td class="px-6 py-4 text-slate-400 whitespace-nowrap">@(++rowNo)</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <NavLink class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-[#f0f4ff] hover:bg-[#e1e9ff] text-[#0052cc] text-xs font-semibold rounded-md border border-[#d2e0ff] transition-all duration-200 active:scale-95 shadow-sm"
+                                    <NavLink class="inline-flex items-center justify-center gap-1.5 h-8 px-3 btn-secondary text-xs font-semibold rounded-md"
                                              href="@($"/topup/new?cardId={item.CardId}")">
                                         <span class="bi bi-plus-circle text-sm"></span>
                                         Top Up
@@ -162,7 +167,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-2">
-                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-white hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200 hover:border-amber-400 hover:text-amber-600 transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50"
+                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 btn-secondary text-xs font-medium rounded-md shadow-sm"
                                                 @onclick="() => EditCard(item)"
                                                 disabled="@(editingCardId is not null)">
                                             <span class="bi bi-pencil text-sm text-amber-600"></span>
@@ -170,7 +175,7 @@
                                         </button>
                                         @if (AuthState.HasPermission("Card.Delete") && !item.DeleteFlag)
                                         {
-                                            <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-white hover:bg-red-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200 hover:border-rose-400 hover:text-rose-600 transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50"
+                                            <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 btn-danger text-xs font-medium rounded-md shadow-sm"
                                                     @onclick="() => DeleteCard(item.CardId)"
                                                     disabled="@(editingCardId is not null)">
                                                 <span class="bi bi-trash text-sm text-rose-500"></span>
@@ -193,11 +198,11 @@
                     Total: <strong class="text-slate-900">@response.Data.TotalCount</strong> cards &middot; 10 per page
                 </div>
                 <div class="flex items-center gap-2">
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-md transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
+                    <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-md shadow-sm" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
                         Previous
                     </button>
                     <span class="text-sm text-slate-600 px-2">Page <strong class="text-slate-900">@request.PageNo</strong> of @TotalPages</span>
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-md transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
+                    <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-md shadow-sm" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
                         Next
                     </button>
                 </div>

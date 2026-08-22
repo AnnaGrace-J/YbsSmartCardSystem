@@ -16,7 +16,7 @@
         </div>
     </div>
     <!-- Mobile Menu Toggle -->
-    <button class="md:hidden text-neutral-600 hover:text-neutral-900 transition-colors p-2 rounded-lg hover:bg-neutral-200/70 active:scale-95" onclick="document.getElementById('mobile-nav').classList.toggle('hidden')">
+    <button class="btn-ghost md:hidden text-neutral-600 hover:text-neutral-900 p-2 rounded-lg hover:bg-neutral-200/70" onclick="document.getElementById('mobile-nav').classList.toggle('hidden')">
         <span class="bi bi-list text-2xl"></span>
     </button>
 </div>
@@ -160,7 +160,7 @@
 @if (AuthState.IsAuthenticated)
 {
     <div class="p-4 mt-auto border-t border-neutral-200/80 bg-gradient-to-b from-white/30 to-neutral-200/40">
-        <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:text-rose-600 hover:bg-gradient-to-r hover:from-rose-500/10 hover:to-transparent border border-transparent hover:border-rose-300/70 transition-all duration-200 active:scale-[0.98]" @onclick="ShowLogoutConfirm">
+        <button class="btn-ghost w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium hover:text-rose-600 hover:bg-gradient-to-r hover:from-rose-500/10 hover:to-transparent border border-transparent hover:border-rose-300/70" @onclick="ShowLogoutConfirm">
             <span class="bi bi-box-arrow-right text-base"></span> Logout
         </button>
     </div>
@@ -181,8 +181,8 @@
                 </div>
             </div>
             <div class="flex gap-3 mt-6">
-                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 transition-colors" @onclick="CancelLogout">Cancel</button>
-                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 transition-colors" @onclick="HandleLogout">Log out</button>
+                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium btn-secondary" @onclick="CancelLogout">Cancel</button>
+                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium btn-danger" @onclick="HandleLogout">Log out</button>
             </div>
         </div>
     </div>

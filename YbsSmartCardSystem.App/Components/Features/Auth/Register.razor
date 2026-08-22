@@ -72,8 +72,11 @@
                                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
                                     <span class="bi bi-lock-fill"></span>
                                 </span>
-                                <InputText id="password" type="password" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
+                                <InputText id="password" type="@(ShowPassword ? "text" : "password")" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
                                            placeholder="••••••••" @bind-Value="Model.Password" />
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors" @onclick="() => ShowPassword = !ShowPassword" aria-label="Toggle password visibility">
+                                    <span class="bi @(ShowPassword ? "bi-eye-slash" : "bi-eye")"></span>
+                                </button>
                             </div>
                         </div>
 
@@ -84,14 +87,17 @@
                                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
                                     <span class="bi bi-shield-lock-fill"></span>
                                 </span>
-                                <InputText id="confirm_password" type="password" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
+                                <InputText id="confirm_password" type="@(ShowConfirmPassword ? "text" : "password")" class="w-full bg-white border border-neutral-200 text-neutral-900 rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 text-sm"
                                            placeholder="••••••••" @bind-Value="ConfirmPassword" />
+                                <button type="button" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors" @onclick="() => ShowConfirmPassword = !ShowConfirmPassword" aria-label="Toggle password visibility">
+                                    <span class="bi @(ShowConfirmPassword ? "bi-eye-slash" : "bi-eye")"></span>
+                                </button>
                             </div>
                         </div>
 
                         <!-- Action -->
                         <button type="submit"
-                                class="mt-1 w-full bg-gradient-to-br from-[#2a3450] to-[#20283c] hover:from-[#333f63] hover:to-[#262e44] text-white font-semibold rounded-xl py-3 shadow-md shadow-slate-300/50 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+                                class="mt-1 w-full btn-primary font-semibold rounded-xl py-3 shadow-md shadow-slate-300/50 flex items-center justify-center gap-2"
                                 disabled="@IsSubmitting">
                             @if (IsSubmitting)
                             {
@@ -135,7 +141,7 @@
                         </div>
 
                         <button type="submit"
-                                class="mt-1 w-full bg-gradient-to-br from-[#2a3450] to-[#20283c] hover:from-[#333f63] hover:to-[#262e44] text-white font-semibold rounded-xl py-3 shadow-md shadow-slate-300/50 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+                                class="mt-1 w-full btn-primary font-semibold rounded-xl py-3 shadow-md shadow-slate-300/50 flex items-center justify-center gap-2"
                                 disabled="@IsSubmitting">
                             @if (IsSubmitting)
                             {

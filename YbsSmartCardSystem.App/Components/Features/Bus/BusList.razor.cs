@@ -51,8 +51,16 @@ namespace YbsSmartCardSystem.App.Components.Features.Bus
             response = await ApiService.GetBuses(request);
         }
 
-        private async Task Search()
+private async Task Search()
         {
+            request.PageNo = 1;
+            await LoadBuses();
+        }
+
+        private async Task Clear()
+        {
+            searchText = string.Empty;
+            request.IsDeleted = null;
             request.PageNo = 1;
             await LoadBuses();
         }

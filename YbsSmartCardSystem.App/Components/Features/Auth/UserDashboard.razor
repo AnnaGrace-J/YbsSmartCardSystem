@@ -49,7 +49,7 @@
                     <span class="bi @(isSuccess ? "bi-check-circle-fill text-emerald-500" : "bi-exclamation-triangle-fill text-red-500") text-sm"></span>
                     <span class="text-xs font-semibold">@message</span>
                 </div>
-                <button class="text-neutral-400 hover:text-neutral-600 transition-colors" @onclick="() => message = null">
+                <button class="btn-ghost text-neutral-400 hover:text-neutral-600" @onclick="() => message = null">
                     <span class="bi bi-x-lg text-xs"></span>
                 </button>
             </div>
@@ -141,13 +141,13 @@
                         </h2>
                         
                         <div class="flex items-center gap-2">
-                            <button class="h-8 px-3 text-xs font-medium bg-neutral-100 text-neutral-700 hover:bg-neutral-200/80 border border-neutral-200/60 rounded-md transition-all active:scale-[0.98] flex items-center gap-1.5"
+                            <button class="h-8 px-3 text-xs font-medium btn-secondary flex items-center gap-1.5"
                                     @onclick="OpenRenameModal">
                                 <i class="bi bi-pencil-square"></i>
                                 <span>Rename Card</span>
                             </button>
                             
-                            <button class="h-8 px-3 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-all active:scale-[0.98] flex items-center gap-1.5 ml-auto"
+                            <button class="h-8 px-3 text-xs font-medium btn-danger flex items-center gap-1.5 ml-auto"
                                     @onclick="ReportLost">
                                 <i class="bi bi-shield-slash"></i>
                                 <span>Deactivate / Lost</span>
@@ -187,7 +187,7 @@
         <div class="bg-white rounded-md shadow-md border border-neutral-200/80 max-w-sm w-full p-4 animate-in fade-in duration-100">
             <div class="flex justify-between items-start mb-3">
                 <h3 class="text-sm font-semibold text-neutral-900">Rename Card Owner</h3>
-                <button class="text-neutral-400 hover:text-neutral-600" @onclick="() => showRenameModal = false">
+                <button class="btn-ghost text-neutral-400 hover:text-neutral-600" @onclick="() => showRenameModal = false">
                     <span class="bi bi-x-lg text-xs"></span>
                 </button>
             </div>
@@ -204,11 +204,11 @@
             </div>
 
             <div class="flex justify-end gap-2">
-                <button class="h-8 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-100 rounded-md transition-colors active:scale-[0.98]"
+                <button class="h-8 px-3 text-xs font-medium btn-ghost"
                         @onclick="() => showRenameModal = false" disabled="@isRenaming">
                     Cancel
                 </button>
-                <button class="h-8 px-3 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded-md shadow-xs transition-all active:scale-[0.98] flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+                <button class="h-8 px-3 text-xs font-medium btn-primary flex items-center gap-1.5"
                         @onclick="RenameCard" disabled="@(isRenaming || string.IsNullOrWhiteSpace(newOwnerName))">
                     @if (isRenaming)
                     {
@@ -231,7 +231,7 @@
                     <span class="bi bi-exclamation-triangle-fill text-red-500 text-sm"></span>
                     Deactivate Smart Card?
                 </h3>
-                <button class="text-neutral-400 hover:text-neutral-600" @onclick="() => showDeactivateModal = false">
+                <button class="btn-ghost text-neutral-400 hover:text-neutral-600" @onclick="() => showDeactivateModal = false">
                     <span class="bi bi-x-lg text-xs"></span>
                 </button>
             </div>
@@ -241,11 +241,11 @@
             </p>
 
             <div class="flex justify-end gap-2">
-                <button class="h-8 px-3 text-xs font-medium text-neutral-600 hover:bg-neutral-100 rounded-md transition-colors active:scale-[0.98]"
+                <button class="h-8 px-3 text-xs font-medium btn-ghost"
                         @onclick="() => showDeactivateModal = false">
                     Cancel
                 </button>
-                <button class="h-8 px-3 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-all active:scale-[0.98] flex items-center gap-1.5"
+                <button class="h-8 px-3 text-xs font-medium btn-danger flex items-center gap-1.5"
                         @onclick="ConfirmReportLost">
                     Confirm Deactivate
                 </button>

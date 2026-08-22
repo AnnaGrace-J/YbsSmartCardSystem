@@ -89,11 +89,11 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
-                    <button class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-sm transition-all duration-200 disabled:opacity-50 text-lg flex items-center justify-center gap-2" @onclick="ShowPayConfirm" disabled="@isSaving">
+                    <button class="flex-1 py-4 btn-primary font-semibold rounded-xl shadow-sm text-lg flex items-center justify-center gap-2" @onclick="ShowPayConfirm" disabled="@isSaving">
                         <span class="bi bi-wifi transform rotate-90"></span>
                         @(isSaving ? "Processing..." : "Pay 400 Kyats")
                     </button>
-                    <NavLink class="px-6 py-4 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm transition-all duration-200 text-center flex items-center justify-center" href="/transactions">
+                    <NavLink class="px-6 py-4 btn-secondary font-medium rounded-xl shadow-sm text-center flex items-center justify-center" href="/transactions">
                         History
                     </NavLink>
                 </div>
@@ -117,8 +117,8 @@
                 </div>
             </div>
             <div class="flex gap-3 mt-6">
-                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 transition-colors" @onclick="CancelPay">Cancel</button>
-                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition-colors disabled:opacity-50" @onclick="ConfirmPay" disabled="@isSaving">@(isSaving ? "Processing..." : "Confirm")</button>
+                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium btn-secondary" @onclick="CancelPay">Cancel</button>
+                <button class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium btn-primary" @onclick="ConfirmPay" disabled="@isSaving">@(isSaving ? "Processing..." : "Confirm")</button>
             </div>
         </div>
     </div>

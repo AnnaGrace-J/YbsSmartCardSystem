@@ -10,6 +10,8 @@ public partial class Register : ComponentBase
     private int CurrentStep { get; set; } = 1;
     private bool IsSubmitting { get; set; }
     private string? ErrorMessage { get; set; }
+    private bool ShowPassword { get; set; }
+    private bool ShowConfirmPassword { get; set; }
 
     private async Task HandleSendOtp()
     {

@@ -8,6 +8,7 @@ public partial class Login : ComponentBase
     private LoginRequestModel Model { get; set; } = new();
     private bool IsSubmitting { get; set; }
     private string? ErrorMessage { get; set; }
+    private bool ShowPassword { get; set; }
 
     private async Task HandleSubmit()
     {

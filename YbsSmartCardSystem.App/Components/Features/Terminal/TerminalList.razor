@@ -4,7 +4,7 @@
 <PageHeader Title="Terminal Fleet Registry" Subtitle="Manage card reader terminals">
     @if (AuthState.HasPermission("Terminal.Create"))
     {
-        <NavLink class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm" href="/terminal/new">
+        <NavLink class="inline-flex items-center gap-2 px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" href="/terminal/new">
             <span class="bi bi-plus-lg"></span> Register Terminal
         </NavLink>
     }
@@ -26,9 +26,14 @@
             <option value="all">All Terminals</option>
         </select>
     </div>
-    <button class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors border border-slate-200 shadow-sm" @onclick="Search">
-        Search
-    </button>
+    <div class="flex items-end gap-2">
+        <button class="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" @onclick="Search">
+            Search
+        </button>
+        <button class="inline-flex items-center px-4 py-2 btn-secondary text-sm font-medium rounded-xl shadow-sm" @onclick="Clear">
+            Clear
+        </button>
+    </div>
 </div>
 
 @if (!string.IsNullOrWhiteSpace(message))
@@ -36,7 +41,7 @@
     <div class="mb-6 p-4 rounded-xl @(isSuccess ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-rose-50 text-rose-700 border-rose-200") border flex items-start gap-3 relative">
         <span class="bi @(isSuccess ? "bi-check-circle" : "bi-exclamation-triangle") mt-0.5"></span>
         <span class="text-sm font-medium">@message</span>
-        <button type="button" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600" @onclick="() => message = null">
+        <button type="button" class="btn-ghost absolute top-4 right-4 text-slate-400 hover:text-slate-600" @onclick="() => message = null">
             <span class="bi bi-x-lg"></span>
         </button>
     </div>
@@ -86,10 +91,10 @@
         </div>
 
         <div class="flex gap-3">
-            <button class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="UpdateTerminal" disabled="@isSaving">
+            <button class="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-lg shadow-sm" @onclick="UpdateTerminal" disabled="@isSaving">
                 @(isSaving ? "Saving…" : "Update")
             </button>
-            <button class="inline-flex items-center px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg border border-slate-200 transition-colors shadow-sm disabled:opacity-50" @onclick="CancelEdit">
+            <button class="inline-flex items-center px-4 py-2 btn-secondary text-sm font-medium rounded-lg shadow-sm" @onclick="CancelEdit">
                 Cancel
             </button>
         </div>
@@ -211,13 +216,13 @@ else
                                 <div class="flex items-center gap-2">
                                     @if (AuthState.HasPermission("Terminal.Update"))
                                     {
-                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-white hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200 hover:border-amber-400 hover:text-amber-600 transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50" @onclick="() => EditTerminal(localTerminal)" disabled="@(editingTerminalId is not null)">
+                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 btn-secondary text-xs font-medium rounded-md shadow-sm" @onclick="() => EditTerminal(localTerminal)" disabled="@(editingTerminalId is not null)">
                                             <span class="bi bi-pencil text-sm text-amber-600"></span> Edit
                                         </button>
                                     }
                                     @if (AuthState.HasPermission("Terminal.Delete") && !localTerminal.DeleteFlag)
                                     {
-                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 bg-white hover:bg-red-100 text-slate-700 text-xs font-medium rounded-md border border-slate-200 hover:border-rose-400 hover:text-rose-600 transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50" @onclick="() => DeleteTerminal(localTerminal.TerminalId)" disabled="@(editingTerminalId is not null)">
+                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-3 btn-danger text-xs font-medium rounded-md shadow-sm" @onclick="() => DeleteTerminal(localTerminal.TerminalId)" disabled="@(editingTerminalId is not null)">
                                             <span class="bi bi-trash text-sm text-rose-500"></span> Delete
                                         </button>
                                     }
@@ -234,11 +239,11 @@ else
                 Total: <strong class="text-slate-900 font-semibold">@response.Data.TotalCount</strong> terminals &middot; 10 per page
             </div>
             <div class="flex items-center gap-2">
-                <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="PrevPage" disabled="@(request.PageNo <= 1)">
+                <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" @onclick="PrevPage" disabled="@(request.PageNo <= 1)">
                     Previous
                 </button>
                 <span class="text-sm text-slate-600 font-medium px-2">Page @request.PageNo of @TotalPages</span>
-                <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="NextPage" disabled="@(request.PageNo >= TotalPages)">
+                <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" @onclick="NextPage" disabled="@(request.PageNo >= TotalPages)">
                     Next
                 </button>
             </div>

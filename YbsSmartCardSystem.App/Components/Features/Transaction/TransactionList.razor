@@ -5,7 +5,7 @@
 <PageHeader Title="Transaction History" Subtitle="View bus payment transactions">
     @if (AuthState.HasPermission("BusPayment.Create"))
     {
-        <NavLink class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm" href="/transactions/new">
+        <NavLink class="inline-flex items-center gap-2 px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" href="/transactions/new">
             <span class="bi bi-plus-lg"></span> New Transaction
         </NavLink>
     }
@@ -32,10 +32,10 @@
             </div>
         </div>
         <div class="flex items-end gap-2">
-            <button class="inline-flex items-center px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-xl transition-colors shadow-sm disabled:opacity-50" @onclick="ApplyFilter" disabled="@isLoading">
+            <button class="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" @onclick="ApplyFilter" disabled="@isLoading">
                 Search
             </button>
-            <button class="inline-flex items-center px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-xl border border-slate-200 shadow-sm transition-colors disabled:opacity-50" @onclick="ClearFilter" disabled="@isLoading">
+            <button class="inline-flex items-center px-4 py-2 btn-secondary text-sm font-medium rounded-xl shadow-sm" @onclick="ClearFilter" disabled="@isLoading">
                 Clear
             </button>
         </div>
@@ -93,7 +93,7 @@ else if (response.IsSuccess)
                                     <span class="font-bold text-rose-600">-@item.Amount.ToString("N0")</span>
                                     <span class="text-slate-400 text-xs ml-1">MMK</span>
                                 </td>
-                                <td class="px-6 py-4 text-slate-500 whitespace-nowrap">@item.TransactionDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="px-6 py-4 text-slate-500 whitespace-nowrap">@item.TransactionDate.ToString("dd-MM-yyyy hh:mm tt")</td>
                             </tr>
                         }
                     }
@@ -108,11 +108,11 @@ else if (response.IsSuccess)
                     Total: <strong class="text-slate-900 font-semibold">@response.Data.TotalCount</strong> records &middot; 10 per page
                 </div>
                 <div class="flex items-center gap-2">
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
+                    <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
                         Previous
                     </button>
                     <span class="text-sm text-slate-600 font-medium px-2">Page @request.PageNo of @TotalPages</span>
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
+                    <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
                         Next
                     </button>
                 </div>

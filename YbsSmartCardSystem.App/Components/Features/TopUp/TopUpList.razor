@@ -5,7 +5,7 @@
 <PageHeader Title="Top Up History" Subtitle="View passenger top up records">
     @if (AuthState.HasPermission("TopUp.Create"))
     {
-        <NavLink class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm" href="/topup/new">
+        <NavLink class="inline-flex items-center gap-2 px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" href="/topup/new">
             <span class="bi bi-plus-lg"></span> New Top Up
         </NavLink>
     }
@@ -27,9 +27,14 @@
                @bind="request.FilterDate" @bind:after="Search" />
     </div>
     
-    <button class="inline-flex items-center justify-center h-10 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors border border-slate-200 shadow-sm" @onclick="Search">
-        Search
-    </button>
+    <div class="flex items-end gap-2">
+        <button class="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" @onclick="Search">
+            Search
+        </button>
+        <button class="inline-flex items-center px-4 py-2 btn-secondary text-sm font-medium rounded-xl shadow-sm" @onclick="Clear">
+            Clear
+        </button>
+    </div>
 </div>
 
 @if (response.IsSuccess)
@@ -73,7 +78,7 @@
                                     <span class="font-bold text-emerald-600">@item.Amount.ToString("N0")</span>
                                     <span class="text-slate-400 text-xs ml-1">MMK</span>
                                 </td>
-                                <td class="px-6 py-4 text-slate-500 whitespace-nowrap">@item.TopUpDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="px-6 py-4 text-slate-500 whitespace-nowrap">@item.TopUpDate.ToString("dd-MM-yyyy hh:mm tt")</td>
                                 <td class="px-6 py-4 text-slate-500">@item.Remark</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if (!string.IsNullOrEmpty(item.CreatedByName))
@@ -103,11 +108,11 @@
                     Total: <strong class="text-slate-900 font-semibold">@response.Data.TotalCount</strong> records &middot; 10 per page
                 </div>
                 <div class="flex items-center gap-2">
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
+                    <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" @onclick="() => ChangePage(request.PageNo - 1)" disabled="@(request.PageNo <= 1)">
                         Previous
                     </button>
                     <span class="text-sm text-slate-600 font-medium px-2">Page @request.PageNo of @TotalPages</span>
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
+                    <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" @onclick="() => ChangePage(request.PageNo + 1)" disabled="@(request.PageNo >= TotalPages)">
                         Next
                     </button>
                 </div>

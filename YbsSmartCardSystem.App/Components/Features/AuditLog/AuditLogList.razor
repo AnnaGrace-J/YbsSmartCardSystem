@@ -49,12 +49,12 @@ else
                 </div>
             </div>
         </div>
-        <div class="flex gap-2">
-            <button class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm" @onclick="SearchAsync">
-                <span class="bi bi-search me-2"></span> Search
+        <div class="flex items-end gap-2">
+            <button class="inline-flex items-center px-4 py-2 btn-primary text-sm font-medium rounded-xl shadow-sm" @onclick="SearchAsync" disabled="@IsLoading">
+                Search
             </button>
-            <button class="inline-flex items-center px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg border border-slate-200 transition-colors shadow-sm" @onclick="ResetAsync">
-                Reset
+            <button class="inline-flex items-center px-4 py-2 btn-secondary text-sm font-medium rounded-xl shadow-sm" @onclick="ResetAsync" disabled="@IsLoading">
+                Clear
             </button>
         </div>
     </div>
@@ -104,7 +104,7 @@ else
                         {
                             <tr class="hover:bg-slate-50/50 transition-colors">
                                 <td class="px-6 py-4 text-slate-400 whitespace-nowrap">@(++rowNo)</td>
-                                <td class="px-6 py-4 font-mono text-slate-700 whitespace-nowrap">@log.CreatedDateTime.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                <td class="px-6 py-4 font-mono text-slate-700 whitespace-nowrap">@log.CreatedDateTime.ToString("dd-MM-yyyy hh:mm tt")</td>
                                 <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">@(log.UserName ?? "-")</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border @GetActionBadgeClass(log.Action)">
@@ -122,7 +122,7 @@ else
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if (!string.IsNullOrEmpty(log.OldValue) || !string.IsNullOrEmpty(log.NewValue))
                                     {
-                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-2.5 bg-[#f0f4ff] hover:bg-[#e1e9ff] text-[#0052cc] text-xs font-semibold rounded-lg border border-[#d2e0ff] transition-all duration-200 active:scale-95"
+                                        <button class="inline-flex items-center justify-center gap-1.5 h-8 px-2.5 btn-secondary text-xs font-semibold rounded-lg"
                                                 @onclick="() => ToggleDetails(log.AuditLogId)">
                                             <span class="bi @(ExpandedId == log.AuditLogId ? "bi-chevron-up" : "bi-chevron-down") text-xs"></span>
                                             @(ExpandedId == log.AuditLogId ? "Hide" : "View")
@@ -175,11 +175,11 @@ else
                     Total: <strong class="text-slate-900 font-semibold">@Response!.Data!.TotalCount</strong> rows &middot; 10 per page
                 </span>
                 <div class="flex items-center gap-2">
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" disabled="@(Request.PageNo <= 1)" @onclick="PrevPage">
+                    <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" disabled="@(Request.PageNo <= 1)" @onclick="PrevPage">
                         Previous
                     </button>
                     <span class="text-sm text-slate-600 font-medium px-2">Page @Request.PageNo of @TotalPages</span>
-                    <button class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50" disabled="@(Request.PageNo >= TotalPages)" @onclick="NextPage">
+                    <button class="inline-flex items-center px-3 py-1.5 btn-secondary text-sm font-medium rounded-lg shadow-sm" disabled="@(Request.PageNo >= TotalPages)" @onclick="NextPage">
                         Next
                     </button>
                 </div>

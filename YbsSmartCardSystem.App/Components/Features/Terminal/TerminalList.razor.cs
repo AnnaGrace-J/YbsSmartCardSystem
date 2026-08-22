@@ -50,8 +50,16 @@ public partial class TerminalList
         }
     }
 
-    private async Task Search()
+private async Task Search()
     {
+        request.PageNo = 1;
+        await LoadTerminals();
+    }
+
+    private async Task Clear()
+    {
+        searchText = string.Empty;
+        request.IsDeleted = null;
         request.PageNo = 1;
         await LoadTerminals();
     }

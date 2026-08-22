@@ -63,6 +63,20 @@ public partial class RoleList : ComponentBase
         }
     }
 
+    private async Task Search()
+    {
+        Request.PageNo = 1;
+        await LoadRoles();
+    }
+
+    private async Task Clear()
+    {
+        Request.Search = null;
+        IsActiveFilter = "";
+        Request.PageNo = 1;
+        await LoadRoles();
+    }
+
     private async Task HandleSearch(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
